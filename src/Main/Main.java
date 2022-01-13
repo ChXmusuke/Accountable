@@ -63,8 +63,13 @@ public class Main {
                     break;
                 default:
                     // Going back
-                    System.out.println("Thanks! I'll process that for you.");
-                    System.out.println("<-- Going back --");
+                    System.out.println("Thanks! I'll process that for you...");
+                    // TODO: better listing of entered transactions
+                    System.out.println("Here is the list of the transactions you have entered:");
+                    for (Transaction t:transactionList) {
+                        System.out.print(t + " - ");
+                    }
+                    System.out.println("\n<-- Going back --");
                     break;
             }
 
