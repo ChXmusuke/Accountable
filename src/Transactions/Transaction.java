@@ -24,11 +24,19 @@ public abstract class Transaction {
         this.amount = newAmount;
     }
 
-    public float getAmount() {
-        return this.amount;
+    /**
+     * Used to edit a transaction's name
+     * @param newName self-explanatory name
+     */
+    public void setName(String newName) {
+        this.name = newName;
     }
 
-    public abstract float add();
+    public float getAmount() {
+        return this.getMultiplier() * this.amount;
+    }
+
+    protected abstract byte getMultiplier();
 
     /**
      * toString override
@@ -36,6 +44,6 @@ public abstract class Transaction {
      */
     @Override
     public String toString() {
-        return this.name + ": " + this.amount;
+        return this.name + ": " + this.getMultiplier() * this.amount;
     }
 }
