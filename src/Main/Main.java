@@ -64,10 +64,10 @@ public class Main {
                 default:
                     // Going back
                     System.out.println("Thanks! I'll process that for you...");
-                    // TODO: better listing of entered transactions
                     System.out.println("Here is the list of the transactions you have entered:");
-                    for (Transaction t:transactionList) {
-                        System.out.print(t + " - ");
+                    for (int i = 0 ; i < transactionList.size() ; i++) {
+                        System.out.print(transactionList.get(i));
+                        if (i < transactionList.size()-1) System.out.print(" - ");
                     }
                     System.out.println("\n<-- Going back --");
                     break;
