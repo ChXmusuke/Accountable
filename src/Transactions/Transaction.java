@@ -1,6 +1,6 @@
 package Transactions;
 
-import Main.Methods;
+import Main.Input;
 
 public abstract class Transaction {
     private float amount;
@@ -8,10 +8,10 @@ public abstract class Transaction {
 
     public Transaction() {
         System.out.println("Enter a name to identify the transaction:");
-        this.name = Methods.stringInput();
+        this.name = Input.stringInput();
 
         System.out.println("Enter the amount of the transaction:");
-        this.amount = Methods.floatInput(0, Float.MAX_VALUE);
+        this.amount = Input.floatInput(0, Float.MAX_VALUE);
 
         System.out.println("--------------------\n" + this + "\n--------------------");
     }

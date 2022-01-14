@@ -1,5 +1,6 @@
 package Accounts;
 
+import Main.Input;
 import Main.Methods;
 import Transactions.*;
 
@@ -37,7 +38,7 @@ public class Account {
         while (choice != 0) {
             System.out.println("Enter the type of transaction:\n1. Income\n2. Expense\n3. Transfer (WIP)\n0. Back");
             // Input of the type of transaction
-            choice = Methods.byteInput((byte) 0, (byte) 3);
+            choice = Input.byteInput((byte) 0, (byte) 3);
 
             switch (choice) {
                 case 1:
@@ -57,10 +58,7 @@ public class Account {
                     // Going back
                     System.out.println("Thanks! I'll process that for you...");
                     System.out.println("Here is the list of the transactions you have entered:");
-                    for (int i = 0 ; i < pendingTransactions.size() ; i++) {
-                        System.out.print(pendingTransactions.get(i));
-                        if (i < pendingTransactions.size()-1) System.out.print(" - ");
-                    }
+                    Methods.printList(pendingTransactions);
                     System.out.println("\n<-- Going back --");
                     break;
             }
@@ -78,6 +76,23 @@ public class Account {
         }
 
         return newBalance;
+    }
+
+    public void browse() {
+        int choice = -1;
+
+        while (choice != 0) {
+            if (this.transactionList.size() > 0) {
+                System.out.println("Here are your account's transactions so far:");
+                Methods.printListVertically(this.transactionList);
+                System.out.println("--------------------\nBalance: " + this.balance);
+                System.out.println("Select the transaction you want to modify: (1 - " + this.transactionList.size() + ")");
+                choice = Input.intInput(0, this.transactionList.size());
+            } else {
+                System.out.println("You have no transactions in \"" + this.name + "\"! Quitting browsing mode...");
+                choice = 0;
+            }
+        }
     }
 
     @Override

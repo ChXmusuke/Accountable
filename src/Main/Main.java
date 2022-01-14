@@ -13,7 +13,7 @@ public class Main {
         while (!stop) {
             System.out.println("Enter the type of action:\n1. Transaction input\n2. Browse (WIP)\n0. Quit");
 
-            byte choice = Methods.byteInput((byte) 0, (byte) 2);
+            byte choice = Input.byteInput((byte) 0, (byte) 2);
             switch (choice) {
                 case 1:
                     // Transaction input
@@ -21,8 +21,9 @@ public class Main {
                     break;
                 case 2:
                     // TODO: Browse
-                    System.out.println("Sorry, this feature is in development. Tune in for updates!");
+                    System.out.println("This feature is still in development, but you may now get a neat preview!");
                     System.out.println("--------------------");
+                    defaultAccount.browse();
                     break;
                 default:
                     // Quit
@@ -34,6 +35,5 @@ public class Main {
         }
 
     }
-
 
 }

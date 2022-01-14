@@ -1,57 +1,22 @@
 package Main;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import Transactions.Transaction;
+
+import java.util.List;
 
 public class Methods {
 
-    private static final Scanner scanner = new Scanner(System.in);
-
     /**
-     * Method used to prompt the user for a floating point number
-     * @param lowerBound for the value given by the user
-     * @param upperBound for the value given by the user
-     * @return the number entered
-     * @throws NumberFormatException when the value entered is not valid
+     * Prints all the elements of a list in a single line.
+     * @param list the list we want to print
      */
-    public static float floatInput(float lowerBound, float upperBound) throws NumberFormatException {
-        float number;
-
-        while (true) {
-            try {
-                number = Float.parseFloat(scanner.nextLine());
-                if (number < lowerBound || number > upperBound) throw new NumberFormatException();
-                break;
-            } catch (InputMismatchException | NumberFormatException e) {
-                System.out.println("Please enter a valid number, or use a dot (.) instead of a comma (,) as a decimal separator.");
-            }
+    public static void printList(List<Transaction> list) {
+        for (int i = 0 ; i < list.size() ; i++) {
+            System.out.print(list.get(i));
+            if (i < list.size()-1) System.out.print(" - ");
         }
-        return number;
     }
-
-    /**
-     * Method used to prompt the user for a byte-sized integer
-     * @param lowerBound for the value given by the user
-     * @param upperBound for the value given by the user
-     * @return the number entered
-     * @throws NumberFormatException when the value entered is not valid
-     */
-    public static byte byteInput(byte lowerBound, byte upperBound) throws NumberFormatException {
-        byte number;
-
-        while (true) {
-            try {
-                number = Byte.parseByte(scanner.nextLine());
-                if (number < lowerBound || number > upperBound) throw new NumberFormatException();
-                break;
-            } catch (InputMismatchException | NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
-            }
-        }
-        return number;
-    }
-
-    public static String stringInput() {
-        return scanner.nextLine();
+    public static void printListVertically(List<Transaction> list) {
+        for (Transaction transaction : list) System.out.println(transaction);
     }
 }
