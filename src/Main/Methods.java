@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Methods {
 
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     /**
      * Method used to prompt the user for a floating point number
@@ -49,5 +49,9 @@ public class Methods {
             }
         }
         return number;
+    }
+
+    public static String stringInput() {
+        return scanner.nextLine();
     }
 }
