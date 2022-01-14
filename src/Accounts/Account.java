@@ -36,7 +36,7 @@ public class Account {
         byte choice = -1;
 
         while (choice != 0) {
-            System.out.println("Enter the type of transaction:\n1. Income\n2. Expense\n3. Transfer (WIP)\n0. Back");
+            System.out.println("Enter the type of transaction:\n1: Income\n2: Expense\n3: Transfer (WIP)\n0: Back");
             // Input of the type of transaction
             choice = Input.byteInput((byte) 0, (byte) 3);
 
@@ -86,10 +86,12 @@ public class Account {
                 System.out.println("Here are your account's transactions so far:");
                 Methods.printListVertically(this.transactionList);
                 System.out.println("--------------------\nBalance: " + this.balance);
-                System.out.println("Select the transaction you want to modify: (1 - " + this.transactionList.size() + ")");
+                System.out.println("1 - " + this.transactionList.size() + ": select a transaction to modify");
+                System.out.println("0: Back");
                 choice = Input.intInput(0, this.transactionList.size());
             } else {
                 System.out.println("You have no transactions in \"" + this.name + "\"! Quitting browsing mode...");
+                System.out.println("--------------------");
                 choice = 0;
             }
         }

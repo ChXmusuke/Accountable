@@ -13,7 +13,7 @@ public class Methods {
     public static void printList(List<Transaction> list) {
         for (int i = 0 ; i < list.size() ; i++) {
             System.out.print(list.get(i));
-            if (i < list.size()-1) System.out.print(" - ");
+            if (i < list.size()-1) System.out.print(" | ");
         }
     }
     public static void printListVertically(List<Transaction> list) {

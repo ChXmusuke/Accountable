@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Welcome to Accountable\nMade by Purrp Inc.");
 
         while (!stop) {
-            System.out.println("Enter the type of action:\n1. Transaction input\n2. Browse (WIP)\n0. Quit");
+            System.out.println("Enter the type of action:\n1: Transaction input\n2: Browse (WIP)\n0: Quit");
 
             byte choice = Input.byteInput((byte) 0, (byte) 2);
             switch (choice) {
