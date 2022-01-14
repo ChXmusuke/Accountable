@@ -79,6 +79,8 @@ public class Account {
     }
 
     public void browse() {
+        // Choice is an integer instead of a byte to prevent problems with large transaction lists.
+        // TODO: transactions separated by year/month hub
         int choice = -1;
 
         while (choice != 0) {
