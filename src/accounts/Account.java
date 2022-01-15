@@ -88,7 +88,7 @@ public class Account {
                 System.out.printf(AccountableUtil.messages.getString("TRANSACTION_SELECT_PROMPT") + "%n", this.transactionList.size());
                 choice = AccountableUtil.Input.intInput(0, this.transactionList.size());
             } else {
-                System.out.printf(AccountableUtil.messages.getString("NO_TRANSACTIONS"), this.name);
+                System.out.printf(AccountableUtil.messages.getString("NO_TRANSACTIONS") + "%n", this.name);
                 choice = 0;
             }
         }
