@@ -1,19 +1,21 @@
-package Transactions;
+package transactions;
 
-import Main.Input;
+import main.AccountableUtil;
 
 public abstract class Transaction {
     private float amount;
     private String name;
 
     public Transaction() {
-        System.out.println("Enter a name to identify the transaction:");
-        this.name = Input.stringInput();
+        System.out.println(AccountableUtil.messages.getString("TRANSACTION_NAME_PROMPT"));
+        this.name = AccountableUtil.Input.stringInput();
 
-        System.out.println("Enter the amount of the transaction:");
-        this.amount = Input.floatInput(0, Float.MAX_VALUE);
+        System.out.println(AccountableUtil.messages.getString("TRANSACTION_AMOUNT_PROMPT"));
+        this.amount = AccountableUtil.Input.floatInput(0, Float.MAX_VALUE);
 
-        System.out.println("--------------------\n" + this + "\n--------------------");
+        System.out.println(AccountableUtil.messages.getString("SEPARATOR") + "\n" +
+                this +
+                "\n" + AccountableUtil.messages.getString("SEPARATOR"));
     }
 
     /**
@@ -36,6 +38,7 @@ public abstract class Transaction {
         return this.getMultiplier() * this.amount;
     }
 
+    // Multiplier is 1 when the transaction is an income, -1 if it is an expense
     protected abstract byte getMultiplier();
 
     /**

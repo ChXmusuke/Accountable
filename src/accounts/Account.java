@@ -1,8 +1,7 @@
-package Accounts;
+package accounts;
 
-import Main.Input;
-import Main.Methods;
-import Transactions.*;
+import main.AccountableUtil;
+import transactions.*;
 
 import java.util.ArrayList;
 
@@ -30,15 +29,22 @@ public class Account {
     }
 
 
+    /**
+     * Used to enter new transactions. The user can choose either an income, an expense
+     * or a transfer between 2 accounts (the latter is a WIP).
+     * The method creates a buffer in which the new transactions are stored, and
+     * adds all its content to the overall transaction list.
+     */
     public void enterTransactions() {
+        // Buffer
         ArrayList<Transaction> pendingTransactions = new ArrayList<>();
 
         byte choice = -1;
 
         while (choice != 0) {
-            System.out.println("Enter the type of transaction:\n1: Income\n2: Expense\n3: Transfer (WIP)\n0: Back");
+            System.out.println(AccountableUtil.messages.getString("TRANSACTION_PROMPT"));
             // Input of the type of transaction
-            choice = Input.byteInput((byte) 0, (byte) 3);
+            choice = AccountableUtil.Input.byteInput((byte) 0, (byte) 3);
 
             switch (choice) {
                 case 1:
@@ -51,31 +57,22 @@ public class Account {
                     break;
                 case 3:
                     // TODO: Transfers
-                    System.out.println("Sorry, this feature is still in development. Tune in for updates!");
-                    System.out.println("--------------------");
-                    break;
-                default:
-                    // Going back
-                    System.out.println("Thanks! I'll process that for you...");
-                    System.out.println("Here is the list of the transactions you have entered:");
-                    Methods.printList(pendingTransactions);
-                    System.out.println("\n<-- Going back --");
+                    System.out.println(AccountableUtil.messages.getString("INDEV_FEATURE"));
+                    System.out.println(AccountableUtil.messages.getString("SEPARATOR"));
                     break;
             }
 
         }
 
-        this.balance += computeTransactionSum(pendingTransactions);
+        // Going back
+        System.out.println(AccountableUtil.messages.getString("ENTER_TRANSACTION_EXIT"));
+        System.out.println(AccountableUtil.messages.getString("SEPARATOR"));
+        AccountableUtil.printTransactionListInfo(pendingTransactions);
+        System.out.println("\n" + AccountableUtil.messages.getString("BACK") + "\n");
+
+        // Add the sum of all new transactions to the already registered ones
+        this.balance += AccountableUtil.computeTransactionSum(pendingTransactions);
         this.transactionList.addAll(pendingTransactions);
-    }
-
-    private float computeTransactionSum(ArrayList<Transaction> transactionList) {
-        float newBalance = 0;
-        for (Transaction t : transactionList) {
-            newBalance += t.getAmount();
-        }
-
-        return newBalance;
     }
 
     public void browse() {
@@ -85,18 +82,18 @@ public class Account {
 
         while (choice != 0) {
             if (this.transactionList.size() > 0) {
-                System.out.println("Here are your account's transactions so far:");
-                Methods.printListVertically(this.transactionList);
-                System.out.println("--------------------\nBalance: " + this.balance);
-                System.out.println("1 - " + this.transactionList.size() + ": select a transaction to modify");
-                System.out.println("0: Back");
-                choice = Input.intInput(0, this.transactionList.size());
+                // Displays the transactions and the total sum
+                System.out.println(AccountableUtil.messages.getString("TRANSACTIONS_LIST"));
+                AccountableUtil.printTransactionListInfo(this.transactionList);
+                System.out.printf(AccountableUtil.messages.getString("TRANSACTION_SELECT_PROMPT") + "%n", this.transactionList.size());
+                choice = AccountableUtil.Input.intInput(0, this.transactionList.size());
             } else {
-                System.out.println("You have no transactions in \"" + this.name + "\"! Quitting browsing mode...");
-                System.out.println("--------------------");
+                System.out.printf(AccountableUtil.messages.getString("NO_TRANSACTIONS"), this.name);
                 choice = 0;
             }
         }
+
+        System.out.println(AccountableUtil.messages.getString("BACK"));
     }
 
     @Override

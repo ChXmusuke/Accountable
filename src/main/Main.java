@@ -1,6 +1,6 @@
-package Main;
+package main;
 
-import Accounts.Account;
+import accounts.Account;
 
 public class Main {
 
@@ -8,12 +8,12 @@ public class Main {
     static Account defaultAccount = new Account("Default account");
 
     public static void main(String[] args) {
-        System.out.println("Welcome to Accountable\nMade by Purrp Inc.");
+        System.out.println(AccountableUtil.messages.getString("WELCOME"));
 
         while (!stop) {
-            System.out.println("Enter the type of action:\n1: Transaction input\n2: Browse (WIP)\n0: Quit");
+            System.out.println(AccountableUtil.messages.getString("ACCOUNT_MENU"));
 
-            byte choice = Input.byteInput((byte) 0, (byte) 2);
+            byte choice = AccountableUtil.Input.byteInput((byte) 0, (byte) 2);
             switch (choice) {
                 case 1:
                     // Transaction input
@@ -21,13 +21,13 @@ public class Main {
                     break;
                 case 2:
                     // TODO: Browse
-                    System.out.println("This feature is still in development, but you may now get a neat preview!");
-                    System.out.println("--------------------");
+                    System.out.println(AccountableUtil.messages.getString("INDEV_FEATURE_PREVIEW"));
+                    System.out.println(AccountableUtil.messages.getString("SEPARATOR"));
                     defaultAccount.browse();
                     break;
                 default:
                     // Quit
-                    System.out.println("It was good to have you!");
+                    System.out.println(AccountableUtil.messages.getString("GOODBYE"));
                     stop = true;
                     break;
             }

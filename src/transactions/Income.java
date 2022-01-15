@@ -1,4 +1,4 @@
-package Transactions;
+package transactions;
 
 public class Income extends Transaction {
 
