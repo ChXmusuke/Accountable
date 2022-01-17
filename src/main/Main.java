@@ -5,7 +5,7 @@ import accounts.Account;
 public class Main {
 
     static boolean stop = false;
-    static Account defaultAccount = new Account("Default account");
+    static Account defaultAccount = new Account(AccountableUtil.messages.getString("DEFAULT_ACCOUNT"));
 
     public static void main(String[] args) {
         System.out.println(AccountableUtil.messages.getString("WELCOME"));
