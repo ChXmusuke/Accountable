@@ -6,7 +6,7 @@ import java.util.*;
 
 public class AccountableUtil {
 
-    public static ResourceBundle messages = ResourceBundle.getBundle("resources.messages.messages", Locale.FRENCH);
+    public static ResourceBundle messages = ResourceBundle.getBundle("resources.messages.messages", Locale.ENGLISH);
 
     /**
      * @param transactionList a list with transactions. (Thanks Sherlock.)
