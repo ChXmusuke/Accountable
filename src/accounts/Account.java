@@ -75,8 +75,8 @@ public class Account {
         this.transactionList.addAll(pendingTransactions);
     }
 
-    public void browse() {
-        // Choice is an integer instead of a byte to prevent problems with large transaction lists.
+    public void browse() throws IndexOutOfBoundsException{
+        // Choice is an integer instead of a byte to prevent problems with larger transaction lists.
         // TODO: transactions separated by year/month hub
         int choice = -1;
 
@@ -87,6 +87,14 @@ public class Account {
                 AccountableUtil.printTransactionListInfo(this.transactionList);
                 System.out.printf(AccountableUtil.messages.getString("TRANSACTION_SELECT_PROMPT") + "%n", this.transactionList.size());
                 choice = AccountableUtil.Input.intInput(0, this.transactionList.size());
+                // Modifies the chosen transaction. modifyTransaction() returns true if the user wants to delete the transaction
+                try {
+                    if (this.transactionList.get(choice - 1).modifyTransaction()) {
+                        String name = transactionList.get(choice-1).getName();
+                        this.transactionList.remove(choice-1);
+                        System.out.printf(AccountableUtil.messages.getString("TRANSACTION_DELETED") + "%n", name);
+                    }
+                } catch (IndexOutOfBoundsException ignored) {}
             } else {
                 System.out.printf(AccountableUtil.messages.getString("NO_TRANSACTIONS") + "%n", this.name);
                 choice = 0;

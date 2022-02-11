@@ -20,8 +20,6 @@ public class Main {
                     defaultAccount.enterTransactions();
                     break;
                 case 2:
-                    // TODO: Browse
-                    System.out.println(AccountableUtil.messages.getString("INDEV_FEATURE_PREVIEW"));
                     System.out.println(AccountableUtil.messages.getString("SEPARATOR"));
                     defaultAccount.browse();
                     break;

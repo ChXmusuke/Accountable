@@ -59,7 +59,8 @@ public class AccountableUtil {
         }
 
         /**
-         * Method used to prompt the user for a byte-sized integer
+         * Method used to prompt the user for a byte-sized integer.
+         * The bounds are included in the interval.
          * @param lowerBound for the value given by the user
          * @param upperBound for the value given by the user
          * @return the number entered
