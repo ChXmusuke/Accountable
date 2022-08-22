@@ -3,6 +3,9 @@ package util;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * This class allows for basic I/O in the command prompt.
+ */
 public class Input {
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -13,11 +16,17 @@ public class Input {
     private Input() {}
 
     /**
-     * Method used to prompt the user for a floating point number
-     * @param lowerBound for the value given by the user
-     * @param upperBound for the value given by the user
+     * Method used to prompt the user for a floating point number.
+     *
+     * @param  lowerBound
+     *         for the value given by the user
+     * @param  upperBound
+     *         for the value given by the user
+     *
      * @return the number entered
-     * @throws NumberFormatException when the value entered is not valid
+     *
+     * @throws NumberFormatException
+     *         when the value entered is not valid
      */
     public static float floatInput(float lowerBound, float upperBound) throws NumberFormatException {
         float number;
@@ -37,10 +46,16 @@ public class Input {
     /**
      * Method used to prompt the user for a byte-sized integer.
      * The bounds are included in the interval.
-     * @param lowerBound for the value given by the user
-     * @param upperBound for the value given by the user
+     *
+     * @param  lowerBound
+     *         for the value given by the user
+     * @param  upperBound
+     *         for the value given by the user
+     *
      * @return the number entered
-     * @throws NumberFormatException when the value entered is not valid
+     *
+     * @throws NumberFormatException
+     *         when the value entered is not valid
      */
     public static byte byteInput(byte lowerBound, byte upperBound) throws NumberFormatException {
         byte number;
@@ -57,6 +72,20 @@ public class Input {
         return number;
     }
 
+    /**
+     * Method used to prompt the user for an int-sized integer.
+     * The bounds are included in the interval.
+     *
+     * @param  lowerBound
+     *         for the value given by the user
+     * @param  upperBound
+     *         for the value given by the user
+     *
+     * @return the number entered
+     *
+     * @throws NumberFormatException
+     *         when the value entered is not valid
+     */
     public static int intInput(int lowerBound, int upperBound) {
         int number;
 
@@ -72,6 +101,11 @@ public class Input {
         return number;
     }
 
+    /**
+     * Method used to prompt the user for a textual input.
+     *
+     * @return the string entered
+     */
     public static String stringInput() {
         return scanner.nextLine();
     }

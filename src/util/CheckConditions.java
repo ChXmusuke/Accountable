@@ -1,5 +1,8 @@
 package util;
 
+/**
+ * This class allows to check a boolean parameter
+ */
 public class CheckConditions {
 
     /**
@@ -7,8 +10,17 @@ public class CheckConditions {
      */
     private CheckConditions() {}
 
-    public static void checkArgument(boolean args) {
-        if (!args)
+    /**
+     * Checks if the given boolean argument is correct
+     *
+     * @param  conditions
+     *         The conditions on the arguments
+     *
+     * @throws IllegalArgumentException
+     *         if the conditions are not met
+     */
+    public static void checkArgument(boolean conditions) throws IllegalArgumentException {
+        if (!conditions)
             throw new IllegalArgumentException();
     }
 }
