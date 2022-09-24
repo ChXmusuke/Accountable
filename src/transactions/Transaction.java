@@ -6,7 +6,8 @@ import java.util.List;
 public class Transaction {
 
     final int id;
-    static int currentId;
+    static int globalId;
+
     String name;
     short date;
     byte from;
@@ -18,7 +19,7 @@ public class Transaction {
 
     public Transaction(String _name, short _date, byte _from, byte _to, float _value, byte _category, List<Byte> _tags) {
 
-        id = currentId++;  // assigns an Id to the Tx and increases the global Id counter
+        id = globalId++;  // assigns an Id to the Tx and increases the global Id counter
 
         name = _name;
         date = _date;
