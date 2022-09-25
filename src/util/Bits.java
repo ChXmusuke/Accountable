@@ -21,15 +21,13 @@ public class Bits {
      *         The length of the extracted vector
      * @return The trimmed 16-bit vector
      */
-    public static short extractUnsigned(int vector, int start, int length) {
+    public static int extractUnsigned(int vector, int start, int length) {
         CheckConditions.checkArgument(validExtraction(start, length));
 
         vector = vector << Integer.SIZE - (start + length);
         vector = vector >>> Integer.SIZE - length;
 
-        vector &= 0xFF;
-
-        return (short) vector;
+        return vector;
     }
 
     /**

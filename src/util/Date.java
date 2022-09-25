@@ -2,32 +2,36 @@ package util;
 
 public class Date {
 
+    private static final int MAX_YEAR = (int) Math.pow(2, 23)-1;
+
     /**
      * Don't let anyone instantiate this class
      */
     private Date() {}
 
     /**
-     * Packs a date into a 16-bit vector.
+     * Packs a date into a 32-bit vector.
+     * Note: The highest possible year value is indeed comically large.
      *
      * @param  year
-     *         a year (2 last digits)
+     *         a year
      * @param  month
      *         a month
      * @param  day
      *         a day
      * @return the packed date
      */
-    public static short packDate(int year, int month, int day) {
-        CheckConditions.checkArgument(year >= 0 && year <= 99 &&
+    public static int packDate(int year, int month, int day) {
+        CheckConditions.checkArgument(year >= 0 && year <= MAX_YEAR  &&
                 month > 0 && month <= 12 &&
                 day > 0 && day <= 31);
 
-        short m_year = (short) (year << 9);
+
+        int m_year = (year << 9);
         short m_month = (short) (month << 5);
         short m_day = (short) day;
 
-        return (short) (m_year | m_month | m_day);
+        return (m_year | m_month | m_day);
     }
 
     /**
@@ -37,7 +41,7 @@ public class Date {
      *         a date
      * @return the day contained in the vector
      */
-    public static short extractDay(short date) {
+    public static int extractDay(int date) {
         return Bits.extractUnsigned(date, 0, 5);
     }
 
@@ -48,7 +52,7 @@ public class Date {
      *         a date
      * @return the month contained in the vector
      */
-    public static short extractMonth(short date) {
+    public static int extractMonth(int date) {
         return Bits.extractUnsigned(date, 5, 4);
     }
 
@@ -59,7 +63,7 @@ public class Date {
      *         a date
      * @return the year contained in the vector
      */
-    public static short extractYear(short date) {
-        return Bits.extractUnsigned(date, 9, 7);
+    public static int extractYear(int date) {
+        return Bits.extractUnsigned(date, 9, 23);
     }
 }
