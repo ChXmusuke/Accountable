@@ -2,31 +2,65 @@ package transactions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
-    final int id;
-    static int globalId;
+    private final int id;
 
-    String name;
-    short date;
-    byte from;
-    byte to;
-    float value;
-    byte category;
-    List<Byte> tags = new ArrayList<>();
+    private String name;
+    private int date;
+    private byte from;
+    private byte to;
+    private float value;
+    private byte category;
+    private List<Byte> tags = new ArrayList<>();
+
+    public Transaction(String name, int date, byte from, byte to, float value, byte category, List<Byte> tags) {
+
+        this.id = new Random().nextInt();
+
+        this.name = name;
+        this.date = date;
+        this.from = from;
+        this.to = to;
+        this.value = value;
+        this.category = category;
+        this.tags.addAll(tags);
+    }
 
 
-    public Transaction(String _name, short _date, byte _from, byte _to, float _value, byte _category, List<Byte> _tags) {
 
-        id = globalId++;  // assigns an Id to the Tx and increases the global Id counter
+    public int getId() {
+        return id;
+    }
 
-        name = _name;
-        date = _date;
-        from = _from;
-        to = _to;
-        value = _value;
-        category = _category;
-        tags.addAll(_tags);
+    public String getName() {
+        return name;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public byte getFrom() {
+        return from;
+    }
+
+    public byte getTo() {
+        return to;
+    }
+
+    public float getValue() {
+        return value;
+    }
+
+    public byte getCategory() {
+        return category;
+    }
+
+    @Override
+    public int compareTo(Transaction that) {
+        return Integer.compare(this.date, that.date);
     }
 }

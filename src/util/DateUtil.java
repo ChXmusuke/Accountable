@@ -1,13 +1,14 @@
 package util;
 
-public class Date {
+public class DateUtil {
 
     private static final int MAX_YEAR = (int) Math.pow(2, 23)-1;
+    public static int FIRST_YEAR;
 
     /**
      * Don't let anyone instantiate this class
      */
-    private Date() {}
+    private DateUtil() {}
 
     /**
      * Packs a date into a 32-bit vector.
