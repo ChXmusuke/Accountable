@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import util.CheckConditions;
+
 public class Transaction implements Comparable<Transaction> {
 
     private final int id;
@@ -17,6 +19,7 @@ public class Transaction implements Comparable<Transaction> {
     private List<Byte> tags = new ArrayList<>();
 
     public Transaction(String name, int date, byte from, byte to, float value, byte category, List<Byte> tags) {
+        CheckConditions.checkArgument(from != to);
 
         this.id = new Random().nextInt();
 
@@ -28,8 +31,6 @@ public class Transaction implements Comparable<Transaction> {
         this.category = category;
         this.tags.addAll(tags);
     }
-
-
 
     public int getId() {
         return id;
