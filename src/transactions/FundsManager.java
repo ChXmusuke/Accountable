@@ -5,8 +5,8 @@ import util.*;
 
 public class FundsManager {
 
-    final List<Set<Transaction>> transactions;
-    final Map<Byte, Float> balances;
+    final private List<Set<Transaction>> transactions;
+    final private Map<Byte, Float> balances;
 
     public FundsManager() {
 
