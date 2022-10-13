@@ -32,6 +32,13 @@ public class Transaction implements Comparable<Transaction> {
         this.tags.addAll(tags);
     }
 
+    public Transaction reverse() {
+        byte _from = this.to;
+        byte _to = this.from;
+
+        return new Transaction(this.name, this.date, _from, _to, this.value, this.category, this.tags);
+    }
+
     public int getId() {
         return id;
     }

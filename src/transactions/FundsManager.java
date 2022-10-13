@@ -59,6 +59,7 @@ public class FundsManager {
             float value,
             byte category,
             List<Byte> tags) {
+
         Transaction t = new Transaction(
                 name,
                 date,
@@ -72,6 +73,16 @@ public class FundsManager {
                 .add(t);
 
         updateBalances(t);
+
+        return t;
+    }
+
+    public Transaction removeTransaction(Transaction t) {
+
+        transactions.get(DateUtil.extractYear(t.getDate()) - DateUtil.FIRST_YEAR)
+                .remove(t);
+
+        updateBalances(t.reverse());
 
         return t;
     }
