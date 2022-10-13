@@ -7,7 +7,8 @@ public class DateUtil {
     private static final int LENGTH_MONTH = 4;
     private static final int LENGTH_YEAR = 23;
 
-    public static int FIRST_YEAR;
+    // TODO: Find a better method
+    public static int FIRST_YEAR = 2022;
 
     /**
      * Don't let anyone instantiate this class
