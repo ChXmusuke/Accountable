@@ -1,6 +1,6 @@
 # Accountable
 A small project for basic logging of personal expenses.\
 For now it aims to feature:
-- Logging of incomes, expenses and transfer between transactions
-- Multiple transactions/wallets
-- Synthetic data about the logged transactions
+- Logging of incomes, expenses and transfers between accounts
+- Multiple accounts
+- Presentation of data about the logged transactions
