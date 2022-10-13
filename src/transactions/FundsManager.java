@@ -7,35 +7,43 @@ public class FundsManager {
 
     final private List<Set<Transaction>> transactions;
     final private Map<Byte, Float> balances;
+    final private Map<String, Byte> accountNames;
 
     public FundsManager() {
 
         transactions = new ArrayList<>(List.of(new TreeSet<>()));
         balances = new HashMap<>();
+        accountNames = new HashMap<>();
 
         // Reserved account considered as "the outside world"
         // Its balance never changes, therefore its initial value doesn't matter
-        createAccount((byte) 0, 0f);
+        createAccount((byte) 0, "Out", 0f);
     }
 
     public boolean accountExists(byte address) {
         return balances.containsKey(address);
     }
 
-    public boolean createAccount(byte address, float initValue) {
+    public boolean accountExists(String name) {
+        return accountExists(accountNames.get(name));
+    }
+
+    private byte createAccount(byte address, String name, float initValue) {
         CheckConditions.checkArgument(!accountExists(address));
 
         balances.put(address, initValue);
-        return true;
+        accountNames.put(name, address);
+
+        return address;
     }
 
-    public boolean createAccount(float initValue) {
-        byte a;
+    public byte createAccount(String name, float initValue) {
+        byte address;
         do
-            a = (byte) new Random().nextInt();
-        while (balances.containsKey(a));
+            address = (byte) new Random().nextInt();
+        while (balances.containsKey(address));
 
-        return createAccount(a, initValue);
+        return createAccount(address, name, initValue);
     }
 
     public float getBalance(byte address) {
