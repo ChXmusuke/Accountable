@@ -51,25 +51,9 @@ public class FundsManager {
         return balances.get(address);
     }
 
-    public Transaction addTransaction(
-            String name,
-            int date,
-            byte from,
-            byte to,
-            float value,
-            byte category,
-            List<Byte> tags) {
+    public Transaction addTransaction(Transaction t) {
 
-        Transaction t = new Transaction(
-                name,
-                date,
-                from,
-                to,
-                value,
-                category,
-                tags);
-
-        transactions.get(DateUtil.extractYear(date) - DateUtil.FIRST_YEAR)
+        transactions.get(DateUtil.extractYear(t.date()) - DateUtil.FIRST_YEAR)
                 .add(t);
 
         updateBalances(t);
@@ -79,7 +63,7 @@ public class FundsManager {
 
     public Transaction removeTransaction(Transaction t) {
 
-        transactions.get(DateUtil.extractYear(t.getDate()) - DateUtil.FIRST_YEAR)
+        transactions.get(DateUtil.extractYear(t.date()) - DateUtil.FIRST_YEAR)
                 .remove(t);
 
         updateBalances(t.reverse());
@@ -87,14 +71,26 @@ public class FundsManager {
         return t;
     }
 
+    public Transaction modifyTransaction(Transaction t, Transaction newT) {
+        removeTransaction(t);
+
+        addTransaction(newT);
+
+        return newT;
+    }
+
     private void updateBalances(Transaction transaction) {
-        byte from = transaction.getFrom();
-        byte to = transaction.getTo();
-        float value = transaction.getValue();
+        byte from = transaction.from();
+        byte to = transaction.to();
+        float value = transaction.value();
 
         if (from != 0)
             balances.put(from, balances.get(from) - value);
         if (to != 0)
             balances.put(to, balances.get(to) + value);
+    }
+
+    public List<Set<Transaction>> dumpTransactions() {
+        return transactions;
     }
 }
