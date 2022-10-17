@@ -4,13 +4,42 @@ import java.util.*;
 
 import util.CheckConditions;
 
+/**
+ * Provides storage of transactions.
+ */
 public record Transaction(String name, int date, byte from, byte to, float value, byte category, List<Byte> tags)
         implements Comparable<Transaction> {
 
+    /**
+     * Constructor for Transaction
+     * 
+     * @param name
+     *                 a name, as String
+     * @param date
+     *                 a date, as int
+     *                 Must be packed in 23-4-5 format
+     * @param from
+     *                 the address of the sender, as byte
+     * @param to
+     *                 the address of the receiver, as byte
+     * @param value
+     *                 the value of the transaction, as float
+     * @param category
+     *                 the category of the transaction, as byte
+     * @param tags
+     *                 the list of tags assigned to the transaction, as a List of
+     *                 bytes
+     */
     public Transaction {
         CheckConditions.checkArgument(from != to);
     }
 
+    /**
+     * Reverses the current transaction.
+     * 
+     * @return
+     *         the current transaction with sender and receiver swapped
+     */
     public Transaction reverse() {
         byte _from = this.to;
         byte _to = this.from;
@@ -18,11 +47,25 @@ public record Transaction(String name, int date, byte from, byte to, float value
         return new Transaction(this.name, this.date, _from, _to, this.value, this.category, this.tags);
     }
 
+    /**
+     * Comparison implementation.
+     * 
+     * Compares two transactions according to their dates.
+     * 
+     * @param that
+     *             another transaction
+     * 
+     * @return -1, 0 or 1 if the current transaction is smaller, equal or greater
+     *         then the other transaction according to their dates
+     */
     @Override
     public int compareTo(Transaction that) {
         return Integer.compare(this.date, that.date);
     }
 
+    /**
+     * Builds a Transaction object.
+     */
     public static class TransactionBuilder {
 
         private String name;
@@ -33,6 +76,25 @@ public record Transaction(String name, int date, byte from, byte to, float value
         private byte category;
         private List<Byte> tags;
 
+        /**
+         * Constructor for a TransactionBuilder.
+         * 
+         * @param name
+         *                 a name, as String
+         * @param date
+         *                 a date, as int (must be packed in 23-4-5 format)
+         * @param from
+         *                 the address of the sender, as byte
+         * @param to
+         *                 the address of the receiver, as byte
+         * @param value
+         *                 the value of the transaction, as float
+         * @param category
+         *                 the category of the transaction, as byte
+         * @param tags
+         *                 the list of tags assigned to the transaction, as a List of
+         *                 bytes
+         */
         public TransactionBuilder(String name, int date, byte from, byte to, float value, byte category,
                 List<Byte> tags) {
             CheckConditions.checkArgument(from != to);
@@ -46,6 +108,12 @@ public record Transaction(String name, int date, byte from, byte to, float value
             this.tags = List.copyOf(tags);
         }
 
+        /**
+         * Creates a TransactionBuilder by copying transaction t's data.
+         * 
+         * @param t
+         *          the transaction to copy
+         */
         public TransactionBuilder(Transaction t) {
             this.tags = new ArrayList<>();
 
@@ -58,22 +126,49 @@ public record Transaction(String name, int date, byte from, byte to, float value
             addTagList(t.tags());
         }
 
+        /**
+         * Constructor for an empty TransactionBuilder.
+         */
         public TransactionBuilder() {
             this.tags = new ArrayList<>();
         }
 
+        /**
+         * Sets the name of the TransactionBuilder.
+         * 
+         * @param name
+         *             a name, as String
+         * 
+         * @return the transaction with the new name
+         */
         public TransactionBuilder setName(String name) {
             this.name = name;
 
             return this;
         }
 
+        /**
+         * Sets the date of the TransactionBuilder.
+         * 
+         * @param date
+         *             a date, as int (must be packed in 23-4-5 format)
+         * 
+         * @return the transaction with the new date
+         */
         public TransactionBuilder setDate(int date) {
             this.date = date;
 
             return this;
         }
 
+        /**
+         * Sets the sender of the TransactionBuilder.
+         * 
+         * @param from
+         *             a sender, as byte
+         * 
+         * @return the transaction with the new sender
+         */
         public TransactionBuilder setFrom(byte from) {
             CheckConditions.checkArgument(from != this.to);
 
@@ -82,6 +177,14 @@ public record Transaction(String name, int date, byte from, byte to, float value
             return this;
         }
 
+        /**
+         * Sets the receiver of the TransactionBuilder.
+         * 
+         * @param to
+         *           a receiver, as byte
+         * 
+         * @return the transaction with the new receiver
+         */
         public TransactionBuilder setTo(byte to) {
             CheckConditions.checkArgument(to != this.from);
 
@@ -90,36 +193,81 @@ public record Transaction(String name, int date, byte from, byte to, float value
             return this;
         }
 
+        /**
+         * Sets the value of the TransactionBuilder.
+         * 
+         * @param value
+         *              a value, as float
+         * 
+         * @return the transaction with the new value
+         */
         public TransactionBuilder setValue(float value) {
             this.value = value;
 
             return this;
         }
 
+        /**
+         * Sets the category of the TransactionBuilder.
+         * 
+         * @param from
+         *             a category, as byte
+         * 
+         * @return the transaction with the new category
+         */
         public TransactionBuilder setCategory(byte category) {
             this.category = category;
 
             return this;
         }
 
+        /**
+         * Adds a tag to the TransactionBuilder.
+         * 
+         * @param tag
+         *            a tag, as byte
+         * 
+         * @return the transaction with the new tag added
+         */
         public TransactionBuilder addTag(byte tag) {
             tags.add(tag);
 
             return this;
         }
 
+        /**
+         * Adds all the tags in a list to the TransactionBuilder.
+         * 
+         * @param tags
+         *             a list of tags, as a List of bytes
+         * 
+         * @return the transaction with the new tags added
+         */
         public TransactionBuilder addTagList(List<Byte> tags) {
             this.tags.addAll(tags);
 
             return this;
         }
 
+        /**
+         * Removes a tag from the TransactionBuilder.
+         * 
+         * @param tag
+         *            a tag, as byte
+         * 
+         * @return the transaction with the tag removed
+         */
         public TransactionBuilder removeTag(byte tag) {
             tags.remove(tag);
 
             return this;
         }
 
+        /**
+         * builds the transaction as an immutable object.
+         * 
+         * @return the transaction built from the builder's data
+         */
         public Transaction build() {
             return new Transaction(name, date, from, to, value, category, tags);
         }
