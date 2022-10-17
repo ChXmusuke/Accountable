@@ -1,6 +1,9 @@
 package util;
 
-public class DateUtil {
+/**
+ * Provides tools to pack and unpack dates in 32-bit vectors.
+ */
+public final class DateUtil {
 
     private static final int MAX_YEAR = (int) Math.pow(2, 23) - 1;
     private static final int LENGTH_DAY = 5;
@@ -11,14 +14,13 @@ public class DateUtil {
     public static final int FIRST_YEAR = 2022;
 
     /**
-     * Don't let anyone instantiate this class
+     * Don't let anyone instantiate this class.
      */
     private DateUtil() {
     }
 
     /**
-     * Packs a date into a 32-bit vector.
-     * Note: The highest possible year value is indeed comically large.
+     * Packs a date into a 32-bit vector in 23-4-5 format.
      *
      * @param year
      *              a year
@@ -26,6 +28,7 @@ public class DateUtil {
      *              a month
      * @param day
      *              a day
+     * 
      * @return the packed date
      */
     public static int packDate(int year, int month, int day) {
@@ -41,10 +44,11 @@ public class DateUtil {
     }
 
     /**
-     * Extract the day from a date in short format
+     * Extracts the day from a date in 23-4-5 format.
      *
      * @param date
      *             a date
+     * 
      * @return the day contained in the vector
      */
     public static int extractDay(int date) {
@@ -52,10 +56,11 @@ public class DateUtil {
     }
 
     /**
-     * Extract the month from a date in short format
+     * Extract the month from a date in 23-4-5 format.
      *
      * @param date
      *             a date
+     * 
      * @return the month contained in the vector
      */
     public static int extractMonth(int date) {
@@ -63,10 +68,11 @@ public class DateUtil {
     }
 
     /**
-     * Extract the year from a date in short format
+     * Extracts the year from a date in 23-4-5 format.
      *
      * @param date
      *             a date
+     * 
      * @return the year contained in the vector
      */
     public static int extractYear(int date) {

@@ -1,25 +1,26 @@
 package util;
 
 /**
- * This class provides methods to work on bit vectors.
+ * Provides methods to work on bit vectors.
  */
-public class Bits {
+public final class Bits {
 
     /**
-     * Don't let anyone instantiate this class
+     * Don't let anyone instantiate this class.
      */
-    private Bits() {}
+    private Bits() {
+    }
 
     /**
      * Extracts a vector of given length from a 16-bit short
      *
-     * @param  vector
-     *         A 16-bit vector
-     * @param  start
-     *         The first bit of the extracted vector
-     * @param  length
-     *         The length of the extracted vector
-     * @return The trimmed 16-bit vector
+     * @param vector
+     *               A 32-bit vector
+     * @param start
+     *               The first bit of the extracted vector
+     * @param length
+     *               The length of the extracted vector
+     * @return The trimmed 32-bit vector
      */
     public static int extractUnsigned(int vector, int start, int length) {
         CheckConditions.checkArgument(validExtraction(start, length));
@@ -33,14 +34,14 @@ public class Bits {
     /**
      * Helper method used to check the validity of a bit extraction.
      *
-     * @param  start
-     *         The start of the bit vector
-     * @param  length
-     *         The length of the bit vector
+     * @param start
+     *               The start of the bit vector
+     * @param length
+     *               The length of the bit vector
      * @return Validity of the extraction (bool)
      */
-    private static boolean validExtraction(int start, int length){
+    private static boolean validExtraction(int start, int length) {
 
-        return 0<=start && start+length<=Integer.SIZE && length>=0 && length<Integer.SIZE;
+        return 0 <= start && start + length <= Integer.SIZE && length >= 0 && length < Integer.SIZE;
     }
 }
