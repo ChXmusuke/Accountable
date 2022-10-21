@@ -2,7 +2,7 @@ package storage;
 
 import java.util.*;
 
-public class NumberedLinkedList<E> implements List<E> {
+public class NumberedLinkedList<E> implements List<E>, Comparable<NumberedLinkedList<E>> {
     private final LinkedList<E> l;
     private int n;
 
@@ -17,6 +17,11 @@ public class NumberedLinkedList<E> implements List<E> {
 
     public void setNumber(int n) {
         this.n = n;
+    }
+
+    @Override
+    public int compareTo(NumberedLinkedList<E> that) {
+        return Integer.compare(this.n, that.n);
     }
 
     @Override
