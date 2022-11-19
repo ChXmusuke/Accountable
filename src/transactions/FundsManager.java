@@ -19,6 +19,7 @@ package transactions;
 
 import java.util.*;
 import util.*;
+import storage.Storage;
 
 /**
  * This class is the main part of the program.
@@ -28,6 +29,7 @@ public class FundsManager {
 
     final private Map<Byte, Float> balances;
     final private Map<String, Byte> accountNames;
+    final private Storage storage;
 
     /**
      * Constructor for the FundsManager class.
@@ -38,6 +40,7 @@ public class FundsManager {
 
         balances = new HashMap<>();
         accountNames = new HashMap<>();
+        storage = new Storage();
 
         // Reserved account considered as "the outside world"
         // Its balance never changes, therefore its initial value doesn't matter
@@ -133,7 +136,7 @@ public class FundsManager {
      */
     public Transaction addTransaction(Transaction t) {
 
-        // TODO: implement storage
+        storage.addTransaction(t);
 
         updateBalances(t);
 
