@@ -1,5 +1,7 @@
-.idea
-*.iml
 out
 Tests
 lib
+
+# Collision because of same name in "storage" package and transaction data storage directory
+storage
+!src/storage
