@@ -26,7 +26,6 @@ import util.*;
  */
 public class FundsManager {
 
-    final private List<Set<Transaction>> transactions;
     final private Map<Byte, Float> balances;
     final private Map<String, Byte> accountNames;
 
@@ -37,7 +36,6 @@ public class FundsManager {
      */
     public FundsManager() {
 
-        transactions = new ArrayList<>(List.of(new TreeSet<>()));
         balances = new HashMap<>();
         accountNames = new HashMap<>();
 
@@ -135,8 +133,7 @@ public class FundsManager {
      */
     public Transaction addTransaction(Transaction t) {
 
-        transactions.get(DateUtil.extractYear(t.date()) - DateUtil.FIRST_YEAR)
-                .add(t);
+        // TODO: implement storage
 
         updateBalances(t);
 
@@ -153,8 +150,7 @@ public class FundsManager {
      */
     public Transaction removeTransaction(Transaction t) {
 
-        transactions.get(DateUtil.extractYear(t.date()) - DateUtil.FIRST_YEAR)
-                .remove(t);
+        // TODO: implement storage
 
         updateBalances(t.reverse());
 
@@ -195,16 +191,5 @@ public class FundsManager {
             balances.put(from, balances.get(from) - value);
         if (to != 0)
             balances.put(to, balances.get(to) + value);
-    }
-
-    /**
-     * !!! TO BE DEPRECATED !!!
-     * 
-     * Dumps all the transaction data
-     * 
-     * @return all the transaction data, as a list of sets
-     */
-    public List<Set<Transaction>> dumpTransactions() {
-        return transactions;
     }
 }
