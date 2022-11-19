@@ -20,10 +20,10 @@ package storage;
 import java.util.*;
 
 public class NumberedArray<E> implements List<E>, Comparable<NumberedArray<E>> {
-    private final ArrayList<E> l;
+    private final List<E> l;
     private int n;
 
-    public NumberedArray(ArrayList<E> l, int n) {
+    public NumberedArray(List<E> l, int n) {
         this.l = l;
         this.n = n;
     }
