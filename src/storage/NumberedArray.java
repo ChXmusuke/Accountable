@@ -19,11 +19,11 @@ package storage;
 
 import java.util.*;
 
-public class NumberedLinkedList<E> implements List<E>, Comparable<NumberedLinkedList<E>> {
-    private final LinkedList<E> l;
+public class NumberedArray<E> implements List<E>, Comparable<NumberedArray<E>> {
+    private final ArrayList<E> l;
     private int n;
 
-    public NumberedLinkedList(LinkedList<E> l, int n) {
+    public NumberedArray(ArrayList<E> l, int n) {
         this.l = l;
         this.n = n;
     }
@@ -37,7 +37,7 @@ public class NumberedLinkedList<E> implements List<E>, Comparable<NumberedLinked
     }
 
     @Override
-    public int compareTo(NumberedLinkedList<E> that) {
+    public int compareTo(NumberedArray<E> that) {
         return Integer.compare(this.n, that.n);
     }
 
