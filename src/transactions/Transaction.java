@@ -80,6 +80,26 @@ public record Transaction(String name, int date, byte from, byte to, float value
         return Integer.compare(this.date, that.date);
     }
 
+    public boolean equals(Transaction t) {
+        return this.name == t.name &&
+                this.date == t.date &&
+                this.from == t.from &&
+                this.to == t.to &&
+                this.value == t.value &&
+                this.category == t.category &&
+                this.tags.equals(t.tags);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, date, from, to, value, category, tags);
+    }
+
     /**
      * Builds a Transaction object.
      */
