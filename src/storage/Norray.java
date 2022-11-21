@@ -19,11 +19,15 @@ package storage;
 
 import java.util.*;
 
-public class NumberedArray<E> implements List<E>, Comparable<NumberedArray<E>> {
+/**
+ * Represents a numbered, ordered array.
+ */
+public class Norray<E extends Comparable<E>> implements List<E>, Comparable<Norray<E>> {
+
     private final List<E> l;
     private int n;
 
-    public NumberedArray(List<E> l, int n) {
+    public Norray(List<E> l, int n) {
         this.l = l;
         this.n = n;
     }
@@ -37,8 +41,35 @@ public class NumberedArray<E> implements List<E>, Comparable<NumberedArray<E>> {
     }
 
     @Override
-    public int compareTo(NumberedArray<E> that) {
+    public int compareTo(Norray<E> that) {
         return Integer.compare(this.n, that.n);
+    }
+
+    /**
+     * Inserts the specified element at the right index for it to be in order inside
+     * the list.
+     *
+     * @param e element to be added to this list
+     * 
+     * @return {@code true} (as specified by {@link Collection#add})
+     * 
+     * @throws NullPointerException if the specified element is null and this
+     *                              list does not permit null elements
+     */
+    @Override
+    public boolean add(E e) {
+        if (e == null)
+            throw new NullPointerException();
+
+        for (int i = l.size(); i > 0; i--) {
+            if (l.get(i - 1).compareTo(e) <= 0) {
+                l.add(i, e);
+                return true;
+            }
+        }
+        this.add(0, e);
+
+        return true;
     }
 
     @Override
@@ -69,11 +100,6 @@ public class NumberedArray<E> implements List<E>, Comparable<NumberedArray<E>> {
     @Override
     public <T> T[] toArray(T[] a) {
         return l.toArray(a);
-    }
-
-    @Override
-    public boolean add(E e) {
-        return l.add(e);
     }
 
     @Override
