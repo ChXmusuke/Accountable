@@ -61,7 +61,7 @@ public abstract class WrappedList<E> implements List<E> {
     }
 
     @Override
-    public <E> boolean add(E e) {
+    public boolean add(E e) {
         return l.add(e);
     }
 
