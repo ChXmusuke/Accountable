@@ -84,13 +84,14 @@ public record Transaction(String name, int date, byte from, byte to, float value
     public boolean equals(Object o) {
         if (o instanceof Transaction) {
             Transaction t = (Transaction) o;
-            return this.name == t.name &&
+
+            return this.name.equals(t.name) &&
                     this.date == t.date &&
                     this.from == t.from &&
                     this.to == t.to &&
                     this.value == t.value &&
                     this.category == t.category &&
-                    this.tags.equals(t.tags);
+                    (this.tags == null ? this.tags == t.tags : this.tags.equals(t.tags));
         } else {
             return false;
         }
