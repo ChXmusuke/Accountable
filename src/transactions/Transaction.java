@@ -85,7 +85,7 @@ public record Transaction(String name, int date, byte from, byte to, float value
         if (o instanceof Transaction) {
             Transaction t = (Transaction) o;
 
-            return this.name.equals(t.name) &&
+            return (this.name == null ? this.name == t.name : this.name.equals(t.name)) &&
                     this.date == t.date &&
                     this.from == t.from &&
                     this.to == t.to &&
