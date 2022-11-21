@@ -19,6 +19,8 @@ package storage;
 
 import java.util.*;
 
+import listDecorators.NumberedOrderedArray;
+import listDecorators.OrderedArray;
 import transactions.Transaction;
 import util.DateUtil;
 
@@ -28,7 +30,7 @@ public class Storage {
 
     // Memory cache
     // Array structure: Memory<years<months>>
-    final private List<Norray<Transaction>> transactions;
+    final private OrderedArray<NumberedOrderedArray<Transaction>> transactions;
 
     /**
      * Constructor for a storage structure.
@@ -36,16 +38,23 @@ public class Storage {
      * Contains an array for the memory cache.
      */
     public Storage() {
-        transactions = new ArrayList<>(MEM_CACHE_CAPACITY);
+        transactions = new OrderedArray<>(new ArrayList<>(MEM_CACHE_CAPACITY));
     }
 
-    public Storage(List<Norray<Transaction>> transactions) {
+    public Storage(OrderedArray<NumberedOrderedArray<Transaction>> transactions) {
         this.transactions = transactions;
     }
 
     public void addTransaction(Transaction t) {
-        transactions.get(indexOfNumber(transactions, DateUtil.dateID(t.date())))
-                .add(t);
+        int index = indexOfNumber(transactions, DateUtil.dateID(t.date()));
+        if (index >= 0)
+            transactions.get(index)
+                    .add(t);
+        else {
+            NumberedOrderedArray<Transaction> newArray = new NumberedOrderedArray<>(new ArrayList<>(),
+                    DateUtil.dateID(t.date()));
+            transactions.add(newArray);
+        }
     }
 
     /**
@@ -59,17 +68,17 @@ public class Storage {
      *         the {@code NumberedArray} is empty if the data has not been
      *         found.
      */
-    public Norray<Transaction> readMonth(int year, int month) {
+    public NumberedOrderedArray<Transaction> readMonth(int year, int month) {
         int searchedDate = DateUtil.dateID(DateUtil.packDate(year, month, 0));
 
-        int index = Collections.binarySearch(transactions, new Norray<>(null, searchedDate));
+        int index = Collections.binarySearch(transactions, new NumberedOrderedArray<>(null, searchedDate));
         if (index >= 0)
             return transactions.get(index);
         else
-            return new Norray<>(new ArrayList<Transaction>(), searchedDate);
+            return new NumberedOrderedArray<>(new ArrayList<Transaction>(), searchedDate);
     }
 
-    private static <E extends Comparable<E>> int indexOfNumber(List<Norray<E>> array, int n) {
+    private static <E extends Comparable<E>> int indexOfNumber(List<NumberedOrderedArray<E>> array, int n) {
         for (int i = 0; i < array.size(); i++) {
             if (array.get(i).getNumber() == n)
                 return i;
