@@ -22,6 +22,7 @@ import java.util.*;
 import listDecorators.NumberedOrderedArray;
 import listDecorators.OrderedArray;
 import transactions.Transaction;
+import util.CheckConditions;
 import util.DateUtil;
 
 public class Storage {
@@ -57,25 +58,39 @@ public class Storage {
         }
     }
 
+    public void removeTransaction(Transaction t) {
+        NumberedOrderedArray<Transaction> mArray = readMonth(DateUtil.dateID(t.date()));
+        int i = Collections.binarySearch(mArray, t);
+
+        if (i >= 0) {
+            for (int d = 0; i + d < mArray.size() && mArray.get(i + d).date() == t.date(); d++)
+                if (mArray.get(i + d).equals(t))
+                    mArray.remove(i + d);
+            for (int d = 1; i - d >= 0 && mArray.get(i - d).date() == t.date(); d++) {
+                if (mArray.get(i - d).equals(t))
+                    mArray.remove(i - d);
+            }
+        }
+    }
+
     /**
      * Queries the given month's data from memory cache.
      * 
-     * @param year
-     *              a year
-     * @param month
-     *              a month
+     * @param dateID
+     *               a dateID
+     * 
      * @return A {@code NumberedArray} with the month's transaction data.
      *         the {@code NumberedArray} is empty if the data has not been
      *         found.
      */
-    public NumberedOrderedArray<Transaction> readMonth(int year, int month) {
-        int searchedDate = DateUtil.dateID(DateUtil.packDate(year, month, 0));
+    public NumberedOrderedArray<Transaction> readMonth(int dateID) {
+        CheckConditions.checkArgument(DateUtil.isDateID(dateID));
 
-        int index = Collections.binarySearch(transactions, new NumberedOrderedArray<>(null, searchedDate));
+        int index = Collections.binarySearch(transactions, new NumberedOrderedArray<>(null, dateID));
         if (index >= 0)
             return transactions.get(index);
         else
-            return new NumberedOrderedArray<>(new ArrayList<Transaction>(), searchedDate);
+            return new NumberedOrderedArray<>(new ArrayList<Transaction>(), dateID);
     }
 
     private static <E extends Comparable<E>> int indexOfNumber(List<NumberedOrderedArray<E>> array, int n) {

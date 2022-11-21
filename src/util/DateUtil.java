@@ -107,4 +107,23 @@ public final class DateUtil {
 
         return date & (byte) ~0b11111;
     }
+
+    /**
+     * Overload for non-packed dates
+     * 
+     * @param year
+     *              a year
+     * @param month
+     *              a month
+     * 
+     * @return the year and month in 23-4-5 format
+     */
+    public static int dateID(int year, int month) {
+
+        return dateID(packDate(year, month, 1));
+    }
+
+    public static boolean isDateID(int date) {
+        return (date & 0b11111) == 0;
+    }
 }
