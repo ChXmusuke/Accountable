@@ -27,9 +27,6 @@ public final class DateUtil {
     private static final int LENGTH_MONTH = 4;
     private static final int LENGTH_YEAR = 23;
 
-    // TODO: Find a better method
-    public static final int FIRST_YEAR = 2022;
-
     /**
      * Don't let anyone instantiate this class.
      */
@@ -51,7 +48,7 @@ public final class DateUtil {
     public static int packDate(int year, int month, int day) {
         CheckConditions.checkArgument(year >= 0 && year <= MAX_YEAR &&
                 month > 0 && month <= 12 &&
-                day > 0 && day <= 31);
+                day >= 0 && day <= 31);
 
         int m_year = (year << LENGTH_DAY + LENGTH_MONTH);
         short m_month = (short) (month << LENGTH_DAY);
@@ -94,5 +91,20 @@ public final class DateUtil {
      */
     public static int extractYear(int date) {
         return Bits.extractUnsigned(date, LENGTH_DAY + LENGTH_MONTH, LENGTH_YEAR);
+    }
+
+    /**
+     * Extracts a date without the day bits.
+     * Used to identify months without caring for the day
+     * ex. 2022.01.00 identifies the month of january, 2022
+     * 
+     * @param date
+     *             a date
+     * 
+     * @return the year and month in 23-4-5 format
+     */
+    public static int dateID(int date) {
+
+        return date & (byte) ~0b11111;
     }
 }
