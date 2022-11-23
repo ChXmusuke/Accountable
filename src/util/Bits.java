@@ -37,10 +37,11 @@ public final class Bits {
      *               The first bit of the extracted vector
      * @param length
      *               The length of the extracted vector
+     * 
      * @return The trimmed 32-bit vector
      */
     public static int extractUnsigned(int vector, int start, int length) {
-        CheckConditions.checkArgument(validExtraction(start, length));
+        Preconditions.checkArgument(validExtraction(start, length));
 
         vector = vector << Integer.SIZE - (start + length);
         vector = vector >>> Integer.SIZE - length;

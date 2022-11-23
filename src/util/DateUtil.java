@@ -46,7 +46,7 @@ public final class DateUtil {
      * @return the packed date
      */
     public static int packDate(int year, int month, int day) {
-        CheckConditions.checkArgument(year >= 0 && year <= MAX_YEAR &&
+        Preconditions.checkArgument(year >= 0 && year <= MAX_YEAR &&
                 month > 0 && month <= 12 &&
                 day >= 0 && day <= 31);
 

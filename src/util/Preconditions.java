@@ -20,12 +20,12 @@ package util;
 /**
  * Allows to check a boolean parameter.
  */
-public final class CheckConditions {
+public final class Preconditions {
 
     /**
      * Don't let anyone instantiate this class.
      */
-    private CheckConditions() {
+    private Preconditions() {
     }
 
     /**

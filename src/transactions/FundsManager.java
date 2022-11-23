@@ -86,7 +86,7 @@ public class FundsManager {
      */
     private byte createAccount(byte address, String name, float initValue) {
         // The account should not exist yet
-        CheckConditions.checkArgument(!accountExists(address));
+        Preconditions.checkArgument(!accountExists(address));
 
         // Creates entries for the account's name and balance
         balances.put(address, initValue);

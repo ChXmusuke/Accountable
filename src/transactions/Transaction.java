@@ -19,7 +19,7 @@ package transactions;
 
 import java.util.*;
 
-import util.CheckConditions;
+import util.Preconditions;
 
 /**
  * Provides storage of transactions.
@@ -48,7 +48,7 @@ public record Transaction(String name, int date, byte from, byte to, float value
      *                 bytes
      */
     public Transaction {
-        CheckConditions.checkArgument(from != to);
+        Preconditions.checkArgument(from != to);
     }
 
     /**
@@ -136,7 +136,7 @@ public record Transaction(String name, int date, byte from, byte to, float value
          */
         public TransactionBuilder(String name, int date, byte from, byte to, float value, byte category,
                 List<Byte> tags) {
-            CheckConditions.checkArgument(from != to);
+            Preconditions.checkArgument(from != to);
 
             this.name = name;
             this.date = date;
@@ -209,7 +209,7 @@ public record Transaction(String name, int date, byte from, byte to, float value
          * @return the transaction with the new sender
          */
         public TransactionBuilder setFrom(byte from) {
-            CheckConditions.checkArgument(from != this.to);
+            Preconditions.checkArgument(from != this.to);
 
             this.from = from;
 
@@ -225,7 +225,7 @@ public record Transaction(String name, int date, byte from, byte to, float value
          * @return the transaction with the new receiver
          */
         public TransactionBuilder setTo(byte to) {
-            CheckConditions.checkArgument(to != this.from);
+            Preconditions.checkArgument(to != this.from);
 
             this.to = to;
 

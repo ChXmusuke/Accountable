@@ -22,7 +22,7 @@ import java.util.*;
 import listDecorators.NumberedOrderedArray;
 import listDecorators.OrderedArray;
 import transactions.Transaction;
-import util.CheckConditions;
+import util.Preconditions;
 import util.DateUtil;
 
 public class Storage {
@@ -119,7 +119,7 @@ public class Storage {
      */
     public NumberedOrderedArray<Transaction> readMonth(int dateID) {
         // Only values with the dateID format are accepted
-        CheckConditions.checkArgument(DateUtil.isDateID(dateID));
+        Preconditions.checkArgument(DateUtil.isDateID(dateID));
 
         int index = Collections.binarySearch(transactions, new NumberedOrderedArray<>(null, dateID));
         if (index >= 0)
