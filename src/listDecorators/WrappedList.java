@@ -18,16 +18,36 @@
 package listDecorators;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Collection;
 
+/**
+ * Allows to create custom objects involving actions on a list.
+ * 
+ * This class either wraps an existing List object or creates a new one if no
+ * parameter is given.
+ */
 public abstract class WrappedList<E> implements List<E> {
 
     private final List<E> l;
 
+    /**
+     * Use this constructor to wrap an existing {@code List}.
+     * 
+     * @param l
+     *          a {@code List}
+     */
     public WrappedList(List<E> l) {
         this.l = l;
+    }
+
+    /**
+     * Use this constructor if a new {@code list} is needed.
+     */
+    public WrappedList() {
+        this.l = new ArrayList<E>();
     }
 
     @Override
