@@ -22,8 +22,8 @@ import util.*;
 import storage.Storage;
 
 /**
- * This class is the main part of the program.
- * Its purpose is to manage the transaction data and accounts.
+ * Instances of this class bind transaction data with stateful balance info and
+ * account names.
  */
 public class FundsManager {
 
@@ -85,8 +85,10 @@ public class FundsManager {
      * @return the address of the newly created acccount
      */
     private byte createAccount(byte address, String name, float initValue) {
+        // The account should not exist yet
         CheckConditions.checkArgument(!accountExists(address));
 
+        // Creates entries for the account's name and balance
         balances.put(address, initValue);
         accountNames.put(name, address);
 
