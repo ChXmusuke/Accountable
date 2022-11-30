@@ -1,3 +1,9 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
 /*  Accountable: a personal spending monitoring program
     Copyright (C) 2022  Artur Yukhanov
 
@@ -15,9 +21,23 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class Main {
+public class Accountable extends Application {
 
     public static void main(String[] args) {
+        launch(args);
+    }
 
+    @Override
+    public void start(Stage primaryStage) {
+        Button b = new Button();
+        b.setText("Hello, and welcome to Accountable!");
+
+        StackPane root = new StackPane();
+        root.getChildren().add(b);
+        Scene scene = new Scene(root, 300, 250);
+
+        primaryStage.setTitle("Accountable");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
