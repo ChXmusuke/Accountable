@@ -197,4 +197,17 @@ public class FundsManager {
         if (to != 0)
             balances.put(to, balances.get(to) + value);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        for (String n : accountNames.keySet()) {
+            b.append(String.format("%s(%s) : %s$\n",
+                    n,
+                    Byte.toUnsignedInt(accountNames.get(n)),
+                    balances.get(accountNames.get(n))));
+        }
+
+        return b.toString();
+    }
 }
