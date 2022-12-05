@@ -15,14 +15,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.Chomusuke.transactions;
+package com.chomusuke.transactions;
 
 import java.util.*;
 
-import com.Chomusuke.listDecorators.NumberedOrderedArray;
-import com.Chomusuke.listDecorators.OrderedArray;
-import com.Chomusuke.util.Preconditions;
-import com.Chomusuke.util.DateUtil;
+import com.chomusuke.listDecorators.NumberedOrderedArray;
+import com.chomusuke.listDecorators.OrderedArray;
+import com.chomusuke.util.DateUtil;
+import com.chomusuke.util.Preconditions;
 
 public class Storage {
 

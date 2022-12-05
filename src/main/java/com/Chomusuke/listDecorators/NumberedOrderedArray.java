@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.Chomusuke.listDecorators;
+package com.chomusuke.listDecorators;
 
 import java.util.List;
 

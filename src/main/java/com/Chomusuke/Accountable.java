@@ -1,4 +1,4 @@
-package com.Chomusuke;
+package com.chomusuke;
 /*  Accountable: a personal spending monitoring program
     Copyright (C) 2022  Artur Yukhanov
 
@@ -16,6 +16,8 @@ package com.Chomusuke;
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import com.chomusuke.transactions.FundsManager;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -28,7 +30,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import com.Chomusuke.transactions.FundsManager;
 
 public class Accountable extends Application {
 

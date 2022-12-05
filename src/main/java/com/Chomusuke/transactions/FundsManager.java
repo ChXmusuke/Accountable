@@ -15,10 +15,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.Chomusuke.transactions;
+package com.chomusuke.transactions;
 
 import java.util.*;
-import com.Chomusuke.util.*;
+
+import com.chomusuke.util.*;
 
 /**
  * Instances of this class bind transaction data with stateful balance info and
