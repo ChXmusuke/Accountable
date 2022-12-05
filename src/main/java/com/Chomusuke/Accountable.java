@@ -121,7 +121,7 @@ public class Accountable extends Application {
         stage.setWidth(WIN_WIDTH);
         stage.setHeight(WIN_HEIGHT);
         stage.setResizable(false);
-        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("resources/icon.png")));
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/icon.png")));
 
         stage.show();
     }
