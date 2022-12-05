@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package util;
+package com.Chomusuke.util;
 
 /**
  * Provides methods to work on bit vectors.

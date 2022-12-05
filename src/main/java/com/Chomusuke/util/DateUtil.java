@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package util;
+package com.Chomusuke.util;
 
 /**
  * Provides tools to pack and unpack dates in 32-bit vectors.

@@ -1,0 +1,3 @@
+-d bin
+--module-path /Users/artur/Documents/jProjects/lib/javafx-sdk-19/lib
+--add-modules javafx.controls

@@ -1,0 +1,2 @@
+Main-Class: bin/Accountable
+Class-Path: ../../lib/javafx-sdk-19/lib/*.jar
