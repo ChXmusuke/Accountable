@@ -15,21 +15,29 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package util;
-
-import java.util.ResourceBundle;
-import java.util.Locale;
+package com.chomusuke.util;
 
 /**
- * Provides a Resource Bundle for managing locales.
+ * Allows to check a boolean parameter.
  */
-public final class Locales {
-
-    public static ResourceBundle messages = ResourceBundle.getBundle("resources.messages.messages", Locale.ENGLISH);
+public final class Preconditions {
 
     /**
      * Don't let anyone instantiate this class.
      */
-    private Locales() {
+    private Preconditions() {
+    }
+
+    /**
+     * Checks if the given boolean argument is correct
+     *
+     * @param conditions
+     *                   The conditions on the arguments
+     *
+     * @throws IllegalArgumentException if the conditions are not met
+     */
+    public static void checkArgument(boolean conditions) throws IllegalArgumentException {
+        if (!conditions)
+            throw new IllegalArgumentException();
     }
 }

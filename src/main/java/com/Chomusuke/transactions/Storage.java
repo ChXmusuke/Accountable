@@ -15,15 +15,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package storage;
+package com.chomusuke.transactions;
 
 import java.util.*;
 
-import listDecorators.NumberedOrderedArray;
-import listDecorators.OrderedArray;
-import transactions.Transaction;
-import util.Preconditions;
-import util.DateUtil;
+import com.chomusuke.listDecorators.NumberedOrderedArray;
+import com.chomusuke.listDecorators.OrderedArray;
+import com.chomusuke.util.DateUtil;
+import com.chomusuke.util.Preconditions;
 
 public class Storage {
 
@@ -39,7 +38,7 @@ public class Storage {
      * Contains an array for the memory cache.
      */
     public Storage() {
-        transactions = new OrderedArray<>(new ArrayList<>(MEM_CACHE_CAPACITY));
+        transactions = new OrderedArray<NumberedOrderedArray<Transaction>>(new ArrayList<>(MEM_CACHE_CAPACITY));
     }
 
     /**

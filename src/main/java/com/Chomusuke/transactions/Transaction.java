@@ -15,11 +15,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package transactions;
+package com.chomusuke.transactions;
 
 import java.util.*;
 
-import util.Preconditions;
+import com.chomusuke.util.Preconditions;
 
 /**
  * Provides storage of transactions.

@@ -15,11 +15,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package transactions;
+package com.chomusuke.transactions;
 
 import java.util.*;
-import util.*;
-import storage.Storage;
+
+import com.chomusuke.util.*;
 
 /**
  * Instances of this class bind transaction data with stateful balance info and
@@ -196,5 +196,18 @@ public class FundsManager {
             balances.put(from, balances.get(from) - value);
         if (to != 0)
             balances.put(to, balances.get(to) + value);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        for (String n : accountNames.keySet()) {
+            b.append(String.format("%s(%s) : %s$\n",
+                    n,
+                    Byte.toUnsignedInt(accountNames.get(n)),
+                    balances.get(accountNames.get(n))));
+        }
+
+        return b.toString();
     }
 }

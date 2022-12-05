@@ -1,3 +1,4 @@
+package com.chomusuke;
 /*  Accountable: a personal spending monitoring program
     Copyright (C) 2022  Artur Yukhanov
 
@@ -15,9 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class Main {
+public class Accountable {
 
     public static void main(String[] args) {
-
     }
 }
