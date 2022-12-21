@@ -16,13 +16,14 @@ package com.chomusuke;
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import com.chomusuke.gui.AccountTilePane;
 import com.chomusuke.transactions.FundsManager;
+import static com.chomusuke.util.Dimensions.*;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -30,18 +31,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.converter.FloatStringConverter;
 
 public class Accountable extends Application {
 
-    private static final int WIN_WIDTH = 360;
-    private static final int WIN_HEIGHT = 640;
-    private static final int PAD = 16;
-    private static final int BUTTONS_HEIGHT = 0;
-    private static final int INNER_WIDTH = WIN_WIDTH - 2 * PAD;
-    private static final int INNER_HEIGHT = WIN_HEIGHT - 2 * PAD;
     private static final String CATEGORIES = "Categories";
     private static final String TAGS = "Tags";
     private static final String ADD_BUTTON = "+";
+    private static final String CREATE_ACCOUNT = "Create account";
+
+    private FundsManager fm;
 
     public static void main(String[] args) {
         launch(args);
@@ -51,8 +50,7 @@ public class Accountable extends Application {
     public void start(Stage stage) {
 
         // Storage
-        FundsManager fm = new FundsManager();
-        fm.createAccount("default", 0);
+        fm = new FundsManager();
 
         // Vertical app layout
         VBox appLayout = new VBox(
@@ -96,20 +94,65 @@ public class Accountable extends Application {
 
     private ScrollPane accountsList(int width, int height) {
         Button newAccount = new Button(ADD_BUTTON);
-        VBox content = new VBox(newAccount);
+        VBox content = new VBox(new AccountTilePane(fm), newAccount);
         ScrollPane s1 = new ScrollPane(content);
 
         s1.setPrefSize(width, height);
 
+        newAccount.setOnMouseClicked((e) -> {
+            Stage popUp = new Stage();
+            VBox contents = new VBox();
+
+            TextField accountName = new TextField();
+            TextField initBalance = new TextField();
+            Button createAccount = new Button(CREATE_ACCOUNT);
+            initBalance.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
+            contents.getChildren().addAll(accountName, initBalance, createAccount);
+
+            contents.setPadding(new Insets(PAD, PAD, PAD, PAD));
+            contents.setSpacing(PAD);
+            Scene popUpScene = new Scene(contents);
+            popUp.setScene(popUpScene);
+
+            createAccount.setOnMouseClicked((c) -> {
+                fm.createAccount(accountName.getText(), Float.parseFloat(initBalance.getText()));
+                popUp.close();
+            });
+
+            popUp.show();
+        });
+
         return s1;
     }
 
+    // TODO: Transaction addition screen
     private ScrollPane TxList(int width, int height) {
         Button addTx = new Button(ADD_BUTTON);
 
         VBox content = new VBox(addTx);
         ScrollPane s1 = new ScrollPane(content);
         s1.setPrefSize(width, height);
+
+        addTx.setOnMouseClicked((e) -> {
+            Stage popUp = new Stage();
+            VBox inputs = new VBox();
+            inputs.setPadding(new Insets(PAD, PAD, PAD, PAD));
+            inputs.setSpacing(PAD);
+
+            TextField name = new TextField();
+            DatePicker date = new DatePicker();
+            TextField from = new TextField();
+            TextField to = new TextField();
+            TextField value = new TextField();
+
+            HBox transactingAccounts = new HBox(from, to);
+            transactingAccounts.setSpacing(PAD);
+
+            inputs.getChildren().addAll(name, date, transactingAccounts, value);
+            Scene popUpScene = new Scene(inputs);
+            popUp.setScene(popUpScene);
+            popUp.show();
+        });
 
         return s1;
     }

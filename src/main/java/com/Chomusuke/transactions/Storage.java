@@ -34,7 +34,7 @@ public class Storage {
 
     /**
      * Constructor for a storage structure.
-     * 
+     *
      * Contains an array for the memory cache.
      */
     public Storage() {
@@ -44,7 +44,7 @@ public class Storage {
     /**
      * Initializes a Storage instance with pre-existing transaction data.
      * Mainly useful for testing.
-     * 
+     *
      * @param transactions
      *                     a transactions MemCache
      */

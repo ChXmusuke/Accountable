@@ -20,15 +20,17 @@ package com.chomusuke.transactions;
 import java.util.*;
 
 import com.chomusuke.util.*;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.collections.FXCollections;
 
 /**
  * Instances of this class bind transaction data with stateful balance info and
  * account names.
  */
 public class FundsManager {
-
-    final private Map<Byte, Float> balances;
-    final private Map<String, Byte> accountNames;
+    private final SimpleMapProperty<Byte, Float> balancesProperty;
+    final private SimpleMapProperty<String, Byte> accountNamesProperty;
     final private Storage storage;
 
     /**
@@ -38,13 +40,21 @@ public class FundsManager {
      */
     public FundsManager() {
 
-        balances = new HashMap<>();
-        accountNames = new HashMap<>();
+        balancesProperty = new SimpleMapProperty<>(FXCollections.observableHashMap());
+        accountNamesProperty = new SimpleMapProperty<>(FXCollections.observableHashMap());
         storage = new Storage();
 
         // Reserved account considered as "the outside world"
         // Its balance never changes, therefore its initial value doesn't matter
         createAccount((byte) 0, "Out", 0f);
+    }
+
+    public MapProperty<Byte, Float> balancesProperty() {
+        return balancesProperty;
+    }
+
+    public MapProperty<String, Byte> accountNamesProperty() {
+        return accountNamesProperty;
     }
 
     /**
@@ -56,7 +66,7 @@ public class FundsManager {
      * @return true if the address is mapped to an account, else false
      */
     public boolean accountExists(byte address) {
-        return balances.containsKey(address);
+        return balancesProperty.containsKey(address);
     }
 
     /**
@@ -69,7 +79,7 @@ public class FundsManager {
      * @return true if the name is mapped to an account, else false
      */
     public boolean accountExists(String name) {
-        return accountExists(accountNames.get(name));
+        return accountNamesProperty.containsKey(name);
     }
 
     /**
@@ -86,11 +96,14 @@ public class FundsManager {
      */
     private byte createAccount(byte address, String name, float initValue) {
         // The account should not exist yet
-        Preconditions.checkArgument(!accountExists(address));
+        if (accountExists(address) || accountExists(name))
+            return (accountExists(address) ? address : accountNamesProperty.get(name));
 
         // Creates entries for the account's name and balance
-        balances.put(address, initValue);
-        accountNames.put(name, address);
+        balancesProperty.put(address, initValue);
+        accountNamesProperty.put(name, address);
+
+        System.out.println(this);  // TODO: Remove
 
         return address;
     }
@@ -110,7 +123,7 @@ public class FundsManager {
         byte address;
         do
             address = (byte) new Random().nextInt();
-        while (balances.containsKey(address));
+        while (balancesProperty.containsKey(address));
 
         return createAccount(address, name, initValue);
     }
@@ -125,7 +138,7 @@ public class FundsManager {
      */
     public float getBalance(byte address) {
 
-        return balances.get(address);
+        return balancesProperty.get(address);
     }
 
     /**
@@ -155,7 +168,7 @@ public class FundsManager {
      */
     public Transaction removeTransaction(Transaction t) {
 
-        // TODO: implement storage
+        storage.removeTransaction(t);
 
         updateBalances(t.reverse());
 
@@ -193,19 +206,19 @@ public class FundsManager {
 
         // The balance of the account 0 is never changed
         if (from != 0)
-            balances.put(from, balances.get(from) - value);
+            balancesProperty.put(from, balancesProperty.get(from) - value);
         if (to != 0)
-            balances.put(to, balances.get(to) + value);
+            balancesProperty.put(to, balancesProperty.get(to) + value);
     }
 
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        for (String n : accountNames.keySet()) {
-            b.append(String.format("%s(%s) : %s$\n",
+        for (String n : accountNamesProperty.keySet()) {
+            b.append(java.lang.String.format("%s(%s) : %s$\n",
                     n,
-                    Byte.toUnsignedInt(accountNames.get(n)),
-                    balances.get(accountNames.get(n))));
+                    java.lang.Byte.toUnsignedInt(accountNamesProperty.get(n)),
+                    balancesProperty.get(accountNamesProperty.get(n))));
         }
 
         return b.toString();
