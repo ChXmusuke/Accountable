@@ -9,13 +9,11 @@ import java.util.Objects;
 public class AccountTilePane extends VBox {
 
     public AccountTilePane(FundsManager fundsManager) {
-        fundsManager.balancesProperty().addListener((obs, o, n) -> {
+        fundsManager.accountNamesProperty().addListener((obs, o, n) -> {
             getChildren().clear();
-            for (String name : fundsManager.accountNamesProperty().keySet()) {
+            for (String name : n.keySet()) {
                 if (!Objects.equals(name, "Out")) {
-                    float balance = fundsManager.balancesProperty()
-                            .get(fundsManager.accountNamesProperty()
-                                    .get(name));
+                    float balance = fundsManager.balancesProperty().get(n.get(name));
                     getChildren().add(new AccountTile(name, balance));
                 }
             }

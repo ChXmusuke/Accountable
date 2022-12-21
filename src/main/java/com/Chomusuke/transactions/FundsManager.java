@@ -19,7 +19,6 @@ package com.chomusuke.transactions;
 
 import java.util.*;
 
-import com.chomusuke.util.*;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
@@ -102,8 +101,6 @@ public class FundsManager {
         // Creates entries for the account's name and balance
         balancesProperty.put(address, initValue);
         accountNamesProperty.put(name, address);
-
-        System.out.println(this);  // TODO: Remove
 
         return address;
     }
