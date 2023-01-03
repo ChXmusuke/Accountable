@@ -115,7 +115,15 @@ public class Accountable extends Application {
             popUp.setScene(popUpScene);
 
             createAccount.setOnMouseClicked((c) -> {
-                fm.createAccount(accountName.getText(), Float.parseFloat(initBalance.getText()));
+                System.out.println();
+                float initValue;
+                try {
+                    initValue = Float.parseFloat(initBalance.getText());
+                } catch (NumberFormatException n) {
+                    initValue = 0;
+                }
+                fm.createAccount(accountName.getText(), initValue);
+
                 popUp.close();
             });
 
