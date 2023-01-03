@@ -26,9 +26,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.converter.FloatStringConverter;
@@ -52,68 +51,77 @@ public class Accountable extends Application {
         // Storage
         fm = new FundsManager();
 
+        HBox buttonsPane = buttonsPane();
+        HBox lowerPane = new HBox(accountList(), txList());
+
+        // Fill remaining space with the lower pane
+        VBox.setVgrow(lowerPane, Priority.ALWAYS);
+
         // Vertical app layout
         VBox appLayout = new VBox(
-                buttonsPane(INNER_WIDTH, BUTTONS_HEIGHT + 2 * PAD),
-                lowerPane(INNER_WIDTH, INNER_HEIGHT - 64));
+                buttonsPane,
+                lowerPane);
 
-        BorderPane frame = new BorderPane();
-        frame.setCenter(appLayout);
-        BorderPane.setMargin(appLayout, new Insets(PAD, PAD, PAD, PAD));
+        // Spacing and padding
+        appLayout.setSpacing(PAD);
+        appLayout.setPadding(new Insets(PAD));
 
         // Boilerplate code, init of window variables
-        setStage(stage, frame);
+        setStage(stage, appLayout);
     }
 
-    private GridPane buttonsPane(int width, int height) {
-        GridPane buttons = new GridPane();
+    private HBox buttonsPane() {
+        HBox buttons = new HBox();
+        buttons.setSpacing(PAD);
 
         // Top buttons
         Button categories = new Button(CATEGORIES);
         Button tags = new Button(TAGS);
         buttons.getChildren().addAll(categories, tags);
 
-        GridPane.setConstraints(categories, 0, 0);
-        GridPane.setConstraints(tags, 1, 0);
-
-        // Dimensions
-        buttons.setPrefSize(width, height);
-
         return buttons;
     }
 
-    private HBox lowerPane(int width, int height) {
-        HBox p = new HBox(
-                accountsList(width / 2, height),
-                TxList(width / 2, height));
-
-        p.setPrefSize(width, height);
-
-        return p;
-    }
-
-    private ScrollPane accountsList(int width, int height) {
+    private VBox accountList() {
+        // Button to add an account
         Button newAccount = new Button(ADD_BUTTON);
-        VBox content = new VBox(new AccountTilePane(fm), newAccount);
-        ScrollPane s1 = new ScrollPane(content);
-
-        s1.setPrefSize(width, height);
-
+        newAccount.setMaxWidth(Double.MAX_VALUE);
+        // The button's functionnality
         newAccount.setOnMouseClicked((e) -> {
-            Stage popUp = new Stage();
+            Stage popUpWindow = new Stage();
             VBox contents = new VBox();
+            Scene scene = new Scene(contents);
 
-            TextField accountName = new TextField();
-            TextField initBalance = new TextField();
-            Button createAccount = new Button(CREATE_ACCOUNT);
-            initBalance.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
-            contents.getChildren().addAll(accountName, initBalance, createAccount);
+            popUpWindow.setScene(scene);
+            popUpWindow.setResizable(false);
 
-            contents.setPadding(new Insets(PAD, PAD, PAD, PAD));
+            contents.setPadding(new Insets(PAD));
             contents.setSpacing(PAD);
-            Scene popUpScene = new Scene(contents);
-            popUp.setScene(popUpScene);
 
+            // Account name field
+            VBox accountNameField = new VBox();
+            Label nameLabel = new Label("Nom du compte");
+            TextField accountName = new TextField();
+            nameLabel.setLabelFor(accountName);
+            accountName.setMaxWidth(Double.MAX_VALUE);
+            accountNameField.getChildren().addAll(nameLabel, accountName);
+
+            // Initial balance field
+            VBox initBalanceField = new VBox();
+            Label balanceLabel = new Label("Solde initial");
+            TextField initBalance = new TextField();
+            initBalance.setMaxWidth(Double.MAX_VALUE);
+            balanceLabel.setLabelFor(initBalance);
+            initBalanceField.getChildren().addAll(balanceLabel, initBalance);
+
+            // "Create account" button
+            Button createAccount = new Button(CREATE_ACCOUNT);
+            createAccount.setMaxWidth(Double.MAX_VALUE);
+            initBalance.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
+
+            contents.getChildren().addAll(accountNameField, initBalanceField, createAccount);
+
+            // Account creation on click
             createAccount.setOnMouseClicked((c) -> {
                 float initValue;
                 try {
@@ -123,23 +131,30 @@ public class Accountable extends Application {
                 }
                 fm.createAccount(accountName.getText(), initValue);
 
-                popUp.close();
+                popUpWindow.close();
             });
 
-            popUp.show();
+            popUpWindow.show();
         });
 
-        return s1;
+        // Scrollable list of account tiles
+        ScrollPane accountList = new ScrollPane(new AccountTilePane(fm));
+        accountList.setFitToWidth(true);
+        accountList.setPrefWidth(accountList.getWidth());
+
+        // Containing VBox
+        VBox accountListPane = new VBox(newAccount, accountList);
+        // Fill available space
+        VBox.setVgrow(accountList, Priority.ALWAYS);
+        HBox.setHgrow(accountListPane, Priority.ALWAYS);
+
+        return accountListPane;
     }
 
-    // TODO: Transaction addition screen
-    private ScrollPane TxList(int width, int height) {
+    private VBox txList() {
         Button addTx = new Button(ADD_BUTTON);
-
-        VBox content = new VBox(addTx);
-        ScrollPane s1 = new ScrollPane(content);
-        s1.setPrefSize(width, height);
-
+        addTx.setMaxWidth(Double.MAX_VALUE);
+        // The button's functionnality
         addTx.setOnMouseClicked((e) -> {
             Stage popUp = new Stage();
             VBox inputs = new VBox();
@@ -161,7 +176,19 @@ public class Accountable extends Application {
             popUp.show();
         });
 
-        return s1;
+        // Scrollable list of transaction tiles
+        // TODO: transaction list
+        ScrollPane txList = new ScrollPane();
+        txList.setFitToWidth(true);
+        txList.setPrefWidth(txList.getWidth());
+
+        // Containing VBox
+        VBox txListPane = new VBox(addTx, txList);
+        // Fill available space
+        VBox.setVgrow(txList, Priority.ALWAYS);
+        HBox.setHgrow(txListPane, Priority.ALWAYS);
+
+        return txListPane;
     }
 
     private void setStage(Stage stage, Pane mainPane) {

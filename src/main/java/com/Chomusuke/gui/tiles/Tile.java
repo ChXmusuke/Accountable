@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 public abstract class Tile extends HBox {
      public Tile() {
          super();
-         super.setPadding(new Insets(PAD, PAD, PAD, PAD));
+         setPadding(new Insets(PAD));
          setStyle("-fx-border-color: black;");
      }
 }
