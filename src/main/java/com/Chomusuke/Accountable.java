@@ -115,7 +115,6 @@ public class Accountable extends Application {
             popUp.setScene(popUpScene);
 
             createAccount.setOnMouseClicked((c) -> {
-                System.out.println();
                 float initValue;
                 try {
                     initValue = Float.parseFloat(initBalance.getText());
