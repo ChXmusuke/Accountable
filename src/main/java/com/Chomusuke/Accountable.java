@@ -16,8 +16,30 @@ package com.chomusuke;
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class Accountable {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Accountable extends Application {
 
     public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        stage.setWidth(512);
+        stage.setHeight(768);
+
+        VBox root = new VBox();
+        root.setId("root");
+        Scene scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        scene.getStylesheets().add("accountable.css");
+
+        stage.show();
     }
 }
