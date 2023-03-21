@@ -1,4 +1,3 @@
-package com.chomusuke;
 /*  Accountable: a personal spending monitoring program
     Copyright (C) 2022  Artur Yukhanov
 
@@ -15,6 +14,7 @@ package com.chomusuke;
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+package com.chomusuke;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
