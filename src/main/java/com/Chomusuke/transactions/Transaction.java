@@ -17,298 +17,102 @@
 
 package com.chomusuke.transactions;
 
-import java.util.*;
-
-import com.chomusuke.util.Preconditions;
-
 /**
- * Provides storage of transactions.
+ * Provides memory storage of transactions.
+ *
+ * @param name the name of the tx
+ * @param to the destination account if tx type is SAVINGS
+ * @param transactionType the type of tx
+ * @param valueType the type of value of the tx
+ * @param value The absolute value of the tx
  */
-public record Transaction(String name, int date, byte from, byte to, float value, byte category, List<Byte> tags)
-        implements Comparable<Transaction> {
+public record Transaction(String name,
+                          byte to,
+                          TransactionType transactionType,
+                          ValueType valueType,
+                          float value) {
 
     /**
-     * Constructor for Transaction
-     * 
-     * @param name
-     *                 a name, as String
-     * @param date
-     *                 a date, as int
-     *                 Must be packed in 23-4-5 format
-     * @param from
-     *                 the address of the sender, as byte
-     * @param to
-     *                 the address of the receiver, as byte
-     * @param value
-     *                 the value of the transaction, as float
-     * @param category
-     *                 the category of the transaction, as byte
-     * @param tags
-     *                 the list of tags assigned to the transaction, as a List of
-     *                 bytes
+     * Packs the enum values of {@code transactionType}
+     * into a single byte.
+     *
+     * @return the packed byte value
      */
-    public Transaction {
-        Preconditions.checkArgument(from != to);
+    public byte packTypes() {
+        return (byte) ((TransactionType.convert(this.transactionType()) << 2) | ValueType.convert(this.valueType()));
     }
 
     /**
-     * Reverses the current transaction.
-     * 
-     * @return
-     *         the current transaction with sender and receiver swapped
+     * Returns the value computed from the transaction's type.
+     *
+     * @param total The total value of the session
+     * @param used The value of the session that's already
+     *             been used
+     *
+     * @return the value of the transaction, context-aware
      */
-    public Transaction reverse() {
-        byte _from = this.to;
-        byte _to = this.from;
-
-        return new Transaction(this.name, this.date, _from, _to, this.value, this.category, this.tags);
-    }
-
-    /**
-     * Comparison implementation.
-     * 
-     * Compares two transactions according to their dates.
-     * 
-     * @param that
-     *             another transaction
-     * 
-     * @return -1, 0 or 1 if the current transaction is smaller, equal or greater
-     *         then the other transaction according to their dates
-     */
-    @Override
-    public int compareTo(Transaction that) {
-        return Integer.compare(this.date, that.date);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Transaction) {
-            Transaction t = (Transaction) o;
-
-            return (this.name == null ? this.name == t.name : this.name.equals(t.name)) &&
-                    this.date == t.date &&
-                    this.from == t.from &&
-                    this.to == t.to &&
-                    this.value == t.value &&
-                    this.category == t.category &&
-                    (this.tags == null ? this.tags == t.tags : this.tags.equals(t.tags));
-        } else {
-            return false;
+    public float value(float total, float used) {
+        switch (valueType) {
+            case ABSOLUTE -> {
+                return value;
+            }
+            case TOTAL -> {
+                return value*total;
+            }
+            case REMAINDER -> {
+                return (total-used) * value;
+            }
+            default -> {
+                return total-used;
+            }
         }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, date, from, to, value, category, tags);
+    public enum TransactionType {
+        REVENUE,
+        BUDGET,
+        BILL,
+        SAVINGS;
+
+        public static byte convert(TransactionType t) {
+            switch (t) {
+                case REVENUE -> {
+                    return 0;
+                }
+                case BUDGET -> {
+                    return 1;
+                }
+                case BILL -> {
+                    return 2;
+                }
+                default -> {
+                    return 3;
+                }
+            }
+        }
     }
 
-    /**
-     * Builds a Transaction object.
-     */
-    public static class TransactionBuilder {
+    public enum ValueType {
+        ABSOLUTE,
+        TOTAL,
+        REMAINDER,
+        ALL;
 
-        private String name;
-        private int date;
-        private byte from;
-        private byte to;
-        private float value;
-        private byte category;
-        private List<Byte> tags;
-
-        /**
-         * Constructor for a TransactionBuilder.
-         * 
-         * @param name
-         *                 a name, as String
-         * @param date
-         *                 a date, as int (must be packed in 23-4-5 format)
-         * @param from
-         *                 the address of the sender, as byte
-         * @param to
-         *                 the address of the receiver, as byte
-         * @param value
-         *                 the value of the transaction, as float
-         * @param category
-         *                 the category of the transaction, as byte
-         * @param tags
-         *                 the list of tags assigned to the transaction, as a List of
-         *                 bytes
-         */
-        public TransactionBuilder(String name, int date, byte from, byte to, float value, byte category,
-                List<Byte> tags) {
-            Preconditions.checkArgument(from != to);
-
-            this.name = name;
-            this.date = date;
-            this.from = from;
-            this.to = to;
-            this.value = value;
-            this.category = category;
-            this.tags = List.copyOf(tags);
-        }
-
-        /**
-         * Creates a TransactionBuilder by copying transaction t's data.
-         * 
-         * @param t
-         *          the transaction to copy
-         */
-        public TransactionBuilder(Transaction t) {
-            this.tags = new ArrayList<>();
-
-            setName(t.name());
-            setDate(t.date());
-            setFrom(t.from());
-            setTo(t.to());
-            setValue(t.value());
-            setCategory(t.category());
-            addTagList(t.tags());
-        }
-
-        /**
-         * Constructor for an empty TransactionBuilder.
-         */
-        public TransactionBuilder() {
-            this.tags = new ArrayList<>();
-        }
-
-        /**
-         * Sets the name of the TransactionBuilder.
-         * 
-         * @param name
-         *             a name, as String
-         * 
-         * @return the transaction with the new name
-         */
-        public TransactionBuilder setName(String name) {
-            this.name = name;
-
-            return this;
-        }
-
-        /**
-         * Sets the date of the TransactionBuilder.
-         * 
-         * @param date
-         *             a date, as int (must be packed in 23-4-5 format)
-         * 
-         * @return the transaction with the new date
-         */
-        public TransactionBuilder setDate(int date) {
-            this.date = date;
-
-            return this;
-        }
-
-        /**
-         * Sets the sender of the TransactionBuilder.
-         * 
-         * @param from
-         *             a sender, as byte
-         * 
-         * @return the transaction with the new sender
-         */
-        public TransactionBuilder setFrom(byte from) {
-            Preconditions.checkArgument(from != this.to);
-
-            this.from = from;
-
-            return this;
-        }
-
-        /**
-         * Sets the receiver of the TransactionBuilder.
-         * 
-         * @param to
-         *           a receiver, as byte
-         * 
-         * @return the transaction with the new receiver
-         */
-        public TransactionBuilder setTo(byte to) {
-            Preconditions.checkArgument(to != this.from);
-
-            this.to = to;
-
-            return this;
-        }
-
-        /**
-         * Sets the value of the TransactionBuilder.
-         * 
-         * @param value
-         *              a value, as float
-         * 
-         * @return the transaction with the new value
-         */
-        public TransactionBuilder setValue(float value) {
-            this.value = value;
-
-            return this;
-        }
-
-        /**
-         * Sets the category of the TransactionBuilder.
-         * 
-         * @param from
-         *             a category, as byte
-         * 
-         * @return the transaction with the new category
-         */
-        public TransactionBuilder setCategory(byte category) {
-            this.category = category;
-
-            return this;
-        }
-
-        /**
-         * Adds a tag to the TransactionBuilder.
-         * 
-         * @param tag
-         *            a tag, as byte
-         * 
-         * @return the transaction with the new tag added
-         */
-        public TransactionBuilder addTag(byte tag) {
-            tags.add(tag);
-
-            return this;
-        }
-
-        /**
-         * Adds all the tags in a list to the TransactionBuilder.
-         * 
-         * @param tags
-         *             a list of tags, as a List of bytes
-         * 
-         * @return the transaction with the new tags added
-         */
-        public TransactionBuilder addTagList(List<Byte> tags) {
-            this.tags.addAll(tags);
-
-            return this;
-        }
-
-        /**
-         * Removes a tag from the TransactionBuilder.
-         * 
-         * @param tag
-         *            a tag, as byte
-         * 
-         * @return the transaction with the tag removed
-         */
-        public TransactionBuilder removeTag(byte tag) {
-            tags.remove(tag);
-
-            return this;
-        }
-
-        /**
-         * builds the transaction as an immutable object.
-         * 
-         * @return the transaction built from the builder's data
-         */
-        public Transaction build() {
-            return new Transaction(name, date, from, to, value, category, tags);
+        public static byte convert(ValueType v) {
+            switch (v) {
+                case ABSOLUTE -> {
+                    return 0;
+                }
+                case TOTAL -> {
+                    return 1;
+                }
+                case REMAINDER -> {
+                    return 2;
+                }
+                default -> {
+                    return 3;
+                }
+            }
         }
     }
 }
