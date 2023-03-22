@@ -1,5 +1,5 @@
 /*  Accountable: a personal spending monitoring program
-    Copyright (C) 2022  Artur Yukhanov
+    Copyright (C) 2023  Artur Yukhanov
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public record Transaction(String name,
      * @return the packed byte value
      */
     public byte packTypes() {
-        return (byte) ((TransactionType.convert(this.transactionType()) << 2) | ValueType.convert(this.valueType()));
+        return (byte) ((this.transactionType().ordinal() << 2) | this.valueType().ordinal());
     }
 
     /**
@@ -68,27 +68,36 @@ public record Transaction(String name,
         }
     }
 
+    @Override
+    public boolean equals(Object that) {
+        if (that == null)
+            return false;
+        else if (this == that)
+            return true;
+        else if (getClass() != that.getClass())
+            return false;
+
+        Transaction o = (Transaction) that;
+
+        return name.equals(o.name)
+                && to == o.to()
+                && transactionType == o.transactionType()
+                && valueType == o.valueType()
+                && value == o.value();
+    }
+
+
+
     public enum TransactionType {
         REVENUE,
         BUDGET,
         BILL,
         SAVINGS;
 
-        public static byte convert(TransactionType t) {
-            switch (t) {
-                case REVENUE -> {
-                    return 0;
-                }
-                case BUDGET -> {
-                    return 1;
-                }
-                case BILL -> {
-                    return 2;
-                }
-                default -> {
-                    return 3;
-                }
-            }
+        public static TransactionType of(byte b) {
+            b &= 0b11;
+
+            return values()[b];
         }
     }
 
@@ -98,21 +107,10 @@ public record Transaction(String name,
         REMAINDER,
         ALL;
 
-        public static byte convert(ValueType v) {
-            switch (v) {
-                case ABSOLUTE -> {
-                    return 0;
-                }
-                case TOTAL -> {
-                    return 1;
-                }
-                case REMAINDER -> {
-                    return 2;
-                }
-                default -> {
-                    return 3;
-                }
-            }
+        public static ValueType of(byte b) {
+            b &= 0b11;
+
+            return values()[b];
         }
     }
 }
