@@ -45,7 +45,9 @@ public class TransactionTile extends HBox {
             case SAVINGS -> colorTag.setFill(Color.BLUE);
         }
 
-        VBox text = new VBox(new Text(t.name()), new Text(Float.toString(value)));
+        VBox text = new VBox(
+                new Text(t.name()),
+                new Text(String.format("%.2f", value)));
         text.setPadding(new Insets(8));
         text.setSpacing(8);
 

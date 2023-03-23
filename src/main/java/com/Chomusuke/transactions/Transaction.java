@@ -60,10 +60,12 @@ public record Transaction(String name,
                 return value*total;
             }
             case REMAINDER -> {
-                return (total-used) * value;
+                float v = (total-used) * value;
+                return (float) (Math.round(v*100)/100.0);
             }
             default -> {
-                return total-used;
+                float v = total-used;
+                return (float) (Math.round(v*100)/100.0);
             }
         }
     }
