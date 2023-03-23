@@ -4,12 +4,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class ButtonPlus extends StackPane {
+public class PlusButton extends StackPane {
 
     private static final String CROSS_COLOR = "-fx-fill: white";
     private static final String BUTTON_COLOR = "-fx-fill: #33CC33";
 
-    public ButtonPlus() {
+    public PlusButton() {
         Circle c = new Circle(25);
         Rectangle v = new Rectangle(21, 3);
         Rectangle h = new Rectangle(3, 21);

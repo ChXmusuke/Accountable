@@ -17,7 +17,7 @@
 
 package com.chomusuke;
 
-import com.chomusuke.gui.ButtonPlus;
+import com.chomusuke.gui.PlusButton;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.HPos;
@@ -27,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import com.chomusuke.transactions.Transaction;
@@ -63,8 +64,7 @@ public class Accountable extends Application {
 
         HBox controls = new HBox();
         controls.setPadding(new Insets(16));
-        // Button to add a transaction
-        ButtonPlus addTransaction = new ButtonPlus();
+        PlusButton addTransaction = new PlusButton();
 
         addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
         scene.setOnKeyPressed((e) -> {
@@ -74,6 +74,12 @@ public class Accountable extends Application {
 
         controls.getChildren().add(addTransaction);
 
+        Text title = new Text("Accountable.");
+        title.setId("title");
+        BorderPane.setAlignment(title, Pos.CENTER);
+        BorderPane.setMargin(title, new Insets(8));
+
+        root.setTop(title);
         root.setCenter(scrollPane);
         root.setBottom(controls);
 
@@ -88,9 +94,19 @@ public class Accountable extends Application {
         stage.setHeight(580);
         stage.setResizable(false);
 
-        scene.getStylesheets().add("accountable.css");
+        scene.getStylesheets().addAll("accountable.css", "TransactionTile.css");
 
         stage.show();
+
+        manager.add(
+                new Transaction(
+                        "salaire",
+                        (byte) 0,
+                        TransactionType.REVENUE,
+                        ValueType.ABSOLUTE,
+                        1377.9f
+                )
+        );
     }
 
     private void addTransaction(TransactionList txList) {

@@ -18,25 +18,19 @@
 package com.chomusuke.gui;
 
 import com.chomusuke.transactions.Transaction;
-import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class TransactionTile extends HBox {
 
-    private static final String TEXT_COLOR = "-fx-fill: lightgrey";
-
     public TransactionTile(Transaction t, float value) {
-        setPadding(new Insets(8));
-        setSpacing(8);
 
         Rectangle colorTag = new Rectangle();
         colorTag.getStyleClass().add("colorTag");
-        colorTag.heightProperty().bind(this.heightProperty().multiply(0.8));
+        colorTag.setHeight(68);
         colorTag.setWidth(8);
 
         switch (t.transactionType()) {
@@ -48,16 +42,10 @@ public class TransactionTile extends HBox {
 
         Text nameText = new Text(t.name());
         Text valueText = new Text(String.format("%.2f", value));
-        nameText.setStyle(TEXT_COLOR);
-        valueText.setStyle(TEXT_COLOR);
 
         VBox textBox = new VBox(nameText, valueText);
-        textBox.setPadding(new Insets(8));
-        textBox.setSpacing(8);
+        textBox.getStyleClass().add("tileText");
 
-        textBox.getChildren().forEach(c -> ((Text) c).setFont(new Font("Helvetica", 24)));
-
-        this.getStyleClass().add("tile");
         this.getChildren().addAll(colorTag, textBox);
     }
 }

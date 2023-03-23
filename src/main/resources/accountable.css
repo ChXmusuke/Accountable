@@ -8,16 +8,15 @@
 
 .transactions {
     -fx-padding: 8;
+    -fx-spacing: 8;
 }
 
-.colorTag {
-    -fx-arc-height: 8;
-    -fx-arc-width: 16;
+Text {
+    -fx-fill: lightgray;
+    -fx-font: 24 "Arial Rounded MT Bold";
 }
 
 #title {
-    -fx-fill: gray;
-    -fx-font-family: "Helvetica";
-    -fx-font-size: 30;
-    -fx-font-weight: bolder;
+    -fx-font-size: 35;
+    -fx-font-weight: bolder
 }
