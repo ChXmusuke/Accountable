@@ -4,7 +4,7 @@
 
 #title {
     -fx-fill: gray;
-    -fx-font-family: "Arial";
+    -fx-font-family: "Helvetica";
     -fx-font-size: 30;
-    -fx-font-weight: bold;
+    -fx-font-weight: bolder;
 }

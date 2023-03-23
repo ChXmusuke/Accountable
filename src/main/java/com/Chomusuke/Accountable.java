@@ -21,14 +21,14 @@ import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.chomusuke.transactions.Transaction;
 import com.chomusuke.transactions.TransactionList;
-
-import java.util.List;
+import javafx.util.converter.FloatStringConverter;
 
 import static com.chomusuke.transactions.Transaction.TransactionType;
 import static com.chomusuke.transactions.Transaction.ValueType;
@@ -61,7 +61,55 @@ public class Accountable extends Application {
         scrollPane.maxHeightProperty().bind(root.heightProperty());
         scrollPane.getStyleClass().add("background");
 
-        root.getChildren().add(scrollPane);
+        VBox top = new VBox();
+        top.setPadding(new Insets(8));
+        // Button to add a transaction
+        Button addTransaction = new Button("+ transaction");
+        addTransaction.setOnMouseClicked((e) -> {
+            Stage tAdd = new Stage();
+            tAdd.setResizable(false);
+
+            GridPane p = new GridPane();
+            p.setPadding(new Insets(8));
+            p.setHgap(8);
+            p.setVgap(8);
+
+            TextField nameField = new TextField();
+            ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
+            tTypeField.getItems().addAll(TransactionType.values());
+            TextField valueField = new TextField();
+            valueField.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
+            ChoiceBox<Transaction.ValueType> vTypeField = new ChoiceBox<>();
+            vTypeField.getItems().setAll(ValueType.values());
+
+            Button submit = new Button("-> Ajouter");
+            submit.setOnMouseClicked((e2) -> {
+                manager.add(new Transaction(
+                        nameField.getText(),
+                        (byte) 0,
+                        tTypeField.getValue(),
+                        vTypeField.getValue(),
+                        Float.parseFloat(valueField.getText())
+                ));
+
+                tAdd.close();
+            });
+
+            p.add(nameField, 0, 0);
+            p.add(tTypeField, 0, 1);
+            p.add(valueField, 1, 0);
+            p.add(vTypeField, 1, 1);
+
+            p.add(submit, 0, 2, 1, 2);
+
+            Scene s = new Scene(p);
+            tAdd.setScene(s);
+            tAdd.show();
+        });
+
+        top.getChildren().add(addTransaction);
+
+        root.getChildren().addAll(top, scrollPane);
 
         ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
         txList.addListener((d, o, n) -> {
@@ -74,64 +122,5 @@ public class Accountable extends Application {
         scene.getStylesheets().add("accountable.css");
 
         stage.show();
-
-        manager.add(List.of(
-                new Transaction(
-                        "salaire",
-                        (byte) 0,
-                        TransactionType.REVENUE,
-                        ValueType.ABSOLUTE,
-                        1377.9f
-                ),
-                new Transaction(
-                        "repas",
-                        (byte) 0,
-                        TransactionType.BUDGET,
-                        ValueType.ABSOLUTE,
-                        300
-                ),
-                new Transaction(
-                        "téléphone",
-                        (byte) 0,
-                        TransactionType.BILL,
-                        ValueType.ABSOLUTE,
-                        15
-                ),
-                new Transaction(
-                        "assurance",
-                        (byte) 0,
-                        TransactionType.BILL,
-                        ValueType.ABSOLUTE,
-                        306.7f
-                ),
-                new Transaction(
-                        "misc",
-                        (byte) 1,
-                        TransactionType.SAVINGS,
-                        ValueType.ABSOLUTE,
-                        192.8f
-                ),
-                new Transaction(
-                        "train",
-                        (byte) 2,
-                        TransactionType.SAVINGS,
-                        ValueType.ABSOLUTE,
-                        166.5f
-                ),
-                new Transaction(
-                        "épargne",
-                        (byte) 5,
-                        TransactionType.SAVINGS,
-                        ValueType.REMAINDER,
-                        0.25f
-                ),
-                new Transaction(
-                        "chu",
-                        (byte) 4,
-                        TransactionType.SAVINGS,
-                        ValueType.ALL,
-                        0
-                )
-        ));
     }
 }
