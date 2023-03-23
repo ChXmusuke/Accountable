@@ -48,17 +48,19 @@ public class Accountable extends Application {
 
         VBox root = new VBox();
         root.getStyleClass().add("background");
-        root.setPadding(new Insets(8));
         root.setSpacing(8);
         Scene scene = new Scene(root);
 
         VBox transactionPane = new VBox();
+        transactionPane.getStyleClass().add("background");
+        transactionPane.setPadding(new Insets(8));
         transactionPane.setSpacing(8);
+
         ScrollPane scrollPane = new ScrollPane(transactionPane);
         scrollPane.setFitToWidth(true);
         scrollPane.maxHeightProperty().bind(root.heightProperty());
         scrollPane.getStyleClass().add("background");
-        transactionPane.getStyleClass().add("background");
+
         root.getChildren().add(scrollPane);
 
         ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
