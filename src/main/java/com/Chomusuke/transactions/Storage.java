@@ -44,7 +44,7 @@ public class Storage {
      *
      * @return {@code true} on success.
      */
-    public static boolean write(LinkedList<Transaction> list, int year, int month) {
+    public static boolean write(List<Transaction> list, int year, int month) {
 
         Path dir = DIR_NAME.resolve(Integer.toString(year));
         Path file = Path.of(Integer.toString(month));
@@ -74,7 +74,7 @@ public class Storage {
         return true;
     }
 
-    public static LinkedList<Transaction> read(int year, int month) {
+    public static List<Transaction> read(int year, int month) {
         Path dir = DIR_NAME.resolve(Integer.toString(year));
         Path file = Path.of(Integer.toString(month));
 
