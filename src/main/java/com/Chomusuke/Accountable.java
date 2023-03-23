@@ -17,13 +17,16 @@
 
 package com.chomusuke;
 
+import com.chomusuke.gui.ButtonPlus;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import com.chomusuke.transactions.Transaction;
@@ -41,75 +44,38 @@ public class Accountable extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setWidth(512);
-        stage.setHeight(768);
-
         TransactionList manager = new TransactionList();
 
-        VBox root = new VBox();
+        BorderPane root = new BorderPane();
         root.getStyleClass().add("background");
-        root.setSpacing(8);
         Scene scene = new Scene(root);
 
         VBox transactionPane = new VBox();
-        transactionPane.getStyleClass().add("background");
-        transactionPane.setPadding(new Insets(8));
-        transactionPane.setSpacing(8);
+        transactionPane.getStyleClass().addAll("background", "transactions");
+        transactionPane.prefWidthProperty().bind(root.widthProperty());
+        transactionPane.prefHeightProperty().bind(root.heightProperty());
 
         ScrollPane scrollPane = new ScrollPane(transactionPane);
         scrollPane.setFitToWidth(true);
-        scrollPane.maxHeightProperty().bind(root.heightProperty());
-        scrollPane.getStyleClass().add("background");
+        scrollPane.getStyleClass().add("scrollPane");
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        VBox top = new VBox();
-        top.setPadding(new Insets(8));
+        HBox controls = new HBox();
+        controls.setPadding(new Insets(16));
         // Button to add a transaction
-        Button addTransaction = new Button("+ transaction");
-        addTransaction.setOnMouseClicked((e) -> {
-            Stage tAdd = new Stage();
-            tAdd.setResizable(false);
+        ButtonPlus addTransaction = new ButtonPlus();
 
-            GridPane p = new GridPane();
-            p.setPadding(new Insets(8));
-            p.setHgap(8);
-            p.setVgap(8);
-
-            TextField nameField = new TextField();
-            ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
-            tTypeField.getItems().addAll(TransactionType.values());
-            TextField valueField = new TextField();
-            valueField.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
-            ChoiceBox<Transaction.ValueType> vTypeField = new ChoiceBox<>();
-            vTypeField.getItems().setAll(ValueType.values());
-
-            Button submit = new Button("-> Ajouter");
-            submit.setOnMouseClicked((e2) -> {
-                manager.add(new Transaction(
-                        nameField.getText(),
-                        (byte) 0,
-                        tTypeField.getValue(),
-                        vTypeField.getValue(),
-                        Float.parseFloat(valueField.getText())
-                ));
-
-                tAdd.close();
-            });
-
-            p.add(nameField, 0, 0);
-            p.add(tTypeField, 0, 1);
-            p.add(valueField, 1, 0);
-            p.add(vTypeField, 1, 1);
-
-            p.add(submit, 0, 2, 1, 2);
-
-            Scene s = new Scene(p);
-            tAdd.setScene(s);
-            tAdd.show();
+        addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
+        scene.setOnKeyPressed((e) -> {
+            if (e.getCode() == KeyCode.SPACE) addTransaction(manager);
         });
+        controls.setAlignment(Pos.CENTER_RIGHT);
 
-        top.getChildren().add(addTransaction);
+        controls.getChildren().add(addTransaction);
 
-        root.getChildren().addAll(top, scrollPane);
+        root.setCenter(scrollPane);
+        root.setBottom(controls);
 
         ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
         txList.addListener((d, o, n) -> {
@@ -118,9 +84,66 @@ public class Accountable extends Application {
         });
 
         stage.setScene(scene);
+        stage.setWidth(333);
+        stage.setHeight(580);
+        stage.setResizable(false);
 
         scene.getStylesheets().add("accountable.css");
 
         stage.show();
+    }
+
+    private void addTransaction(TransactionList txList) {
+        Stage tAdd = new Stage();
+        tAdd.setResizable(false);
+
+        GridPane p = new GridPane();
+        p.setPadding(new Insets(8));
+        p.setHgap(8);
+        p.setVgap(8);
+        p.getStyleClass().add("background");
+
+        TextField nameField = new TextField();
+        ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
+        tTypeField.getItems().addAll(TransactionType.values());
+        tTypeField.setMaxWidth(Double.MAX_VALUE);
+        TextField valueField = new TextField();
+        valueField.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
+        ChoiceBox<Transaction.ValueType> vTypeField = new ChoiceBox<>();
+        vTypeField.getItems().setAll(ValueType.values());
+        vTypeField.setMaxWidth(Double.MAX_VALUE);
+
+        Button submit = new Button("-> Ajouter");
+        submit.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setMargin(submit, new Insets(16));
+        submit.setOnAction((e2) -> {
+            if (nameField.getText() == null || nameField.getText().equals("")
+                    || valueField.getText() == null || valueField.getText().equals("")
+                    || tTypeField.getValue() == null || vTypeField.getValue() == null) {
+                return;
+            }
+            txList.add(new Transaction(
+                    nameField.getText(),
+                    (byte) 0,
+                    tTypeField.getValue(),
+                    vTypeField.getValue(),
+                    Float.parseFloat(valueField.getText())
+            ));
+
+            tAdd.close();
+        });
+
+        p.add(nameField, 0, 0);
+        p.add(valueField, 1, 0);
+        p.add(tTypeField, 0, 1);
+        p.add(vTypeField, 1, 1);
+
+        p.add(submit, 0, 2, 2, 1);
+        GridPane.setHalignment(submit, HPos.CENTER);
+
+        Scene s = new Scene(p);
+        s.getStylesheets().add("accountable.css");
+        tAdd.setScene(s);
+        tAdd.show();
     }
 }

@@ -2,6 +2,19 @@
     -fx-background-color: #222222;
 }
 
+.scrollPane {
+    -fx-background-color: transparent;
+}
+
+.transactions {
+    -fx-padding: 8;
+}
+
+.colorTag {
+    -fx-arc-height: 8;
+    -fx-arc-width: 16;
+}
+
 #title {
     -fx-fill: gray;
     -fx-font-family: "Helvetica";
