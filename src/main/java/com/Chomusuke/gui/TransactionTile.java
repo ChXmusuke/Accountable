@@ -17,8 +17,41 @@
 
 package com.chomusuke.gui;
 
-public class TransactionTile extends Tile {
-    public TransactionTile(String title, float value) {
-        super(title, value);
+import com.chomusuke.transactions.Transaction;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+public class TransactionTile extends HBox {
+
+    public TransactionTile(Transaction t, float value) {
+        setPadding(new Insets(8));
+        setSpacing(8);
+
+        Rectangle colorTag = new Rectangle();
+        colorTag.heightProperty().bind(this.heightProperty().multiply(0.8));
+        colorTag.setWidth(8);
+
+
+        switch (t.transactionType()) {
+            case REVENUE -> colorTag.setFill(Color.GREEN);
+            case BUDGET -> colorTag.setFill(Color.YELLOW);
+            case BILL -> colorTag.setFill(Color.RED);
+            case SAVINGS -> colorTag.setFill(Color.BLUE);
+        }
+
+        VBox text = new VBox(new Text(t.name()), new Text(Float.toString(value)));
+        text.setPadding(new Insets(8));
+        text.setSpacing(8);
+
+        text.getChildren().forEach(c -> ((Text) c).setFont(new Font("Helvetica", 24)));
+
+        this.setBackground(Background.fill(Color.DARKGREY));
+        this.getChildren().addAll(colorTag, text);
     }
 }
