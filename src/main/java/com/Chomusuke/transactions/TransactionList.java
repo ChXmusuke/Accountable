@@ -53,20 +53,35 @@ public class TransactionList {
         return values;
     }
 
-    public void add(Transaction t) {
-        add(List.of(t));
-    }
-
-    public void add(List<Transaction> t) {
-        for (Transaction ti : t) {
-            if (ti.transactionType().equals(TransactionType.REVENUE))
-                this.txs.add(nextRevenueIndex++, ti);
-            else this.txs.add(ti);
+    /**
+     * Replaces {@code oldT} with {@code t}.
+     *
+     * @param t The new transaction
+     * @param oldT The old transaction
+     */
+    public void add(Transaction t, Transaction oldT) {
+        if (oldT != null) {
+            remove(oldT);
+        }
+        if (t != null) {
+            add(t);
         }
     }
 
-    public int size() {
-        return txs.size();
+    public void add(Transaction t) {
+        if (t != null) {
+            if (t.transactionType().equals(TransactionType.REVENUE))
+                this.txs.add(nextRevenueIndex++, t);
+            else this.txs.add(t);
+        }
+    }
+
+    public void remove(Transaction t) {
+        if (txs.remove(t)) {
+            if (t.transactionType() == TransactionType.REVENUE) {
+                nextRevenueIndex--;
+            }
+        }
     }
 
     public ReadOnlyListProperty<Transaction> getTransactionsProperty() {

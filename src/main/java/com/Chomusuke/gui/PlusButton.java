@@ -27,11 +27,12 @@ public class PlusButton extends StackPane {
     private static final String BUTTON_COLOR = "-fx-fill: #33CC33";
     public static final int RADIUS = 25;
     private static final int CROSS_ARM_LENGTH = 21;
+    private static final double CROSS_ARM_RATIO = 1.0/7;
 
     public PlusButton() {
         Circle c = new Circle(RADIUS);
         Rectangle v = new Rectangle(CROSS_ARM_LENGTH, CROSS_ARM_LENGTH/7.0);
-        Rectangle h = new Rectangle(CROSS_ARM_LENGTH/7.0, CROSS_ARM_LENGTH);
+        Rectangle h = new Rectangle(CROSS_ARM_LENGTH*CROSS_ARM_RATIO, CROSS_ARM_LENGTH);
 
         c.setStyle(BUTTON_COLOR);
 

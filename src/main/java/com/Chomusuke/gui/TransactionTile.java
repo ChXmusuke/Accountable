@@ -26,7 +26,11 @@ import javafx.scene.text.Text;
 
 public class TransactionTile extends HBox {
 
+    Transaction baseTransaction;
+
     public TransactionTile(Transaction t, float value) {
+
+        baseTransaction = t;
 
         Rectangle colorTag = new Rectangle();
         colorTag.getStyleClass().add("colorTag");
@@ -47,5 +51,9 @@ public class TransactionTile extends HBox {
         textBox.getStyleClass().add("tileText");
 
         this.getChildren().addAll(colorTag, textBox);
+    }
+
+    public Transaction getBaseTransaction() {
+        return baseTransaction;
     }
 }
