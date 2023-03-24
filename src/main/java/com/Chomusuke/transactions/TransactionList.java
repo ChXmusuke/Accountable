@@ -65,14 +65,15 @@ public class TransactionList {
      */
     public void add(Transaction t, Transaction oldT) {
         if (oldT != null) {
-            remove(oldT);
-        }
-        if (t != null) {
+            int index = txs.indexOf(oldT);
+            txs.set(index, t);
+        } else {
             add(t);
         }
     }
 
     public void add(Transaction t) {
+        add(t, null);
         if (t != null) {
             if (t.transactionType().equals(TransactionType.REVENUE))
                 this.txs.add(nextRevenueIndex++, t);
@@ -81,10 +82,16 @@ public class TransactionList {
     }
 
     public void remove(Transaction t) {
-        if (txs.remove(t)) {
-            if (t.transactionType() == TransactionType.REVENUE) {
+        remove(txs.indexOf(t));
+    }
+
+    public void remove(int index) {
+        try {
+            if (txs.remove(index).transactionType() == TransactionType.REVENUE)
                 nextRevenueIndex--;
-            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
