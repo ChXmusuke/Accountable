@@ -19,12 +19,14 @@ package com.chomusuke;
 
 import com.chomusuke.gui.PlusButton;
 import com.chomusuke.gui.TransactionTile;
+import com.chomusuke.transactions.Storage;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -46,12 +48,40 @@ public class Accountable extends Application {
     private static final double WINDOW_RATIO = 6/10.0;
     private static final int PADDING = 8;
 
+    // TODO: date parameters
+    private int year = 2023;
+    private int month = 3;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
+        System.out.println("""
+        ========================================================================
+        
+        Accountable: a personal spending monitoring program\s
+        Copyright (C) 2023  Artur Yukhanov
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+        Icons provided by <https://icons8.com>
+        
+        ========================================================================
+        """);
+
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
 
@@ -60,16 +90,37 @@ public class Accountable extends Application {
 
         TransactionList manager = new TransactionList();
 
+        VBox top = new VBox();
+        top.setSpacing(PADDING);
+
         // Title of the app
         Text title = new Text("Accountable.");
         title.setId("title");
-        BorderPane.setAlignment(title, Pos.CENTER);
+        top.setAlignment(Pos.CENTER);
+
+        // Button for saving
+        HBox controls = new HBox();
+
+        ImageView saveIcon = new ImageView("save.png");
+        saveIcon.setFitHeight(24);
+        saveIcon.setPreserveRatio(true);
+
+        Button save = new Button();
+        save.setGraphic(saveIcon);
+        save.getStyleClass().add("background");
+        save.setOnAction(a -> {
+            Storage.write(manager.getTransactionsProperty().getValue(), year, month);
+        });
+
+        controls.getChildren().add(save);
+
+        top.getChildren().addAll(title, controls);
 
         // Pane for content
         Pane content = new Pane();
         content.setPadding(new Insets(PADDING));
 
-        root.setTop(title);
+        root.setTop(top);
         root.setCenter(content);
 
         // Content
@@ -101,7 +152,7 @@ public class Accountable extends Application {
 
         addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
         addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
-        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING));
+        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode() == KeyCode.SPACE) {
@@ -117,7 +168,13 @@ public class Accountable extends Application {
         stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
         stage.setResizable(false);
 
-        scene.getStylesheets().addAll("accountable.css", "TransactionTile.css");
+        scene.getStylesheets().addAll(
+                "stylesheets/accountable.css",
+                "stylesheets/TransactionTile.css"
+        );
+
+        if (manager.setTransactionList(Storage.read(year, month)))
+            System.out.printf("Loaded file for %s/%s", year, month);
 
         stage.show();
     }
@@ -180,8 +237,6 @@ public class Accountable extends Application {
             tAdd.close();
         });
 
-        buttons.getChildren().add(submit);
-
         // Delete button
         if (t != null) {
             Button delete = new Button("Supprimer");
@@ -195,6 +250,8 @@ public class Accountable extends Application {
             buttons.getChildren().add(delete);
         }
 
+        buttons.getChildren().add(submit);
+
         p.add(nameField, 0, 0);
         p.add(valueField, 1, 0);
         p.add(tTypeField, 0, 1);
@@ -203,7 +260,7 @@ public class Accountable extends Application {
         p.add(buttons, 0, 2, 2, 1);
 
         Scene s = new Scene(p);
-        s.getStylesheets().add("accountable.css");
+        s.getStylesheets().add("stylesheets/accountable.css");
         tAdd.setScene(s);
         tAdd.show();
     }
