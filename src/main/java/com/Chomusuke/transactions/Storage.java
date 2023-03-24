@@ -96,7 +96,10 @@ public class Storage {
 
                 txs.add(new Transaction(name, to, tt, vt, value));
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            return new ArrayList<>();
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
