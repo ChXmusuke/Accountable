@@ -39,6 +39,9 @@ import com.chomusuke.transactions.Transaction;
 import com.chomusuke.transactions.TransactionList;
 import javafx.util.converter.FloatStringConverter;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import static com.chomusuke.transactions.Transaction.TransactionType;
 import static com.chomusuke.transactions.Transaction.ValueType;
 
@@ -49,8 +52,8 @@ public class Accountable extends Application {
     private static final int PADDING = 8;
 
     // TODO: date parameters
-    private int year = 2023;
-    private int month = 3;
+    private int year;
+    private int month;
 
     public static void main(String[] args) {
         launch(args);
@@ -81,6 +84,11 @@ public class Accountable extends Application {
         
         ========================================================================
         """);
+
+        Calendar currentDate = GregorianCalendar.getInstance();
+
+        year = currentDate.get(Calendar.YEAR);
+        month = currentDate.get(Calendar.MONTH)+1;
 
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
