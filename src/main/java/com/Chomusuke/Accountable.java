@@ -39,49 +39,48 @@ import static com.chomusuke.transactions.Transaction.ValueType;
 
 public class Accountable extends Application {
 
+    private static final int WINDOW_HEIGHT = 580;
+    private static final double WINDOW_RATIO = 6/10.0;
+    private static final int PADDING = 8;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
-        TransactionList manager = new TransactionList();
-
         BorderPane root = new BorderPane();
-        root.getStyleClass().add("background");
         Scene scene = new Scene(root);
 
-        VBox transactionPane = new VBox();
-        transactionPane.getStyleClass().addAll("background", "transactions");
-        transactionPane.prefWidthProperty().bind(root.widthProperty());
-        transactionPane.prefHeightProperty().bind(root.heightProperty());
+        root.getStyleClass().add("background");
+        root.setPadding(new Insets(PADDING, PADDING, 0, PADDING));
 
-        ScrollPane scrollPane = new ScrollPane(transactionPane);
-        scrollPane.setFitToWidth(true);
-        scrollPane.getStyleClass().add("scrollPane");
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        TransactionList manager = new TransactionList();
 
-        HBox controls = new HBox();
-        controls.setPadding(new Insets(16));
-        PlusButton addTransaction = new PlusButton();
-
-        addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
-        scene.setOnKeyPressed((e) -> {
-            if (e.getCode() == KeyCode.SPACE) addTransaction(manager);
-        });
-        controls.setAlignment(Pos.CENTER_RIGHT);
-
-        controls.getChildren().add(addTransaction);
-
+        // Title of the app
         Text title = new Text("Accountable.");
         title.setId("title");
         BorderPane.setAlignment(title, Pos.CENTER);
-        BorderPane.setMargin(title, new Insets(8));
+
+        // Pane for content
+        Pane content = new Pane();
+        content.setPadding(new Insets(PADDING));
 
         root.setTop(title);
-        root.setCenter(scrollPane);
-        root.setBottom(controls);
+        root.setCenter(content);
+
+        // Content
+        VBox transactionPane = new VBox();
+        transactionPane.getStyleClass().addAll("background");
+        transactionPane.setSpacing(PADDING);
+        transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
+        transactionPane.prefWidthProperty().bind(content.widthProperty());
+        transactionPane.prefHeightProperty().bind(content.heightProperty());
+
+        ScrollPane scrollPane = new ScrollPane(transactionPane);
+        scrollPane.getStyleClass().add("scrollPane");
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
         txList.addListener((d, o, n) -> {
@@ -89,24 +88,39 @@ public class Accountable extends Application {
             pane.getChildren().setAll(manager.getTiles());
         });
 
+        // "Add transaction" button
+        PlusButton addTransaction = new PlusButton();
+
+        addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
+        addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING));
+
+        scene.setOnKeyPressed((e) -> {
+            if (e.getCode() == KeyCode.SPACE) addTransaction(manager);
+        });
+
+        content.getChildren().addAll(scrollPane, addTransaction);
+
         stage.setScene(scene);
-        stage.setWidth(333);
-        stage.setHeight(580);
+        stage.setHeight(WINDOW_HEIGHT);
+        stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
         stage.setResizable(false);
 
         scene.getStylesheets().addAll("accountable.css", "TransactionTile.css");
 
         stage.show();
 
-        manager.add(
-                new Transaction(
-                        "salaire",
-                        (byte) 0,
-                        TransactionType.REVENUE,
-                        ValueType.ABSOLUTE,
-                        1377.9f
-                )
-        );
+        for (int i = 0 ; i < 15 ; i++) {
+            manager.add(
+                    new Transaction(
+                            "salaire",
+                            (byte) 0,
+                            TransactionType.REVENUE,
+                            ValueType.ABSOLUTE,
+                            1377.9f
+                    )
+            );
+        }
     }
 
     private void addTransaction(TransactionList txList) {
@@ -114,9 +128,9 @@ public class Accountable extends Application {
         tAdd.setResizable(false);
 
         GridPane p = new GridPane();
-        p.setPadding(new Insets(8));
-        p.setHgap(8);
-        p.setVgap(8);
+        p.setPadding(new Insets(PADDING));
+        p.setHgap(PADDING);
+        p.setVgap(PADDING);
         p.getStyleClass().add("background");
 
         TextField nameField = new TextField();
@@ -131,7 +145,7 @@ public class Accountable extends Application {
 
         Button submit = new Button("-> Ajouter");
         submit.setMaxWidth(Double.MAX_VALUE);
-        GridPane.setMargin(submit, new Insets(16));
+        GridPane.setMargin(submit, new Insets(PADDING*2));
         submit.setOnAction((e2) -> {
             if (nameField.getText() == null || nameField.getText().equals("")
                     || valueField.getText() == null || valueField.getText().equals("")

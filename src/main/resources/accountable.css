@@ -6,11 +6,6 @@
     -fx-background-color: transparent;
 }
 
-.transactions {
-    -fx-padding: 8;
-    -fx-spacing: 8;
-}
-
 Text {
     -fx-fill: lightgray;
     -fx-font: 24 "Arial Rounded MT Bold";
@@ -18,5 +13,5 @@ Text {
 
 #title {
     -fx-font-size: 35;
-    -fx-font-weight: bolder
+    -fx-font-weight: bolder;
 }
