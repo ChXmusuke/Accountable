@@ -68,7 +68,7 @@ public class TransactionList {
             int index = txs.indexOf(oldT);
             txs.set(index, t);
         } else {
-            add(t);
+            txs.add(t);
         }
     }
 
