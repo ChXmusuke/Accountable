@@ -17,6 +17,7 @@
 
 package com.chomusuke;
 
+import com.chomusuke.gui.element.DateSelector;
 import com.chomusuke.gui.element.PlusButton;
 import com.chomusuke.gui.element.SquareButton;
 import com.chomusuke.gui.element.TransactionTile;
@@ -39,8 +40,6 @@ import javafx.stage.Stage;
 
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
-
-import static javafx.collections.FXCollections.observableList;
 
 public class Accountable extends Application {
 
@@ -96,39 +95,17 @@ public class Accountable extends Application {
 
         HBox controls = new HBox();
 
-        // Selection boxes
-        ChoiceBox<String> selectMonth = new ChoiceBox<>();
-
-        ChoiceBox<String> selectYear = new ChoiceBox<>();
-        selectYear.valueProperty().addListener(e -> {
-            try {
-                int y = Integer.parseInt(selectYear.getValue());
-                selectMonth.setItems(observableList(Storage.getAvailableMonths(y)));
-                if (selectMonth.getItems().size() == 0)
-                    selectMonth.getItems().add(Integer.toString(Time.getCurrentMonth()));
-
-                selectMonth.setValue(selectMonth.getItems().get(selectMonth.getItems().size()-1));
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-        selectYear.setItems(observableList(Storage.getAvailableYears()));
-        if (!selectYear.getItems().contains(Integer.toString(Time.getCurrentYear())))
-            selectYear.getItems().add(Integer.toString(Time.getCurrentYear()));
-        selectYear.setValue(selectYear.getItems().get(selectYear.getItems().size()-1));
-
+        DateSelector dateSelector = new DateSelector();
         // New file button
-        SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show(
-                selectYear.itemsProperty().get()
-        ));
+        SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
 
         // Load button
         SquareButton load = new SquareButton("load.png", a -> {
             try {
                 manager.setTransactionList(Storage.load(
-                        Integer.parseInt(selectYear.getValue()),
-                        Integer.parseInt(selectMonth.getValue())
-                ));
+                        dateSelector.getYearValue(),
+                        dateSelector.getMonthValue())
+                );
             } catch (NumberFormatException ignored) {
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -140,8 +117,8 @@ public class Accountable extends Application {
             try {
                 Storage.write(
                         manager.getTransactionsProperty().getValue(),
-                        Integer.parseInt(selectYear.getValue()),
-                        Integer.parseInt(selectMonth.getValue()));
+                        dateSelector.getYearValue(),
+                        dateSelector.getMonthValue());
             } catch (NumberFormatException ignored) {
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -149,7 +126,7 @@ public class Accountable extends Application {
 
         });
 
-        controls.getChildren().addAll(newFile, load, selectYear, selectMonth, save);
+        controls.getChildren().addAll(newFile, load, dateSelector, save);
 
         top.getChildren().addAll(title, controls);
 

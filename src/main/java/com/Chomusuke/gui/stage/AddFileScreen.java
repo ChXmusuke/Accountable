@@ -12,10 +12,9 @@ import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddFileScreen {
-    public static void show(List<String> availableYears) {
+    public static void show() {
         Stage stage = new Stage();
         stage.setResizable(false);
         VBox root = new VBox();
@@ -57,10 +56,8 @@ public class AddFileScreen {
                     || monthValue > 12) {
                 return;
             }
+
             Storage.write(new ArrayList<>(), yearValue, monthValue);
-
-            availableYears.add(year.getText());
-
 
             stage.close();
         });

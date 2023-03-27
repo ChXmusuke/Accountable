@@ -123,6 +123,7 @@ public class Storage {
         File[] availableF = new File(DIR_NAME.resolve(path).toString()).listFiles();
 
         if (availableF != null) {
+            Arrays.sort(availableF);
             for (File f : availableF) {
                 try {
                     Integer.parseInt(f.getName());
@@ -130,11 +131,11 @@ public class Storage {
                     valid.add(f.getName());
                 } catch (NumberFormatException ignored) {
                     // Exception ignored
-                } catch (Exception exception) {
-                    exception.printStackTrace();
                 }
             }
         }
+
+        Collections.sort(valid);
 
         return valid;
     }
