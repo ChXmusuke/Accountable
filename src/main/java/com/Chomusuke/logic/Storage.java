@@ -107,14 +107,12 @@ public class Storage {
         return txs;
     }
 
-    public static List<String> getAvailableMonths(String year) {
+    public static List<String> getAvailableMonths(int year) {
 
-        return getAvailable(year);
+        return getAvailable(Integer.toString(year));
     }
 
     public static List<String> getAvailableYears() {
-
-
 
         return getAvailable("");
     }
@@ -132,6 +130,8 @@ public class Storage {
                     valid.add(f.getName());
                 } catch (NumberFormatException ignored) {
                     // Exception ignored
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
             }
         }

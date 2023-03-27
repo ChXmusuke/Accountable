@@ -23,6 +23,7 @@ import com.chomusuke.gui.element.TransactionTile;
 import com.chomusuke.gui.stage.AddFileScreen;
 import com.chomusuke.gui.stage.AddTransactionScreen;
 import com.chomusuke.logic.Storage;
+import com.chomusuke.util.Time;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Insets;
@@ -38,9 +39,6 @@ import javafx.stage.Stage;
 
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import static javafx.collections.FXCollections.observableList;
 
@@ -80,12 +78,6 @@ public class Accountable extends Application {
         ========================================================================
         """);
 
-
-        Calendar currentDate = GregorianCalendar.getInstance();
-
-        int currentYear = currentDate.get(Calendar.YEAR);
-        int currentMonth = currentDate.get(Calendar.MONTH)+1;
-
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
 
@@ -109,15 +101,20 @@ public class Accountable extends Application {
 
         ChoiceBox<String> selectYear = new ChoiceBox<>();
         selectYear.valueProperty().addListener(e -> {
-            selectMonth.setItems(observableList(Storage.getAvailableMonths(selectYear.getValue())));
-            if (selectMonth.getItems().size() == 0)
-                selectMonth.getItems().add(Integer.toString(currentMonth));
+            try {
+                int y = Integer.parseInt(selectYear.getValue());
+                selectMonth.setItems(observableList(Storage.getAvailableMonths(y)));
+                if (selectMonth.getItems().size() == 0)
+                    selectMonth.getItems().add(Integer.toString(Time.getCurrentMonth()));
 
-            selectMonth.setValue(selectMonth.getItems().get(selectMonth.getItems().size()-1));
+                selectMonth.setValue(selectMonth.getItems().get(selectMonth.getItems().size()-1));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         });
         selectYear.setItems(observableList(Storage.getAvailableYears()));
-        if (!selectYear.getItems().contains(Integer.toString(currentYear)))
-            selectYear.getItems().add(Integer.toString(currentYear));
+        if (!selectYear.getItems().contains(Integer.toString(Time.getCurrentYear())))
+            selectYear.getItems().add(Integer.toString(Time.getCurrentYear()));
         selectYear.setValue(selectYear.getItems().get(selectYear.getItems().size()-1));
 
         // New file button
@@ -213,7 +210,10 @@ public class Accountable extends Application {
                 "stylesheets/TransactionTile.css"
         );
 
-        manager.setTransactionList(Storage.load(currentYear, currentMonth));
+        manager.setTransactionList(Storage.load(
+                Time.getCurrentYear(),
+                Time.getCurrentMonth()
+        ));
 
         stage.show();
     }
