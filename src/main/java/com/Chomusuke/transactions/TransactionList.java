@@ -33,8 +33,8 @@ public class TransactionList {
     private final ObservableList<Transaction> txs = FXCollections.observableArrayList();
     private int nextRevenueIndex = 0;
 
-    public boolean setTransactionList(List<Transaction> txs) {
-        return this.txs.setAll(txs);
+    public void setTransactionList(List<Transaction> txs) {
+        this.txs.setAll(txs);
     }
 
     public float[] getValues() {

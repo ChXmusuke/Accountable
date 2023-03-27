@@ -74,7 +74,8 @@ public class Storage {
         return true;
     }
 
-    public static List<Transaction> read(int year, int month) {
+    public static List<Transaction> load(int year, int month) {
+
         Path dir = DIR_NAME.resolve(Integer.toString(year));
         Path file = Path.of(Integer.toString(month));
 
@@ -104,5 +105,37 @@ public class Storage {
         }
 
         return txs;
+    }
+
+    public static List<String> getAvailableMonths(String year) {
+
+        return getAvailable(year);
+    }
+
+    public static List<String> getAvailableYears() {
+
+
+
+        return getAvailable("");
+    }
+
+    private static List<String> getAvailable(String path) {
+
+        List<String> valid = new ArrayList<>();
+        File[] availableF = new File(DIR_NAME.resolve(path).toString()).listFiles();
+
+        if (availableF != null) {
+            for (File f : availableF) {
+                try {
+                    Integer.parseInt(f.getName());
+
+                    valid.add(f.getName());
+                } catch (NumberFormatException ignored) {
+                    // Exception ignored
+                }
+            }
+        }
+
+        return valid;
     }
 }

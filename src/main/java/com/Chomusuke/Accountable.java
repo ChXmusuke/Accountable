@@ -34,26 +34,23 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.converter.FloatStringConverter;
 
 import com.chomusuke.transactions.Transaction;
 import com.chomusuke.transactions.TransactionList;
-import javafx.util.converter.FloatStringConverter;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import static com.chomusuke.transactions.Transaction.TransactionType;
 import static com.chomusuke.transactions.Transaction.ValueType;
+import static javafx.collections.FXCollections.observableList;
 
 public class Accountable extends Application {
 
     private static final int WINDOW_HEIGHT = 580;
     private static final double WINDOW_RATIO = 6/10.0;
     private static final int PADDING = 8;
-
-    // TODO: date parameters
-    private int year;
-    private int month;
 
     public static void main(String[] args) {
         launch(args);
@@ -85,10 +82,11 @@ public class Accountable extends Application {
         ========================================================================
         """);
 
+
         Calendar currentDate = GregorianCalendar.getInstance();
 
-        year = currentDate.get(Calendar.YEAR);
-        month = currentDate.get(Calendar.MONTH)+1;
+        int currentYear = currentDate.get(Calendar.YEAR);
+        int currentMonth = currentDate.get(Calendar.MONTH)+1;
 
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root);
@@ -109,6 +107,41 @@ public class Accountable extends Application {
         // Button for saving
         HBox controls = new HBox();
 
+        ChoiceBox<String> selectMonth = new ChoiceBox<>();
+
+        ChoiceBox<String> selectYear = new ChoiceBox<>();
+        selectYear.valueProperty().addListener(e -> {
+            selectMonth.setItems(observableList(Storage.getAvailableMonths(selectYear.getValue())));
+            if (selectMonth.getItems().size() == 0)
+                selectMonth.getItems().add(Integer.toString(currentMonth));
+
+            selectMonth.setValue(selectMonth.getItems().get(selectMonth.getItems().size()-1));
+        });
+        selectYear.setItems(observableList(Storage.getAvailableYears()));
+        if (!selectYear.getItems().contains(Integer.toString(currentYear)))
+            selectYear.getItems().add(Integer.toString(currentYear));
+        selectYear.setValue(selectYear.getItems().get(selectYear.getItems().size()-1));
+
+        // Load button
+        ImageView loadIcon = new ImageView("load.png");
+        loadIcon.setFitHeight(24);
+        loadIcon.setPreserveRatio(true);
+
+        Button load = new Button();
+        load.setGraphic(loadIcon);
+        load.getStyleClass().add("background");
+        load.setOnAction(a -> {
+            try {
+                manager.setTransactionList(Storage.load(
+                        Integer.parseInt(selectYear.getValue()),
+                        Integer.parseInt(selectMonth.getValue())
+                ));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
+        // Save button
         ImageView saveIcon = new ImageView("save.png");
         saveIcon.setFitHeight(24);
         saveIcon.setPreserveRatio(true);
@@ -117,10 +150,20 @@ public class Accountable extends Application {
         save.setGraphic(saveIcon);
         save.getStyleClass().add("background");
         save.setOnAction(a -> {
-            Storage.write(manager.getTransactionsProperty().getValue(), year, month);
+            try {
+                Storage.write(
+                        manager.getTransactionsProperty().getValue(),
+                        Integer.parseInt(selectYear.getValue()),
+                        Integer.parseInt(selectMonth.getValue()));
+            } catch (NumberFormatException nfe) {
+                System.out.println("Wrong number format in year or month");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+
         });
 
-        controls.getChildren().add(save);
+        controls.getChildren().addAll(load, selectYear, selectMonth, save);
 
         top.getChildren().addAll(title, controls);
 
@@ -181,8 +224,7 @@ public class Accountable extends Application {
                 "stylesheets/TransactionTile.css"
         );
 
-        if (manager.setTransactionList(Storage.read(year, month)))
-            System.out.printf("Loaded file for %s/%s", year, month);
+        manager.setTransactionList(Storage.load(currentYear, currentMonth));
 
         stage.show();
     }
