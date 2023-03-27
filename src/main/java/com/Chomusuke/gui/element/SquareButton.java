@@ -1,4 +1,4 @@
-package com.chomusuke.gui;
+package com.chomusuke.gui.element;
 
 import javafx.scene.control.Button;
 import javafx.event.EventHandler;

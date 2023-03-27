@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui;
+package com.chomusuke.gui.element;
 
 import com.chomusuke.transactions.Transaction;
 import javafx.scene.layout.HBox;

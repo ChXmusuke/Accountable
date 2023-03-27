@@ -17,8 +17,11 @@
 
 package com.chomusuke;
 
-import com.chomusuke.gui.PlusButton;
-import com.chomusuke.gui.TransactionTile;
+import com.chomusuke.gui.element.PlusButton;
+import com.chomusuke.gui.element.SquareButton;
+import com.chomusuke.gui.element.TransactionTile;
+import com.chomusuke.gui.stage.AddFileScreen;
+import com.chomusuke.gui.stage.AddTransactionScreen;
 import com.chomusuke.transactions.Storage;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
@@ -26,15 +29,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.converter.FloatStringConverter;
 
 import com.chomusuke.transactions.Transaction;
 import com.chomusuke.transactions.TransactionList;
@@ -42,8 +42,6 @@ import com.chomusuke.transactions.TransactionList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static com.chomusuke.transactions.Transaction.TransactionType;
-import static com.chomusuke.transactions.Transaction.ValueType;
 import static javafx.collections.FXCollections.observableList;
 
 public class Accountable extends Application {
@@ -104,9 +102,9 @@ public class Accountable extends Application {
         title.setId("title");
         top.setAlignment(Pos.CENTER);
 
-        // Button for saving
         HBox controls = new HBox();
 
+        // Selection boxes
         ChoiceBox<String> selectMonth = new ChoiceBox<>();
 
         ChoiceBox<String> selectYear = new ChoiceBox<>();
@@ -122,48 +120,39 @@ public class Accountable extends Application {
             selectYear.getItems().add(Integer.toString(currentYear));
         selectYear.setValue(selectYear.getItems().get(selectYear.getItems().size()-1));
 
-        // Load button
-        ImageView loadIcon = new ImageView("load.png");
-        loadIcon.setFitHeight(24);
-        loadIcon.setPreserveRatio(true);
+        // New file button
+        SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show(
+                selectYear.itemsProperty().get()
+        ));
 
-        Button load = new Button();
-        load.setGraphic(loadIcon);
-        load.getStyleClass().add("background");
-        load.setOnAction(a -> {
+        // Load button
+        SquareButton load = new SquareButton("load.png", a -> {
             try {
                 manager.setTransactionList(Storage.load(
                         Integer.parseInt(selectYear.getValue()),
                         Integer.parseInt(selectMonth.getValue())
                 ));
+            } catch (NumberFormatException ignored) {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         });
 
         // Save button
-        ImageView saveIcon = new ImageView("save.png");
-        saveIcon.setFitHeight(24);
-        saveIcon.setPreserveRatio(true);
-
-        Button save = new Button();
-        save.setGraphic(saveIcon);
-        save.getStyleClass().add("background");
-        save.setOnAction(a -> {
+        SquareButton save = new SquareButton("save.png", a -> {
             try {
                 Storage.write(
                         manager.getTransactionsProperty().getValue(),
                         Integer.parseInt(selectYear.getValue()),
                         Integer.parseInt(selectMonth.getValue()));
-            } catch (NumberFormatException nfe) {
-                System.out.println("Wrong number format in year or month");
+            } catch (NumberFormatException ignored) {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
 
         });
 
-        controls.getChildren().addAll(load, selectYear, selectMonth, save);
+        controls.getChildren().addAll(newFile, load, selectYear, selectMonth, save);
 
         top.getChildren().addAll(title, controls);
 
@@ -193,7 +182,7 @@ public class Accountable extends Application {
             pane.getChildren().setAll(manager.getTiles());
             pane.getChildren().forEach(t -> t.setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.PRIMARY) {
-                    addTransaction(manager, ((TransactionTile) t).getBaseTransaction());
+                    AddTransactionScreen.show(manager, ((TransactionTile) t).getBaseTransaction());
                 }
             }));
         });
@@ -201,13 +190,13 @@ public class Accountable extends Application {
         // "Add transaction" button
         PlusButton addTransaction = new PlusButton();
 
-        addTransaction.setOnMouseClicked((e) -> addTransaction(manager));
+        addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
         addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
         addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode() == KeyCode.SPACE) {
-                addTransaction(manager);
+                AddTransactionScreen.show(manager);
             }
             event.consume();
         });
@@ -227,91 +216,5 @@ public class Accountable extends Application {
         manager.setTransactionList(Storage.load(currentYear, currentMonth));
 
         stage.show();
-    }
-
-    private void addTransaction(TransactionList txList) {
-        addTransaction(txList, null);
-    }
-
-    private void addTransaction(TransactionList txList, Transaction t) {
-        Stage tAdd = new Stage();
-        tAdd.setResizable(false);
-
-        GridPane p = new GridPane();
-        p.setPadding(new Insets(PADDING));
-        p.setHgap(PADDING);
-        p.setVgap(PADDING);
-        p.getStyleClass().add("background");
-
-        // Construction of the GUI
-        TextField nameField = new TextField();
-        ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
-        tTypeField.getItems().addAll(TransactionType.values());
-        tTypeField.setMaxWidth(Double.MAX_VALUE);
-        TextField valueField = new TextField();
-        valueField.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
-        ChoiceBox<Transaction.ValueType> vTypeField = new ChoiceBox<>();
-        vTypeField.getItems().setAll(ValueType.values());
-        vTypeField.setMaxWidth(Double.MAX_VALUE);
-
-        if (t != null) {
-            nameField.setText(t.name());
-            tTypeField.setValue(t.transactionType());
-            vTypeField.setValue(t.valueType());
-            valueField.setText(Float.toString(t.value()));
-        }
-
-        HBox buttons = new HBox();
-        buttons.setPadding(new Insets(PADDING*2));
-        buttons.setSpacing(PADDING);
-
-        // Submit button and its behavior
-        Button submit = new Button(t != null ? "Modifier" : "Ajouter");
-        submit.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(submit, Priority.ALWAYS);
-        submit.setOnAction((e2) -> {
-            if (nameField.getText() == null || nameField.getText().equals("")
-                    || valueField.getText() == null || valueField.getText().equals("")
-                    || tTypeField.getValue() == null || vTypeField.getValue() == null) {
-                return;
-            }
-            txList.add(new Transaction(
-                    nameField.getText(),
-                    (byte) 0,
-                    tTypeField.getValue(),
-                    vTypeField.getValue(),
-                    Float.parseFloat(valueField.getText())
-            ),
-                    t);
-
-            tAdd.close();
-        });
-
-        // Delete button
-        if (t != null) {
-            Button delete = new Button("Supprimer");
-            delete.setTextFill(Color.RED);
-            delete.setOnAction(a -> {
-                txList.remove(t);
-
-                tAdd.close();
-            });
-
-            buttons.getChildren().add(delete);
-        }
-
-        buttons.getChildren().add(submit);
-
-        p.add(nameField, 0, 0);
-        p.add(valueField, 1, 0);
-        p.add(tTypeField, 0, 1);
-        p.add(vTypeField, 1, 1);
-
-        p.add(buttons, 0, 2, 2, 1);
-
-        Scene s = new Scene(p);
-        s.getStylesheets().add("stylesheets/accountable.css");
-        tAdd.setScene(s);
-        tAdd.show();
     }
 }

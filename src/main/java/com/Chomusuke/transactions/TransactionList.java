@@ -18,7 +18,7 @@
 package com.chomusuke.transactions;
 
 
-import com.chomusuke.gui.TransactionTile;
+import com.chomusuke.gui.element.TransactionTile;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
