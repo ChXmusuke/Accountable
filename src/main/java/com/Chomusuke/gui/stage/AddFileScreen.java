@@ -1,6 +1,6 @@
 package com.chomusuke.gui.stage;
 
-import com.chomusuke.transactions.Storage;
+import com.chomusuke.logic.Storage;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

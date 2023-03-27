@@ -22,7 +22,7 @@ import com.chomusuke.gui.element.SquareButton;
 import com.chomusuke.gui.element.TransactionTile;
 import com.chomusuke.gui.stage.AddFileScreen;
 import com.chomusuke.gui.stage.AddTransactionScreen;
-import com.chomusuke.transactions.Storage;
+import com.chomusuke.logic.Storage;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Insets;
@@ -36,8 +36,8 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import com.chomusuke.transactions.Transaction;
-import com.chomusuke.transactions.TransactionList;
+import com.chomusuke.logic.Transaction;
+import com.chomusuke.logic.TransactionList;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

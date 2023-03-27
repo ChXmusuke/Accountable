@@ -1,7 +1,7 @@
 package com.chomusuke.gui.stage;
 
-import com.chomusuke.transactions.Transaction;
-import com.chomusuke.transactions.TransactionList;
+import com.chomusuke.logic.Transaction;
+import com.chomusuke.logic.TransactionList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

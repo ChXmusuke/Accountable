@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.transactions;
+package com.chomusuke.logic;
 
 
 import com.chomusuke.gui.element.TransactionTile;
@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
 
 import java.util.*;
 
-import static com.chomusuke.transactions.Transaction.TransactionType;
+import static com.chomusuke.logic.Transaction.TransactionType;
 
 public class TransactionList {
 

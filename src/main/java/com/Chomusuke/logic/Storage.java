@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.transactions;
+package com.chomusuke.logic;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
@@ -23,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.chomusuke.transactions.Transaction.TransactionType;
-import static com.chomusuke.transactions.Transaction.ValueType;
+import static com.chomusuke.logic.Transaction.TransactionType;
+import static com.chomusuke.logic.Transaction.ValueType;
 
 public class Storage {
 

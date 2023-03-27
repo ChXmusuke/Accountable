@@ -17,7 +17,7 @@
 
 package com.chomusuke.gui.element;
 
-import com.chomusuke.transactions.Transaction;
+import com.chomusuke.logic.Transaction;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
