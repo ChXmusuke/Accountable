@@ -53,6 +53,19 @@ public class TransactionList {
         return values;
     }
 
+    public float getTotalRevenue() {
+        float s = 0;
+
+        for (Transaction t : txs) {
+            if (t.transactionType() != TransactionType.REVENUE)
+                break;
+
+            s += t.value();
+        }
+
+        return s;
+    }
+
     public float getRemainder() {
         return getRemainder(getValues());
     }
