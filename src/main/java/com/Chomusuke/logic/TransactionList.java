@@ -57,6 +57,16 @@ public class TransactionList {
     }
 
     /**
+     * Adds transaction {@code t} to the list.
+     *
+     * @param t A new transaction
+     */
+    public void add(Transaction t) {
+
+        add(t, null);
+    }
+
+    /**
      * Replaces {@code oldT} with {@code t}.
      *
      * @param t The new transaction
@@ -74,19 +84,14 @@ public class TransactionList {
         }
     }
 
-    public void add(Transaction t) {
-
-        add(t, null);
-    }
-
+    /**
+     * Removes the transaction {@code t} from the list.
+     *
+     * @param t A transaction
+     */
     public void remove(Transaction t) {
 
-        remove(txs.indexOf(t));
-    }
-
-    public void remove(int index) {
-
-        txs.remove(index);
+        txs.remove(t);
     }
 
     public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
