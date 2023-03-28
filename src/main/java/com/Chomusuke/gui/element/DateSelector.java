@@ -77,10 +77,6 @@ public class DateSelector extends HBox {
         return -1;
     }
 
-    public ReadOnlyStringProperty getYearProperty() {
-        return year.getReadOnlyProperty();
-    }
-
     public ReadOnlyStringProperty getMonthProperty() {
         return month.getReadOnlyProperty();
     }
