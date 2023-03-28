@@ -157,15 +157,16 @@ public class Accountable extends Application {
             // Tiles generation
             List<TransactionTile> tiles = new ArrayList<>();
             for (int i = 0 ; i < txList.size() ; i++) {
-                tiles.add(new TransactionTile(txList.get(i), manager.getValues()[i]));
-            }
+                TransactionTile tile = new TransactionTile(txList.get(i), manager.getValues()[i]);
+                // Event handler
+                tile.setOnMouseClicked(e -> {
+                    if (e.getButton() == MouseButton.PRIMARY) {
+                        AddTransactionScreen.show(manager, tile.getBaseTransaction());
+                    }
+                });
 
-            // Creation of event handlers for tiles
-            tiles.forEach(t -> t.setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.PRIMARY) {
-                    AddTransactionScreen.show(manager, t.getBaseTransaction());
-                }
-            }));
+                tiles.add(tile);
+            }
 
             pane.getChildren().setAll(tiles);
         });
