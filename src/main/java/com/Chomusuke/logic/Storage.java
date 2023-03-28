@@ -52,8 +52,8 @@ public class Storage {
         try {
             Files.createDirectories(dir);
             Files.createFile(dir.resolve(file));
-        } catch (FileAlreadyExistsException e) {
-            System.out.println("file already exists");
+        } catch (FileAlreadyExistsException ignored) {
+            // Exception ignored
         } catch (Exception e) {
             e.printStackTrace();
         }
