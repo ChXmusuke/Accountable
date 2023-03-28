@@ -31,7 +31,6 @@ import static com.chomusuke.logic.Transaction.TransactionType;
 public class TransactionList {
 
     private final ObservableList<Transaction> txs = FXCollections.observableArrayList();
-    private int nextRevenueIndex = 0;
 
     public void setTransactionList(List<Transaction> txs) {
         this.txs.setAll(txs);
@@ -64,35 +63,30 @@ public class TransactionList {
      * @param oldT The old transaction
      */
     public void add(Transaction t, Transaction oldT) {
+
         if (oldT != null) {
             int index = txs.indexOf(oldT);
             txs.set(index, t);
         } else {
-            txs.add(t);
-        }
-    }
-
-    public void add(Transaction t) {
-        add(t, null);
-        if (t != null) {
             if (t.transactionType().equals(TransactionType.REVENUE))
-                this.txs.add(nextRevenueIndex++, t);
+                this.txs.add(0, t);
             else this.txs.add(t);
         }
     }
 
+    public void add(Transaction t) {
+
+        add(t, null);
+    }
+
     public void remove(Transaction t) {
+
         remove(txs.indexOf(t));
     }
 
     public void remove(int index) {
-        try {
-            if (txs.remove(index).transactionType() == TransactionType.REVENUE)
-                nextRevenueIndex--;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        txs.remove(index);
     }
 
     public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
