@@ -24,7 +24,6 @@ import com.chomusuke.gui.element.TransactionTile;
 import com.chomusuke.gui.stage.AddFileScreen;
 import com.chomusuke.gui.stage.AddTransactionScreen;
 import com.chomusuke.logic.Storage;
-import com.chomusuke.util.Time;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Insets;
@@ -96,14 +95,23 @@ public class Accountable extends Application {
         HBox controls = new HBox();
 
         DateSelector dateSelector = new DateSelector();
+
+        Text loadedDate = new Text();
+
         // New file button
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
 
         // Load button
-        SquareButton load = new SquareButton("load.png", a -> manager.setTransactionList(Storage.load(
-                dateSelector.getYearValue(),
-                dateSelector.getMonthValue())
-        ));
+        SquareButton load = new SquareButton("load.png", a -> {
+            int year = dateSelector.getYearValue();
+            int month = dateSelector.getMonthValue();
+
+            if (year >= 1 && month >= 1) {
+                manager.setTransactionList(Storage.load(year, month));
+
+                loadedDate.setText(String.format("%s/%s", year, month));
+            }
+        });
 
         // Save button
         SquareButton save = new SquareButton("save.png", a -> Storage.write(
@@ -111,9 +119,9 @@ public class Accountable extends Application {
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()));
 
-        controls.getChildren().addAll(newFile, load, dateSelector, save);
+        controls.getChildren().addAll(newFile, load, save, dateSelector);
 
-        top.getChildren().addAll(title, controls);
+        top.getChildren().addAll(title, controls, loadedDate);
 
         // Pane for content
         Pane content = new Pane();
@@ -173,9 +181,10 @@ public class Accountable extends Application {
         );
 
         manager.setTransactionList(Storage.load(
-                Time.getCurrentYear(),
-                Time.getCurrentMonth()
+                dateSelector.getYearValue(),
+                dateSelector.getMonthValue()
         ));
+        loadedDate.setText(String.format("%s/%s", dateSelector.getYearValue(), dateSelector.getMonthValue()));
 
         stage.show();
     }
