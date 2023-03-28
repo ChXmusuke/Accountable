@@ -6,13 +6,27 @@
     -fx-background-color: transparent;
 }
 
-Text {
-    -fx-fill: lightgray;
+.stdText {
     -fx-font: 24 "Arial Rounded MT Bold";
+    -fx-fill: lightgray;
 }
 
 #title {
     -fx-font-size: 35;
+    -fx-fill: lightgray;
     -fx-font-weight: bolder;
-    -fx-text-alignment: center;
+}
+
+TransactionTile {
+    -fx-spacing: 8;
+}
+
+.tileText {
+    -fx-padding: 0 8 8 8;
+    -fx-spacing: 8;
+}
+
+.colorTag {
+    -fx-arc-height: 8;
+    -fx-arc-width: 16;
 }

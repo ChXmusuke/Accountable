@@ -34,6 +34,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -42,12 +43,14 @@ import com.chomusuke.logic.TransactionList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Accountable extends Application {
 
     private static final int WINDOW_HEIGHT = 580;
     private static final double WINDOW_RATIO = 6/10.0;
     private static final int PADDING = 8;
+    private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
 
     public static void main(String[] args) {
         launch(args);
@@ -80,7 +83,16 @@ public class Accountable extends Application {
         """);
 
         BorderPane root = new BorderPane();
+
         Scene scene = new Scene(root);
+        scene.getStylesheets().add("stylesheets/accountable.css");
+
+        stage.setScene(scene);
+        stage.setHeight(WINDOW_HEIGHT);
+        stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
+        stage.setResizable(false);
+
+        stage.show();
 
         root.getStyleClass().add("background");
         root.setPadding(new Insets(PADDING, PADDING, 0, PADDING));
@@ -89,17 +101,21 @@ public class Accountable extends Application {
 
         VBox top = new VBox();
         top.setSpacing(PADDING);
+        top.setPadding(new Insets(0, 0, PADDING, 0));
 
         // Title of the app
         Text title = new Text("Accountable.");
         title.setId("title");
-        top.setAlignment(Pos.CENTER);
+        title.getStyleClass().add("stdText");
+        HBox titleContainer = new HBox(title);
+        titleContainer.setAlignment(Pos.CENTER);
 
         HBox controls = new HBox();
 
         DateSelector dateSelector = new DateSelector();
 
         Text loadedDate = new Text();
+        loadedDate.getStyleClass().add("stdText");
 
         // New file button
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
@@ -120,7 +136,24 @@ public class Accountable extends Application {
         controls.getChildren().addAll(newFile, dateSelector, loadedDate);
         HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
 
-        top.getChildren().addAll(title, controls);
+        Text remainder = new Text();
+        remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
+        HBox remainderContainer = new HBox(remainder);
+        remainderContainer.setAlignment(Pos.BASELINE_LEFT);
+
+        remainder.textProperty().addListener((v, o, n) -> {
+            if (Float.parseFloat(n) == 0)
+                remainder.setFill(Color.BLUE);
+            else if (Float.parseFloat(n) < 0)
+                remainder.setFill(Color.RED);
+            else if (Float.parseFloat(n) < manager.getTotalRevenue()*REMAINDER_COLOR_THRESHOLD) {
+                remainder.setFill(Color.ORANGE);
+            }
+            else
+                remainder.setFill(Color.GREEN);
+        });
+
+        top.getChildren().addAll(titleContainer, controls, remainderContainer);
 
         // Pane for content
         Pane content = new Pane();
@@ -150,6 +183,9 @@ public class Accountable extends Application {
                     manager.getTransactionsProperty().getValue(),
                     dateSelector.getYearValue(),
                     dateSelector.getMonthValue());
+
+            remainder.setText(String.format(Locale.ROOT, "%.2f", manager.getRemainder()));
+
 
             // Display
             VBox pane = (VBox) scrollPane.getContent();
@@ -187,22 +223,11 @@ public class Accountable extends Application {
 
         content.getChildren().addAll(scrollPane, addTransaction);
 
-        stage.setScene(scene);
-        stage.setHeight(WINDOW_HEIGHT);
-        stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
-        stage.setResizable(false);
-
-        scene.getStylesheets().addAll(
-                "stylesheets/accountable.css",
-                "stylesheets/TransactionTile.css"
-        );
-
         manager.setTransactionList(Storage.load(
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()
         ));
         loadedDate.setText(String.format("%s/%s", dateSelector.getYearValue(), dateSelector.getMonthValue()));
-
-        stage.show();
+        remainder.setText(Float.toString(manager.getRemainder()));
     }
 }

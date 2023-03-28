@@ -24,6 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.util.Locale;
+
 public class TransactionTile extends HBox {
 
     Transaction baseTransaction;
@@ -45,10 +47,14 @@ public class TransactionTile extends HBox {
         }
 
         Text nameText = new Text(t.name());
-        Text valueText = new Text(String.format("%.2f", value));
+        Text valueText = new Text(String.format(Locale.ROOT, "%.2f", value));
 
         VBox textBox = new VBox(nameText, valueText);
         textBox.getStyleClass().add("tileText");
+        textBox.getChildren().forEach(text -> text.setStyle(
+                "-fx-font: 24 \"Arial Rounded MT Bold\"; " +
+                "-fx-fill: lightgray"
+        ));
 
         this.getChildren().addAll(colorTag, textBox);
     }
