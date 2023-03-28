@@ -1,0 +1,32 @@
+.background {
+    -fx-background-color: #222222;
+}
+
+.scrollPane {
+    -fx-background-color: transparent;
+}
+
+.stdText {
+    -fx-font: 24 "Arial Rounded MT Bold";
+    -fx-fill: lightgray;
+}
+
+#title {
+    -fx-font-size: 35;
+    -fx-fill: lightgray;
+    -fx-font-weight: bolder;
+}
+
+TransactionTile {
+    -fx-spacing: 8;
+}
+
+.tileText {
+    -fx-padding: 0 8 8 8;
+    -fx-spacing: 8;
+}
+
+.colorTag {
+    -fx-arc-height: 8;
+    -fx-arc-width: 16;
+}
