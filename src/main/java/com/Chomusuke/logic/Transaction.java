@@ -61,11 +61,11 @@ public record Transaction(String name,
             }
             case REMAINDER -> {
                 float v = (total-used) * value;
-                return (float) (Math.round(v*100)/100.0);
+                return Math.round(v*100)/100.0f;
             }
             default -> {
                 float v = total-used;
-                return (float) (Math.round(v*100)/100.0);
+                return Math.round(v*100)/100.0f;
             }
         }
     }
