@@ -17,7 +17,6 @@
 
 package com.chomusuke.logic;
 
-import com.chomusuke.gui.element.TransactionTile;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
@@ -94,14 +93,5 @@ public class TransactionList {
 
     public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
         return txs.getReadOnlyProperty();
-    }
-
-    public List<TransactionTile> getTiles() {
-        List<TransactionTile> tiles = new ArrayList<>();
-        for (int i = 0 ; i < txs.size() ; i++) {
-            tiles.add(new TransactionTile(txs.get(i), getValues()[i]));
-        }
-
-        return tiles;
     }
 }
