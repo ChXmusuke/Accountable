@@ -17,12 +17,10 @@
 
 package com.chomusuke.logic;
 
-
 import com.chomusuke.gui.element.TransactionTile;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.util.*;
 
@@ -30,7 +28,7 @@ import static com.chomusuke.logic.Transaction.TransactionType;
 
 public class TransactionList {
 
-    private final ObservableList<Transaction> txs = FXCollections.observableArrayList();
+    private final ReadOnlyListWrapper<Transaction> txs = new ReadOnlyListWrapper<>(FXCollections.observableList(new ArrayList<>()));
 
     public void setTransactionList(List<Transaction> txs) {
         this.txs.setAll(txs);
@@ -79,8 +77,8 @@ public class TransactionList {
             txs.set(index, t);
         } else {
             if (t.transactionType().equals(TransactionType.REVENUE))
-                this.txs.add(0, t);
-            else this.txs.add(t);
+                txs.add(0, t);
+            else txs.add(t);
         }
     }
 
@@ -95,7 +93,7 @@ public class TransactionList {
     }
 
     public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
-        return new ReadOnlyListWrapper<>(txs);
+        return txs.getReadOnlyProperty();
     }
 
     public List<TransactionTile> getTiles() {
