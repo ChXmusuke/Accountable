@@ -100,31 +100,16 @@ public class Accountable extends Application {
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
 
         // Load button
-        SquareButton load = new SquareButton("load.png", a -> {
-            try {
-                manager.setTransactionList(Storage.load(
-                        dateSelector.getYearValue(),
-                        dateSelector.getMonthValue())
-                );
-            } catch (NumberFormatException ignored) {
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        });
+        SquareButton load = new SquareButton("load.png", a -> manager.setTransactionList(Storage.load(
+                dateSelector.getYearValue(),
+                dateSelector.getMonthValue())
+        ));
 
         // Save button
-        SquareButton save = new SquareButton("save.png", a -> {
-            try {
-                Storage.write(
-                        manager.getTransactionsProperty().getValue(),
-                        dateSelector.getYearValue(),
-                        dateSelector.getMonthValue());
-            } catch (NumberFormatException ignored) {
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-
-        });
+        SquareButton save = new SquareButton("save.png", a -> Storage.write(
+                manager.getTransactionsProperty().getValue(),
+                dateSelector.getYearValue(),
+                dateSelector.getMonthValue()));
 
         controls.getChildren().addAll(newFile, load, dateSelector, save);
 
