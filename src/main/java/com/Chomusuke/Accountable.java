@@ -114,15 +114,10 @@ public class Accountable extends Application {
             }
         });
 
-        // Save button
-        SquareButton save = new SquareButton("save.png", a -> Storage.write(
-                manager.getTransactionsProperty().getValue(),
-                dateSelector.getYearValue(),
-                dateSelector.getMonthValue()));
+        controls.getChildren().addAll(newFile, dateSelector, loadedDate);
+        HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
 
-        controls.getChildren().addAll(newFile, save, dateSelector);
-
-        top.getChildren().addAll(title, controls, loadedDate);
+        top.getChildren().addAll(title, controls);
 
         // Pane for content
         Pane content = new Pane();
@@ -153,6 +148,12 @@ public class Accountable extends Application {
                     AddTransactionScreen.show(manager, ((TransactionTile) t).getBaseTransaction());
                 }
             }));
+
+            // Write the new data to storage
+            Storage.write(
+                    manager.getTransactionsProperty().getValue(),
+                    dateSelector.getYearValue(),
+                    dateSelector.getMonthValue());
         });
 
         // "Add transaction" button
