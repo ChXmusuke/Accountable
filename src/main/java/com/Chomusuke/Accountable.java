@@ -40,6 +40,9 @@ import javafx.stage.Stage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Accountable extends Application {
 
     private static final int WINDOW_HEIGHT = 580;
@@ -141,19 +144,30 @@ public class Accountable extends Application {
 
         ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
         txList.addListener((d, o, n) -> {
-            VBox pane = (VBox) scrollPane.getContent();
-            pane.getChildren().setAll(manager.getTiles());
-            pane.getChildren().forEach(t -> t.setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.PRIMARY) {
-                    AddTransactionScreen.show(manager, ((TransactionTile) t).getBaseTransaction());
-                }
-            }));
 
             // Write the new data to storage
             Storage.write(
                     manager.getTransactionsProperty().getValue(),
                     dateSelector.getYearValue(),
                     dateSelector.getMonthValue());
+
+            // Display
+            VBox pane = (VBox) scrollPane.getContent();
+
+            // Tiles generation
+            List<TransactionTile> tiles = new ArrayList<>();
+            for (int i = 0 ; i < txList.size() ; i++) {
+                tiles.add(new TransactionTile(txList.get(i), manager.getValues()[i]));
+            }
+
+            // Creation of event handlers for tiles
+            tiles.forEach(t -> t.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    AddTransactionScreen.show(manager, t.getBaseTransaction());
+                }
+            }));
+
+            pane.getChildren().setAll(tiles);
         });
 
         // "Add transaction" button
