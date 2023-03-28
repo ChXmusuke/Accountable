@@ -53,6 +53,20 @@ public class TransactionList {
         return values;
     }
 
+    public float getRemainder() {
+        return getRemainder(getValues());
+    }
+
+    public float getRemainder(float[] values) {
+        float sum = 0;
+
+        for (float v : values) {
+            sum += v;
+        }
+
+        return Math.round(sum * 100)/100.0f;
+    }
+
     /**
      * Adds transaction {@code t} to the list.
      *
