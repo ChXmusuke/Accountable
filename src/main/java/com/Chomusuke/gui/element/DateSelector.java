@@ -2,8 +2,8 @@ package com.chomusuke.gui.element;
 
 import com.chomusuke.logic.Storage;
 import com.chomusuke.util.Time;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 public class DateSelector extends HBox {
 
-    private final StringProperty year = new SimpleStringProperty();
-    private final StringProperty month = new SimpleStringProperty();
+    private final ReadOnlyStringWrapper year = new ReadOnlyStringWrapper();
+    private final ReadOnlyStringWrapper month = new ReadOnlyStringWrapper();
 
     private static final int PADDING = 8;
     public DateSelector() {
@@ -75,5 +75,13 @@ public class DateSelector extends HBox {
         }
 
         return -1;
+    }
+
+    public ReadOnlyStringProperty getYearProperty() {
+        return year.getReadOnlyProperty();
+    }
+
+    public ReadOnlyStringProperty getMonthProperty() {
+        return month.getReadOnlyProperty();
     }
 }

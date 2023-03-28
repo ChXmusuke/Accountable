@@ -101,15 +101,16 @@ public class Accountable extends Application {
         // New file button
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
 
-        // Load button
-        SquareButton load = new SquareButton("load.png", a -> {
-            int year = dateSelector.getYearValue();
-            int month = dateSelector.getMonthValue();
+        dateSelector.getMonthProperty().addListener((v, o, n) -> {
+            if (n != null) {
+                int year = dateSelector.getYearValue();
+                int month = Integer.parseInt(n);
 
-            if (year >= 1 && month >= 1) {
-                manager.setTransactionList(Storage.load(year, month));
+                if (year >= 1 && month >= 1) {
+                    manager.setTransactionList(Storage.load(year, month));
 
-                loadedDate.setText(String.format("%s/%s", year, month));
+                    loadedDate.setText(String.format("%s/%s", year, month));
+                }
             }
         });
 
@@ -119,7 +120,7 @@ public class Accountable extends Application {
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()));
 
-        controls.getChildren().addAll(newFile, load, save, dateSelector);
+        controls.getChildren().addAll(newFile, save, dateSelector);
 
         top.getChildren().addAll(title, controls, loadedDate);
 
