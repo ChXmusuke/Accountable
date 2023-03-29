@@ -30,6 +30,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -44,6 +45,7 @@ import com.chomusuke.logic.TransactionList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Accountable extends Application {
 
@@ -91,6 +93,8 @@ public class Accountable extends Application {
         stage.setHeight(WINDOW_HEIGHT);
         stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
         stage.setResizable(false);
+
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
 
         stage.show();
 
