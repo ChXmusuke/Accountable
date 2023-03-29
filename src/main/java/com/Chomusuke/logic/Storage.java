@@ -28,7 +28,8 @@ import static com.chomusuke.logic.Transaction.ValueType;
 
 public class Storage {
 
-    private static final Path DIR_NAME = Path.of("/Users/artur/Library/Application Support/Accountable/storage/");
+    public static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
+    private static final Path DIR_NAME = ROOT_DIR.resolve("Accountable/storage/");
 
     /**
      * Don't let anyone instantiate this class.
