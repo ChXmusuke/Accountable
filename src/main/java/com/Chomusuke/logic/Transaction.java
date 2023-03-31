@@ -18,19 +18,26 @@
 package com.chomusuke.logic;
 
 /**
- * Provides memory storage of transactions.
- *
- * @param name the name of the tx
- * @param to the destination account if tx type is SAVINGS
- * @param transactionType the type of tx
- * @param valueType the type of value of the tx
- * @param value The absolute value of the tx
+ * This record provides memory storage of transactions.
  */
 public record Transaction(String name,
                           byte to,
                           TransactionType transactionType,
                           ValueType valueType,
                           float value) {
+
+    /**
+     * Canonical constructor.
+     *
+     * @param name the name of the tx
+     * @param to the destination account if tx type is SAVINGS TODO: not used yet
+     * @param transactionType the type of tx
+     * @param valueType the type of value of the tx
+     * @param value The absolute value of the tx
+     */
+    public Transaction {
+
+    }
 
     /**
      * Packs the enum values of {@code transactionType}
@@ -89,13 +96,22 @@ public record Transaction(String name,
     }
 
 
-
+    /**
+     * This enum provides constants for transaction types.
+     */
     public enum TransactionType {
         REVENUE,
         BUDGET,
         BILL,
         SAVINGS;
 
+        /**
+         * Unpacks the byte {@code b} into a {@code TransactionType}.
+         *
+         * @param b a byte
+         *
+         * @return a {@code TransactionType}
+         */
         public static TransactionType of(byte b) {
             b &= 0b11;
 
@@ -103,12 +119,22 @@ public record Transaction(String name,
         }
     }
 
+    /**
+     * This enum provides constants for value computation types.
+     */
     public enum ValueType {
         ABSOLUTE,
         TOTAL,
         REMAINDER,
         ALL;
 
+        /**
+         * Unpacks the byte {@code b} into a {@code ValueType}.
+         *
+         * @param b a byte
+         *
+         * @return a {@code ValueType}
+         */
         public static ValueType of(byte b) {
             b &= 0b11;
 
