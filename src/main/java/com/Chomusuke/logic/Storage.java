@@ -39,15 +39,47 @@ public class Storage {
     private Storage() {}
 
     /**
+     * Writes the specified {@code Transaction} to a file according to the given year and month.
+     *
+     * @param t  a {@code Transaction}
+     * @param year  a value
+     * @param month a value
+     */
+    public static void write(Transaction t, int year, int month) {
+
+        Path dir = DIR_NAME.resolve(Integer.toString(year));
+        Path file = Path.of(Integer.toString(month));
+
+        try {
+            Files.createDirectories(dir);
+            Files.createFile(dir.resolve(file));
+        } catch (FileAlreadyExistsException ignored) {
+            // Exception ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(dir.resolve(file).toString(), true))) {
+
+            output.writeUTF(t.name());
+            output.writeByte(t.to());
+            output.writeByte(t.packTypes());
+            output.writeFloat(t.value());
+
+            System.out.println("Wrote 1 transaction");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Writes the specified list to a file according to the given year and month.
      *
      * @param list  a {@code Transaction} list
      * @param year  a value
      * @param month a value
-     *
-     * @return {@code true} on success.
      */
-    public static boolean write(List<Transaction> list, int year, int month) {
+    public static void write(List<Transaction> list, int year, int month) {
 
         Path dir = DIR_NAME.resolve(Integer.toString(year));
         Path file = Path.of(Integer.toString(month));
@@ -69,11 +101,11 @@ public class Storage {
                 output.writeByte(t.packTypes());
                 output.writeFloat(t.value());
             }
+
+            System.out.printf("Wrote %s transactions%n", list.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return true;
     }
 
     public static List<Transaction> load(int year, int month) {
@@ -95,10 +127,14 @@ public class Storage {
 
                 float value = input.readFloat();
 
-                txs.add(new Transaction(name, to, tt, vt, value));
+                Transaction newTx = new Transaction(name, to, tt, vt, value);
+                if (tt.equals(TransactionType.REVENUE))
+                    txs.add(0, newTx);
+                else
+                    txs.add(newTx);
             }
 
-            throw new RuntimeException("Le fichier contient trop de transactions.");
+            throw new RuntimeException(String.format("The file %s/%s contains too much transactions.", year, month));
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
         } catch (EOFException ignored) {

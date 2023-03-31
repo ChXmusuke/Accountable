@@ -25,7 +25,7 @@ import com.chomusuke.gui.stage.AddFileScreen;
 import com.chomusuke.gui.stage.AddTransactionScreen;
 import com.chomusuke.logic.Storage;
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyListProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -129,11 +129,8 @@ public class Accountable extends Application {
                 int year = dateSelector.getYearValue();
                 int month = Integer.parseInt(n);
 
-                if (year >= 1 && month >= 1) {
+                if (year >= 1 && month >= 1)
                     manager.setTransactionList(Storage.load(year, month));
-
-                    loadedDate.setText(String.format("%s/%s", year, month));
-                }
             }
         });
 
@@ -179,28 +176,42 @@ public class Accountable extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
-        txList.addListener((d, o, n) -> {
+        manager.getTransactionList().addListener((ListChangeListener<Transaction>) l -> {
+            l.next();
 
-            // Write the new data to storage
-            Storage.write(
-                    manager.getTransactionsProperty().getValue(),
-                    dateSelector.getYearValue(),
-                    dateSelector.getMonthValue());
-
-            remainder.setText(String.format(Locale.ROOT, "%.2f", manager.getRemainder()));
-
+            if (!manager.setAllFlag()) {
+                if (l.wasRemoved()) {
+                    Storage.write(
+                            manager.getTransactionList(),
+                            dateSelector.getYearValue(),
+                            dateSelector.getMonthValue()
+                    );
+                } else {
+                    Storage.write(
+                            l.getAddedSubList().get(0),
+                            dateSelector.getYearValue(),
+                            dateSelector.getMonthValue()
+                    );
+                }
+            }
 
             // Display
+
+            int year = dateSelector.getYearValue();
+            int month = dateSelector.getMonthValue();
+            loadedDate.setText(String.format("%s/%s", year, month));
+            remainder.setText(String.format(Locale.ROOT, "%.2f", manager.getRemainder()));
+
             VBox pane = (VBox) scrollPane.getContent();
 
+            List<Transaction> txList = manager.getTransactionList();
             // Tiles generation
             List<TransactionTile> tiles = new ArrayList<>();
             for (int i = 0 ; i < txList.size() ; i++) {
                 TransactionTile tile = new TransactionTile(txList.get(i), manager.getValues()[i]);
                 // Event handler
-                tile.setOnMouseClicked(e -> {
-                    if (e.getButton() == MouseButton.PRIMARY) {
+                tile.setOnMouseClicked(m -> {
+                    if (m.getButton() == MouseButton.PRIMARY) {
                         AddTransactionScreen.show(manager, tile.getBaseTransaction());
                     }
                 });
@@ -211,19 +222,20 @@ public class Accountable extends Application {
             pane.getChildren().setAll(tiles);
         });
 
-        // "Add transaction" button
-        PlusButton addTransaction = new PlusButton();
-
-        addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
-        addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
-        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
-
+        // Transaction addition
         scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode() == KeyCode.SPACE) {
                 AddTransactionScreen.show(manager);
             }
             event.consume();
         });
+
+        // "Add transaction" button
+        PlusButton addTransaction = new PlusButton();
+
+        addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
+        addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
 
         content.getChildren().addAll(scrollPane, addTransaction);
 
@@ -232,6 +244,5 @@ public class Accountable extends Application {
                 dateSelector.getMonthValue()
         ));
         loadedDate.setText(String.format("%s/%s", dateSelector.getYearValue(), dateSelector.getMonthValue()));
-        remainder.setText(Float.toString(manager.getRemainder()));
     }
 }

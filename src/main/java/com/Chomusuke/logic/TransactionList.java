@@ -17,20 +17,31 @@
 
 package com.chomusuke.logic;
 
-import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.*;
 
 import static com.chomusuke.logic.Transaction.TransactionType;
 
 public class TransactionList {
+    private final ObservableList<Transaction> txs = FXCollections.observableArrayList();
+    private final ObservableList<Transaction> unmodifiableTxs = FXCollections.unmodifiableObservableList(txs);
 
-    private final ReadOnlyListWrapper<Transaction> txs = new ReadOnlyListWrapper<>(FXCollections.observableList(new ArrayList<>()));
+    private boolean setAllFlag = false;
 
     public void setTransactionList(List<Transaction> txs) {
+
+        setAllFlag = true;
+
         this.txs.setAll(txs);
+
+        setAllFlag = false;
+    }
+
+    public boolean setAllFlag() {
+
+        return setAllFlag;
     }
 
     public float[] getValues() {
@@ -99,9 +110,11 @@ public class TransactionList {
     public void add(Transaction t, Transaction oldT) {
 
         if (oldT != null) {
+
             int index = txs.indexOf(oldT);
             txs.set(index, t);
         } else {
+
             if (t.transactionType().equals(TransactionType.REVENUE))
                 txs.add(0, t);
             else txs.add(t);
@@ -118,7 +131,8 @@ public class TransactionList {
         txs.remove(t);
     }
 
-    public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
-        return txs.getReadOnlyProperty();
+    public ObservableList<Transaction> getTransactionList() {
+
+        return unmodifiableTxs;
     }
 }
