@@ -28,6 +28,8 @@ import static com.chomusuke.logic.Transaction.ValueType;
 
 public class Storage {
 
+    private static final int MAX_TRANSACTION_COUNT = 512;
+
     public static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
     private static final Path DIR_NAME = ROOT_DIR.resolve("Accountable/storage/");
 
@@ -60,7 +62,6 @@ public class Storage {
         }
 
         try (DataOutputStream output = new DataOutputStream(new FileOutputStream(dir.resolve(file).toString()))) {
-            output.writeInt(list.size());
 
             for (Transaction t : list) {
                 output.writeUTF(t.name());
@@ -83,9 +84,7 @@ public class Storage {
         LinkedList<Transaction> txs = new LinkedList<>();
 
         try (DataInputStream input = new DataInputStream(new FileInputStream(dir.resolve(file).toString()))) {
-            int entries = input.readInt();
-
-            for (int i = 0 ; i < entries ; i++) {
+            for (int i = 0 ; i < MAX_TRANSACTION_COUNT ; i++) {
                 String name = input.readUTF();
 
                 byte to = input.readByte();
@@ -98,10 +97,13 @@ public class Storage {
 
                 txs.add(new Transaction(name, to, tt, vt, value));
             }
+
+            throw new RuntimeException("Le fichier contient trop de transactions.");
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
-        }
-        catch (Exception e) {
+        } catch (EOFException ignored) {
+            // Exception ignored
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
