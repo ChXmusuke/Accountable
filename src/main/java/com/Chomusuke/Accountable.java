@@ -108,8 +108,6 @@ public class Accountable extends Application {
 
             // Icon
             stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
-
-            stage.show();
         }
 
 
@@ -277,5 +275,9 @@ public class Accountable extends Application {
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()
         ));
+
+
+
+        stage.show();
     }
 }

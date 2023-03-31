@@ -17,7 +17,8 @@
 
 package com.chomusuke.gui.stage;
 
-import com.chomusuke.logic.Storage;
+import java.util.ArrayList;
+
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -30,70 +31,103 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
-import java.util.ArrayList;
+import com.chomusuke.logic.Storage;
 
+/**
+ * This class displays a JavaFX Stage made for transaction creation.
+ */
 public class AddFileScreen {
 
     private static final int PADDING = 8;
 
+    /**
+     * Don't let anyone instantiate this class
+     */
+    private AddFileScreen() {}
+
+    /**
+     * Displays the date entry window.
+     */
     public static void show() {
         Stage stage = new Stage();
-        stage.setResizable(false);
+
         VBox root = new VBox();
-        root.getStyleClass().add("background");
-        root.setPadding(new Insets(PADDING));
-        root.setSpacing(PADDING);
-        stage.setScene(new Scene(root));
 
         HBox inputs = new HBox();
-        inputs.setSpacing(PADDING);
-
         TextField year = new TextField();
         TextField month = new TextField();
-        inputs.getChildren().addAll(year, month);
-        inputs.getChildren().forEach(n ->
-                ((TextField) n).setTextFormatter(new TextFormatter<>(new IntegerStringConverter()))
-        );
-        month.textProperty().addListener(t -> {
-            StringProperty monthText = (StringProperty) t;
-            int v;
-            try {
-                v = Integer.parseInt(monthText.getValue());
 
-                if (v < 0)
-                    monthText.setValue(Integer.toString(1));
-                else if (v > 12) {
-                    monthText.setValue(Integer.toString(12));
-                }
-            } catch (NumberFormatException ignored) {
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        });
+        inputs.getChildren().addAll(year, month);
 
         Button submit = new Button("Ajouter");
-        submit.setOnAction(a -> {
-            if (year.getText().equals("")
-                    || month.getText().equals("")) {
-                return;
-            }
-
-            int yearValue = Integer.parseInt(year.getText());
-            int monthValue = Integer.parseInt(month.getText());
-
-            if (Integer.parseInt(year.getText()) < 1
-                    || Integer.parseInt(month.getText()) > 12) {
-                return;
-            }
-
-            Storage.write(new ArrayList<>(), yearValue, monthValue);
-
-            stage.close();
-        });
-        submit.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(submit, Priority.ALWAYS);
 
         root.getChildren().addAll(inputs, submit);
+
+
+
+        // ----- STYLE -----
+        {
+            stage.setResizable(false);
+            root.getStyleClass().add("background");
+            root.setPadding(new Insets(PADDING));
+            root.setSpacing(PADDING);
+            stage.setScene(new Scene(root));
+
+            inputs.setSpacing(PADDING);
+            inputs.getChildren().forEach(n ->
+                    ((TextField) n).setTextFormatter(new TextFormatter<>(new IntegerStringConverter()))
+            );
+
+            submit.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(submit, Priority.ALWAYS);
+        }
+
+
+
+        // ----- EVENTS -----
+        {
+            // Restrict the month input to realistic values
+            month.textProperty().addListener(t -> {
+                StringProperty monthText = (StringProperty) t;
+                int v;
+                try {
+                    v = Integer.parseInt(monthText.getValue());
+
+                    if (v < 0)
+                        monthText.setValue(Integer.toString(1));
+                    else if (v > 12) {
+                        monthText.setValue(Integer.toString(12));
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Exception ignored
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
+
+            // Creation of the file
+            submit.setOnAction(a -> {
+                // The submission does not trigger if either one of the fields is empty
+                if (year.getText().equals("")
+                        || month.getText().equals("")) {
+                    return;
+                }
+
+                int yearValue = Integer.parseInt(year.getText());
+                int monthValue = Integer.parseInt(month.getText());
+
+                // Restrict inputs to realistic year and month values
+                if (Integer.parseInt(year.getText()) < 1
+                        || Integer.parseInt(month.getText()) > 12) {
+                    return;
+                }
+
+                // Writes an empty list, meaning creating an empty file at wanted location
+                Storage.write(new ArrayList<>(), yearValue, monthValue);
+
+                stage.close();
+            });
+        }
 
         stage.show();
     }

@@ -30,7 +30,7 @@ import com.chomusuke.logic.Storage;
 import com.chomusuke.util.Time;
 
 /**
- * Provides a node for selecting a date with {@code ChoiceBox}es.
+ * Provides a JavaFX Node for selecting a date with {@code ChoiceBox}es.
  */
 public class DateSelector extends HBox {
 
@@ -82,6 +82,7 @@ public class DateSelector extends HBox {
             });
         }
 
+        // Create a file at current date if none is found
         if (years.size() == 0) {
             Storage.write(new ArrayList<>(), Time.getCurrentYear(), Time.getCurrentMonth());
             years = FXCollections.observableList(Storage.getAvailableYears());

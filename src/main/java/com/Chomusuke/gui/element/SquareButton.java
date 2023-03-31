@@ -22,17 +22,27 @@ import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 import javafx.scene.image.ImageView;
 
+/**
+ * Provides a JavaFX Node that represents a square button
+ * with an icon and an action.
+ */
 public class SquareButton extends Button {
 
     private static final int SIZE = 24;
 
     public SquareButton(String icon, EventHandler<ActionEvent> event) {
+
+        // ----- ICON -----
         ImageView buttonIcon = new ImageView(icon);
         buttonIcon.setFitHeight(SIZE);
         buttonIcon.setPreserveRatio(true);
 
         setGraphic(buttonIcon);
         getStyleClass().add("background");
+
+
+
+        // ----- ACTION -----
         setOnAction(event);
     }
 }
