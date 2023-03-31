@@ -49,9 +49,6 @@ public class DateSelector extends HBox {
 
         getChildren().addAll(yearSelector, monthSelector);
 
-        year.bind(yearSelector.valueProperty());
-        month.bind(monthSelector.valueProperty());
-
         List<String> years = Storage.getAvailableYears();
         List<String> months = Storage.getAvailableMonths(Integer.parseInt(years.get(years.size()-1)));
 
@@ -70,9 +67,19 @@ public class DateSelector extends HBox {
             )));
 
             // Clears the selected month when another year is chosen
-            yearSelector.getSelectionModel().selectedItemProperty().addListener(e -> monthSelector.getSelectionModel()
-                    .clearSelection()
-            );
+            // Updates the year property if the selected value is not null
+            yearSelector.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
+                monthSelector.getSelectionModel()
+                        .clearSelection();
+
+                if (n != null)
+                    year.set(yearSelector.getValue());
+            });
+
+            monthSelector.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
+                if (n != null)
+                    month.set(monthSelector.getValue());
+            });
         }
 
         if (years.size() == 0) {
@@ -98,7 +105,7 @@ public class DateSelector extends HBox {
      */
     public int getYearValue() {
 
-        return Integer.parseInt(year.getValue());
+        return Integer.parseInt(year.get());
     }
 
     /**
@@ -108,7 +115,7 @@ public class DateSelector extends HBox {
      */
     public int getMonthValue() {
 
-        return Integer.parseInt(month.getValue());
+        return Integer.parseInt(month.get());
     }
 
     /**
@@ -117,6 +124,7 @@ public class DateSelector extends HBox {
      * @return a {@code ReadOnlyStringProperty}
      */
     public ReadOnlyStringProperty getMonthProperty() {
+
         return month.getReadOnlyProperty();
     }
 }
