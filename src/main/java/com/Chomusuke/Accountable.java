@@ -17,15 +17,13 @@
 
 package com.chomusuke;
 
-import com.chomusuke.gui.element.DateSelector;
-import com.chomusuke.gui.element.PlusButton;
-import com.chomusuke.gui.element.SquareButton;
-import com.chomusuke.gui.element.TransactionTile;
-import com.chomusuke.gui.stage.AddFileScreen;
-import com.chomusuke.gui.stage.AddTransactionScreen;
-import com.chomusuke.logic.Storage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyListProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -39,14 +37,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import com.chomusuke.logic.Transaction;
-import com.chomusuke.logic.TransactionList;
+import com.chomusuke.gui.element.*;
+import com.chomusuke.gui.stage.*;
+import com.chomusuke.logic.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
+/**
+ * Main class of the Accountable application.
+ * <p>
+ * Manages the main UI elements.
+ */
 public class Accountable extends Application {
 
     private static final int WINDOW_HEIGHT = 580;
@@ -84,154 +83,201 @@ public class Accountable extends Application {
         ========================================================================
         """);
 
-        BorderPane root = new BorderPane();
 
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("stylesheets/accountable.css");
 
-        stage.setScene(scene);
-        stage.setHeight(WINDOW_HEIGHT);
-        stage.setWidth(WINDOW_HEIGHT*WINDOW_RATIO);
-        stage.setResizable(false);
-
-        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
-
-        stage.show();
-
-        root.getStyleClass().add("background");
-        root.setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-
+        // ----- MEMORY -----
         TransactionList manager = new TransactionList();
 
+
+
+        // ----- MAIN -----
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root);
+
+        // Main
+        {
+            stage.setScene(scene);
+            stage.setHeight(WINDOW_HEIGHT);
+            stage.setWidth(WINDOW_HEIGHT * WINDOW_RATIO);
+            stage.setResizable(false);
+
+            root.getStyleClass().add("background");
+            root.setPadding(new Insets(PADDING, PADDING, 0, PADDING));
+
+            scene.getStylesheets().add("stylesheets/accountable.css");
+
+            // Icon
+            stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
+        }
+
+
+
+        // ----- TOP -----
         VBox top = new VBox();
-        top.setSpacing(PADDING);
-        top.setPadding(new Insets(0, 0, PADDING, 0));
 
         // Title of the app
         Text title = new Text("Accountable.");
-        title.setId("title");
-        title.getStyleClass().add("stdText");
         HBox titleContainer = new HBox(title);
-        titleContainer.setAlignment(Pos.CENTER);
 
+        // Date selector and related
         HBox controls = new HBox();
 
-        DateSelector dateSelector = new DateSelector();
-
-        Text loadedDate = new Text();
-        loadedDate.getStyleClass().add("stdText");
-
-        // New file button
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
-
-        dateSelector.getMonthProperty().addListener((v, o, n) -> {
-            if (n != null) {
-                int year = dateSelector.getYearValue();
-                int month = Integer.parseInt(n);
-
-                if (year >= 1 && month >= 1) {
-                    manager.setTransactionList(Storage.load(year, month));
-
-                    loadedDate.setText(String.format("%s/%s", year, month));
-                }
-            }
-        });
-
-        controls.getChildren().addAll(newFile, dateSelector, loadedDate);
-        HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
+        DateSelector dateSelector = new DateSelector();
+        Text loadedDate = new Text();
 
         Text remainder = new Text();
-        remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
         HBox remainderContainer = new HBox(remainder);
-        remainderContainer.setAlignment(Pos.BASELINE_LEFT);
-
-        remainder.textProperty().addListener((v, o, n) -> {
-            if (Float.parseFloat(n) == 0)
-                remainder.setFill(Color.BLUE);
-            else if (Float.parseFloat(n) < 0)
-                remainder.setFill(Color.RED);
-            else if (Float.parseFloat(n) < manager.getTotalRevenue()*REMAINDER_COLOR_THRESHOLD) {
-                remainder.setFill(Color.ORANGE);
-            }
-            else
-                remainder.setFill(Color.GREEN);
-        });
 
         top.getChildren().addAll(titleContainer, controls, remainderContainer);
-
-        // Pane for content
-        Pane content = new Pane();
-        content.setPadding(new Insets(PADDING));
-
         root.setTop(top);
-        root.setCenter(content);
 
-        // Content
+        // Top
+        {
+            top.setSpacing(PADDING);
+            top.setPadding(new Insets(0, 0, PADDING, 0));
+
+            title.setId("title");
+            title.getStyleClass().add("stdText");
+            titleContainer.setAlignment(Pos.CENTER);
+
+            controls.getChildren().addAll(newFile, dateSelector, loadedDate);
+
+            loadedDate.getStyleClass().add("stdText");
+            HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
+
+            // Load the corresponding file in memory when selecting a year+month
+            dateSelector.getMonthProperty().addListener((v, o, n) -> {
+                if (n != null) {
+                    int year = dateSelector.getYearValue();
+                    int month = Integer.parseInt(n);
+
+                    if (year >= 1 && month >= 1)
+                        manager.setTransactionList(Storage.load(year, month));
+                }
+            });
+
+            remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
+            remainderContainer.setAlignment(Pos.BASELINE_LEFT);
+        }
+
+
+
+        // ----- CONTENT -----
+        Pane content = new Pane();
+
         VBox transactionPane = new VBox();
-        transactionPane.getStyleClass().addAll("background");
-        transactionPane.setSpacing(PADDING);
-        transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
-        transactionPane.prefWidthProperty().bind(content.widthProperty());
-        transactionPane.prefHeightProperty().bind(content.heightProperty());
-
         ScrollPane scrollPane = new ScrollPane(transactionPane);
-        scrollPane.getStyleClass().add("scrollPane");
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-        ReadOnlyListProperty<Transaction> txList = manager.getTransactionsProperty();
-        txList.addListener((d, o, n) -> {
-
-            // Write the new data to storage
-            Storage.write(
-                    manager.getTransactionsProperty().getValue(),
-                    dateSelector.getYearValue(),
-                    dateSelector.getMonthValue());
-
-            remainder.setText(String.format(Locale.ROOT, "%.2f", manager.getRemainder()));
-
-
-            // Display
-            VBox pane = (VBox) scrollPane.getContent();
-
-            // Tiles generation
-            List<TransactionTile> tiles = new ArrayList<>();
-            for (int i = 0 ; i < txList.size() ; i++) {
-                TransactionTile tile = new TransactionTile(txList.get(i), manager.getValues()[i]);
-                // Event handler
-                tile.setOnMouseClicked(e -> {
-                    if (e.getButton() == MouseButton.PRIMARY) {
-                        AddTransactionScreen.show(manager, tile.getBaseTransaction());
-                    }
-                });
-
-                tiles.add(tile);
-            }
-
-            pane.getChildren().setAll(tiles);
-        });
 
         // "Add transaction" button
         PlusButton addTransaction = new PlusButton();
 
-        addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
-        addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
-        addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
-
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-            if (event.getCode() == KeyCode.SPACE) {
-                AddTransactionScreen.show(manager);
-            }
-            event.consume();
-        });
-
         content.getChildren().addAll(scrollPane, addTransaction);
+        root.setCenter(content);
 
+        // Content
+        {
+            content.setPadding(new Insets(PADDING));
+
+            transactionPane.getStyleClass().addAll("background");
+            transactionPane.setSpacing(PADDING);
+            transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
+            transactionPane.prefWidthProperty().bind(content.widthProperty());
+            transactionPane.prefHeightProperty().bind(content.heightProperty());
+
+            scrollPane.getStyleClass().add("scrollPane");
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+            addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+            addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+        }
+
+
+
+        // ----- EVENTS -----
+        {
+            // Transaction addition (space key)
+            scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+                if (event.getCode() == KeyCode.SPACE) {
+                    AddTransactionScreen.show(manager);
+                }
+                event.consume();
+            });
+
+            // Transaction addition (Big Fat + Button)
+            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
+
+            // Colors for remainder
+            remainder.textProperty().addListener((v, o, n) -> {
+                if (Float.parseFloat(n) == 0)
+                    remainder.setFill(Color.BLUE);
+                else if (Float.parseFloat(n) < 0)
+                    remainder.setFill(Color.RED);
+                else if (Float.parseFloat(n) < manager.getTotalRevenue() * REMAINDER_COLOR_THRESHOLD)
+                    remainder.setFill(Color.ORANGE);
+                else
+                    remainder.setFill(Color.GREEN);
+            });
+
+            // Transaction list modification
+            manager.getTransactionList().addListener((ListChangeListener<Transaction>) l -> {
+                l.next();
+
+                if (!manager.setAllFlag()) {
+                    if (l.wasRemoved()) {
+                        Storage.write(
+                                manager.getTransactionList(),
+                                dateSelector.getYearValue(),
+                                dateSelector.getMonthValue()
+                        );
+                    } else {
+                        Storage.write(
+                                l.getAddedSubList().get(0),
+                                dateSelector.getYearValue(),
+                                dateSelector.getMonthValue()
+                        );
+                    }
+                }
+
+                // Display
+
+                int year = dateSelector.getYearValue();
+                int month = dateSelector.getMonthValue();
+                loadedDate.setText(String.format("%s/%s", year, month));
+                remainder.setText(String.format(Locale.ROOT, "%.2f", manager.getRemainder()));
+
+                VBox pane = (VBox) scrollPane.getContent();
+
+                List<Transaction> txList = manager.getTransactionList();
+                // Tiles generation
+                List<TransactionTile> tiles = new ArrayList<>();
+                for (int i = 0; i < txList.size(); i++) {
+                    TransactionTile tile = new TransactionTile(txList.get(i), manager.getValues()[i]);
+                    // Event handler
+                    tile.setOnMouseClicked(m -> {
+                        if (m.getButton() == MouseButton.PRIMARY) {
+                            AddTransactionScreen.show(manager, tile.getBaseTransaction());
+                        }
+                    });
+
+                    tiles.add(tile);
+                }
+
+                pane.getChildren().setAll(tiles);
+            });
+        }
+
+
+
+        // ----- STORAGE INIT -----
         manager.setTransactionList(Storage.load(
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()
         ));
-        loadedDate.setText(String.format("%s/%s", dateSelector.getYearValue(), dateSelector.getMonthValue()));
-        remainder.setText(Float.toString(manager.getRemainder()));
+
+
+
+        stage.show();
     }
 }

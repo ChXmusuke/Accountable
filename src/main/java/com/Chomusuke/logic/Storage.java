@@ -26,7 +26,12 @@ import java.util.*;
 import static com.chomusuke.logic.Transaction.TransactionType;
 import static com.chomusuke.logic.Transaction.ValueType;
 
+/**
+ * Provides disk storage for transactions.
+ */
 public class Storage {
+
+    private static final int MAX_TRANSACTION_COUNT = 512;
 
     public static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
     private static final Path DIR_NAME = ROOT_DIR.resolve("Accountable/storage/");
@@ -37,30 +42,47 @@ public class Storage {
     private Storage() {}
 
     /**
+     * Appends the specified {@code Transaction} to a file according to the given year and month.
+     * This method does not overwrite existing data in the file.
+     *
+     * @param t  a {@code Transaction}
+     * @param year  a value
+     * @param month a value
+     */
+    public static void write(Transaction t, int year, int month) {
+
+        Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
+
+        createDirFiles(file);
+
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(file.toString(), true))) {
+
+            output.writeUTF(t.name());
+            output.writeByte(t.to());
+            output.writeByte(t.packTypes());
+            output.writeFloat(t.value());
+
+            System.out.println("Wrote 1 transaction");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Writes the specified list to a file according to the given year and month.
+     * This method overwrites any existing date in the file.
      *
      * @param list  a {@code Transaction} list
      * @param year  a value
      * @param month a value
-     *
-     * @return {@code true} on success.
      */
-    public static boolean write(List<Transaction> list, int year, int month) {
+    public static void write(List<Transaction> list, int year, int month) {
 
-        Path dir = DIR_NAME.resolve(Integer.toString(year));
-        Path file = Path.of(Integer.toString(month));
+        Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
 
-        try {
-            Files.createDirectories(dir);
-            Files.createFile(dir.resolve(file));
-        } catch (FileAlreadyExistsException ignored) {
-            // Exception ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        createDirFiles(file);
 
-        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(dir.resolve(file).toString()))) {
-            output.writeInt(list.size());
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(file.toString()))) {
 
             for (Transaction t : list) {
                 output.writeUTF(t.name());
@@ -68,24 +90,29 @@ public class Storage {
                 output.writeByte(t.packTypes());
                 output.writeFloat(t.value());
             }
+
+            System.out.printf("Wrote %s transactions%n", list.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return true;
     }
 
+    /**
+     * Loads the file located at year/month.
+     *
+     * @param year a value
+     * @param month a value
+     *
+     * @return a list of transactions loaded from the file
+     */
     public static List<Transaction> load(int year, int month) {
 
-        Path dir = DIR_NAME.resolve(Integer.toString(year));
-        Path file = Path.of(Integer.toString(month));
+        Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
 
         LinkedList<Transaction> txs = new LinkedList<>();
 
-        try (DataInputStream input = new DataInputStream(new FileInputStream(dir.resolve(file).toString()))) {
-            int entries = input.readInt();
-
-            for (int i = 0 ; i < entries ; i++) {
+        try (DataInputStream input = new DataInputStream(new FileInputStream(file.toString()))) {
+            for (int i = 0 ; i < MAX_TRANSACTION_COUNT ; i++) {
                 String name = input.readUTF();
 
                 byte to = input.readByte();
@@ -96,36 +123,74 @@ public class Storage {
 
                 float value = input.readFloat();
 
-                txs.add(new Transaction(name, to, tt, vt, value));
+                Transaction newTx = new Transaction(name, to, tt, vt, value);
+                if (tt.equals(TransactionType.REVENUE))
+                    txs.add(0, newTx);
+                else
+                    txs.add(newTx);
             }
+
+            throw new RuntimeException(String.format("The file %s/%s contains too much transactions.", year, month));
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
-        }
-        catch (Exception e) {
+        } catch (EOFException ignored) {
+            // Exception ignored
+            System.out.println("Reached end of file.");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return txs;
     }
 
+    /**
+     * Returns the files that exist in the corresponding
+     * year's directory.
+     * <br>
+     * The files need to be named as integers
+     * in order to be counted.
+     *
+     * @param year a value
+     *
+     * @return a list of available months
+     */
     public static List<String> getAvailableMonths(int year) {
 
         return getAvailable(Integer.toString(year));
     }
 
+    /**
+     * Returns the directories that exist in the
+     * global storage directory.
+     * <br>
+     * The directories need to be named as integers
+     * in order to be counted.
+     *
+     * @return a list of available years
+     */
     public static List<String> getAvailableYears() {
 
         return getAvailable("");
     }
 
+    /**
+     * Lists the existing files or directories at the given path.
+     * <br>
+     * The files/directories need to be named as integers
+     * in order to be counted.
+     *
+     * @param path a path
+     *
+     * @return a list of files/directories
+     */
     private static List<String> getAvailable(String path) {
 
         List<String> valid = new ArrayList<>();
         File[] availableF = new File(DIR_NAME.resolve(path).toString()).listFiles();
 
         if (availableF != null) {
-            Arrays.sort(availableF);
             for (File f : availableF) {
+                // Filters out non-integer-named files and directories
                 try {
                     Integer.parseInt(f.getName());
 
@@ -139,5 +204,23 @@ public class Storage {
         Collections.sort(valid);
 
         return valid;
+    }
+
+    /**
+     * Creates the directory and file corresponding to the path
+     * {@code DIR_NAME}/a/b
+     *
+     * @param p the path to the file
+     */
+    private static void createDirFiles(Path p) {
+
+        try {
+            Files.createDirectories(p.getParent());
+            Files.createFile(p);
+        } catch (FileAlreadyExistsException ignored) {
+            // Exception ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

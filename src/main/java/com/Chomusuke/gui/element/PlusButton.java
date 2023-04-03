@@ -21,6 +21,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Provides a JavaFX Node that looks like a Plus (+) button
+ */
 public class PlusButton extends StackPane {
 
     private static final String CROSS_COLOR = "-fx-fill: white";
@@ -31,14 +34,20 @@ public class PlusButton extends StackPane {
 
     public PlusButton() {
         Circle c = new Circle(RADIUS);
+        // Cross
         Rectangle v = new Rectangle(CROSS_ARM_LENGTH, CROSS_ARM_LENGTH/7.0);
         Rectangle h = new Rectangle(CROSS_ARM_LENGTH*CROSS_ARM_RATIO, CROSS_ARM_LENGTH);
 
-        c.setStyle(BUTTON_COLOR);
-
-        v.setStyle(CROSS_COLOR);
-        h.setStyle(CROSS_COLOR);
-
         getChildren().addAll(c, v, h);
+
+
+
+        // ----- STYLE -----
+        {
+            c.setStyle(BUTTON_COLOR);
+
+            v.setStyle(CROSS_COLOR);
+            h.setStyle(CROSS_COLOR);
+        }
     }
 }

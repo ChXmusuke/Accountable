@@ -17,26 +17,65 @@
 
 package com.chomusuke.logic;
 
-import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.collections.FXCollections;
+import java.util.List;
 
-import java.util.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import static com.chomusuke.logic.Transaction.TransactionType;
 
+/**
+ * This class provides memory storage of transactions.
+ * <br>
+ * Uses the default constructor.
+ */
 public class TransactionList {
 
-    private final ReadOnlyListWrapper<Transaction> txs = new ReadOnlyListWrapper<>(FXCollections.observableList(new ArrayList<>()));
+    private final ObservableList<Transaction> txs = FXCollections.observableArrayList();
+    private final ObservableList<Transaction> unmodifiableTxs = FXCollections.unmodifiableObservableList(txs);
 
+    private boolean setAllFlag = false;
+
+    /**
+     * Replaces all transactions in memory by the transactions
+     * in {@code txs}.
+     *
+     * @param txs a {@code List} of {@code Transaction} objects
+     */
     public void setTransactionList(List<Transaction> txs) {
+
+        // A flag is necessary for listeners to make a difference
+        // between individual operations and full list replacements
+
+        setAllFlag = true;
+
         this.txs.setAll(txs);
+
+        setAllFlag = false;
     }
 
+    /**
+     * Gets the status of the {@code setAllFlag}.
+     *
+     * @return {@code true} if the change being witnessed
+     *         is a {@code setAll} operation,
+     *         {@code false} if not.
+     */
+    public boolean setAllFlag() {
+
+        return setAllFlag;
+    }
+
+    /**
+     * Computes the values of all transactions
+     * currently in memory.
+     *
+     * @return an array of float values
+     */
     public float[] getValues() {
         float[] values = new float[txs.size()];
-        float valueP = 0;
-        float valueN = 0;
+        float valueP = 0;  // Total income
+        float valueN = 0;  // Total expenses
 
         for (int i = 0 ; i < txs.size() ; i++) {
             Transaction t = txs.get(i);
@@ -53,6 +92,12 @@ public class TransactionList {
         return values;
     }
 
+    /**
+     * Returns the sum of all transactions
+     * of {@code TransactionType.REVENUE}.
+     *
+     * @return the total {@code float} value
+     */
     public float getTotalRevenue() {
         float s = 0;
 
@@ -91,7 +136,9 @@ public class TransactionList {
     }
 
     /**
-     * Replaces {@code oldT} with {@code t}.
+     * Adds transaction {@code t} to the list.
+     * Replaces {@code oldT} with {@code t} if
+     * provided an {@code oldT} to replace.
      *
      * @param t The new transaction
      * @param oldT The old transaction
@@ -99,9 +146,11 @@ public class TransactionList {
     public void add(Transaction t, Transaction oldT) {
 
         if (oldT != null) {
+
             int index = txs.indexOf(oldT);
             txs.set(index, t);
         } else {
+
             if (t.transactionType().equals(TransactionType.REVENUE))
                 txs.add(0, t);
             else txs.add(t);
@@ -118,7 +167,14 @@ public class TransactionList {
         txs.remove(t);
     }
 
-    public ReadOnlyListProperty<Transaction> getTransactionsProperty() {
-        return txs.getReadOnlyProperty();
+    /**
+     * Returns an unmodifiable version of the internal
+     * {@code Transaction} list.
+     *
+     * @return an unmodifiable list
+     */
+    public ObservableList<Transaction> getTransactionList() {
+
+        return unmodifiableTxs;
     }
 }

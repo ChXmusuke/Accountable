@@ -26,6 +26,9 @@ import javafx.scene.text.Text;
 
 import java.util.Locale;
 
+/**
+ * Provides a JavaFX Node that represents a transaction.
+ */
 public class TransactionTile extends HBox {
 
     Transaction baseTransaction;
@@ -35,31 +38,46 @@ public class TransactionTile extends HBox {
         baseTransaction = t;
 
         Rectangle colorTag = new Rectangle();
-        colorTag.getStyleClass().add("colorTag");
-        colorTag.setHeight(68);
-        colorTag.setWidth(8);
+        VBox textBox = new VBox();
 
-        switch (t.transactionType()) {
-            case REVENUE -> colorTag.setFill(Color.web("#33CC33"));
-            case BUDGET -> colorTag.setFill(Color.web("#FFE066"));
-            case BILL -> colorTag.setFill(Color.web("#FF1A75"));
-            case SAVINGS -> colorTag.setFill(Color.web("#33CCFF"));
-        }
+        this.getChildren().addAll(colorTag, textBox);
 
         Text nameText = new Text(t.name());
         Text valueText = new Text(String.format(Locale.ROOT, "%.2f", value));
 
-        VBox textBox = new VBox(nameText, valueText);
-        textBox.getStyleClass().add("tileText");
-        textBox.getChildren().forEach(text -> text.setStyle(
-                "-fx-font: 24 \"Arial Rounded MT Bold\"; " +
-                "-fx-fill: lightgray"
-        ));
+        textBox.getChildren().addAll(nameText, valueText);
 
-        this.getChildren().addAll(colorTag, textBox);
+
+
+        // ----- STYLE -----
+        {
+            colorTag.getStyleClass().add("colorTag");
+            colorTag.setHeight(68);
+            colorTag.setWidth(8);
+
+            // Color-coded based on transaction type
+            switch (t.transactionType()) {
+                case REVENUE -> colorTag.setFill(Color.web("#33CC33"));
+                case BUDGET -> colorTag.setFill(Color.web("#FFE066"));
+                case BILL -> colorTag.setFill(Color.web("#FF1A75"));
+                case SAVINGS -> colorTag.setFill(Color.web("#33CCFF"));
+            }
+
+            textBox.getStyleClass().add("tileText");
+            textBox.getChildren().forEach(text -> text.setStyle(
+                    "-fx-font: 24 \"Arial Rounded MT Bold\"; " +
+                            "-fx-fill: lightgray"
+            ));
+        }
     }
 
+    /**
+     * Returns the transaction used to build the tile.
+     *
+     * @return a {@code Transaction}
+     */
     public Transaction getBaseTransaction() {
+
         return baseTransaction;
     }
 }
