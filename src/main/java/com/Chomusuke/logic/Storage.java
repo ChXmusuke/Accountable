@@ -62,6 +62,30 @@ public class Storage {
         }
     }
 
+    public static Map<Byte, Account> readAccounts() {
+        Path file = DIR_NAME.resolve("balances");
+
+        Map<Byte, Account> a = new HashMap<>();
+
+        try (DataInputStream input = new DataInputStream(new FileInputStream(file.toString()))) {
+            byte id;
+            Account account;
+            for (int i = 0 ; i < MAX_ACCOUNT_COUNT ; i++) {
+                id = input.readByte();
+                account = new Account(input.readUTF(), input.readDouble());
+                a.put(id, account);
+            }
+
+            throw new RuntimeException("The file contains too much accounts.");
+        } catch (EOFException ignored) {
+            // Exception ignored
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        return a;
+    }
+
     /**
      * Appends the specified {@code Transaction} to a file according to the given year and month.
      * This method does not overwrite existing data in the file.
