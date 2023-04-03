@@ -95,4 +95,9 @@ public class Account {
 
         return balance;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Account {name:%s, balance:%s}", name, balance);
+    }
 }
