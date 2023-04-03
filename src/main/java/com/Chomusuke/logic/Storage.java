@@ -43,6 +43,24 @@ public class Storage {
      */
     private Storage() {}
 
+    public static void writeAccounts(Map<Byte, Account> accounts) {
+        Path file = DIR_NAME.resolve("balances");
+
+        createDirFiles(file);
+
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(file.toString()))) {
+            for (Byte id : accounts.keySet()) {
+                output.writeByte(id);
+                output.writeUTF(accounts.get(id).getName());
+                output.writeDouble(accounts.get(id).getBalance());
+            }
+
+            System.out.printf("Wrote %s balances%n", accounts.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Appends the specified {@code Transaction} to a file according to the given year and month.
      * This method does not overwrite existing data in the file.
@@ -109,7 +127,7 @@ public class Storage {
      *
      * @return a list of transactions loaded from the file
      */
-    public static List<Transaction> load(int year, int month) {
+    public static List<Transaction> read(int year, int month) {
         Preconditions.checkArgument(month > 0 && month <= 12);
 
         Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
