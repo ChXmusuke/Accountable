@@ -19,7 +19,6 @@ package com.chomusuke.gui.stage;
 
 import java.util.ArrayList;
 
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
 
 import com.chomusuke.logic.Storage;
 
@@ -74,9 +72,6 @@ public class AddFileScreen {
             stage.setScene(new Scene(root));
 
             inputs.setSpacing(PADDING);
-            inputs.getChildren().forEach(n ->
-                    ((TextField) n).setTextFormatter(new TextFormatter<>(new IntegerStringConverter()))
-            );
 
             submit.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(submit, Priority.ALWAYS);
@@ -86,23 +81,41 @@ public class AddFileScreen {
 
         // ----- EVENTS -----
         {
-            // Restrict the month input to realistic values
-            month.textProperty().addListener((t, o, n) -> {
-                int v;
-                try {
-                    v = Integer.parseInt(n);
+            year.setTextFormatter(new TextFormatter<>(c -> {
+                if (c.isAdded()) {
+                    try {
+                        int n = Integer.parseInt(c.getControlNewText());
 
-                    if (v < 0)
-                        ((StringProperty) t).setValue(Integer.toString(1));
-                    else if (v > 12) {
-                        ((StringProperty) t).setValue(Integer.toString(12));
+                        if (n < 0) {
+                            year.setText(Integer.toString(~n+1));
+
+                            throw new NumberFormatException();
+                        }
+                    } catch (NumberFormatException n) {
+                        return null;
                     }
-                } catch (NumberFormatException e) {
-                    // Exception ignored
-                } catch (Exception exception) {
-                    exception.printStackTrace();
                 }
-            });
+
+                return c;
+            }));
+
+            month.setTextFormatter(new TextFormatter<>(c -> {
+                if (c.isAdded()) {
+                    try {
+                        int n = Integer.parseInt(c.getControlNewText());
+
+                        if (1 > n || n > 12) {
+                            month.setText(Integer.toString(Math.min(Math.max(n, 1), 12)));
+
+                            throw new NumberFormatException();
+                        }
+                    } catch (NumberFormatException n) {
+                        return null;
+                    }
+                }
+
+                return c;
+            }));
 
             // Creation of the file
             submit.setOnAction(a -> {
