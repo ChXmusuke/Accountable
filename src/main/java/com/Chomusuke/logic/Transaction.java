@@ -17,6 +17,8 @@
 
 package com.chomusuke.logic;
 
+import com.chomusuke.util.Preconditions;
+
 /**
  * This record provides memory storage of transactions.
  */
@@ -36,7 +38,7 @@ public record Transaction(String name,
      * @param value The absolute value of the tx
      */
     public Transaction {
-
+        Preconditions.checkArgument(transactionType != TransactionType.REVENUE || valueType == ValueType.ABSOLUTE);
     }
 
     /**
@@ -64,17 +66,20 @@ public record Transaction(String name,
                 return value;
             }
             case TOTAL -> {
-                return value*total;
+                float v = Math.max(value/100*total, 0);
+                return Math.round(v*100)/100f;
             }
             case REMAINDER -> {
-                float v = (total-used) * value;
-                return Math.round(v*100)/100.0f;
+                float v = Math.max((total-used) * value/100, 0);
+                return Math.round(v*100)/100f;
             }
-            default -> {
-                float v = total-used;
-                return Math.round(v*100)/100.0f;
+            case ALL -> {
+                float v = Math.max(total-used, 0);
+                return Math.round(v*100)/100f;
             }
         }
+
+        return 0;
     }
 
     @Override

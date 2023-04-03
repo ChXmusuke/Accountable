@@ -28,10 +28,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.converter.FloatStringConverter;
 
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
+
+import java.util.Objects;
+
+import static com.chomusuke.logic.Transaction.*;
 
 public class AddTransactionScreen {
 
@@ -60,9 +63,9 @@ public class AddTransactionScreen {
         Scene s = new Scene(p);
 
         TextField nameField = new TextField();
-        ChoiceBox<Transaction.TransactionType> tTypeField = new ChoiceBox<>();
+        ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
         TextField valueField = new TextField();
-        ChoiceBox<Transaction.ValueType> vTypeField = new ChoiceBox<>();
+        ChoiceBox<ValueType> vTypeField = new ChoiceBox<>();
 
         HBox buttons = new HBox();
         Button submit = new Button(t != null ? "Modifier" : "Ajouter");
@@ -103,19 +106,9 @@ public class AddTransactionScreen {
 
             s.getStylesheets().add("stylesheets/accountable.css");
 
-            tTypeField.getItems().addAll(Transaction.TransactionType.values());
             tTypeField.setMaxWidth(Double.MAX_VALUE);
 
-            valueField.setTextFormatter(new TextFormatter<>(new FloatStringConverter()));
-            vTypeField.getItems().setAll(Transaction.ValueType.values());
             vTypeField.setMaxWidth(Double.MAX_VALUE);
-
-            if (t != null) {
-                nameField.setText(t.name());
-                tTypeField.setValue(t.transactionType());
-                vTypeField.setValue(t.valueType());
-                valueField.setText(Float.toString(t.value()));
-            }
 
             buttons.setPadding(new Insets(PADDING * 2));
             buttons.setSpacing(PADDING);
@@ -127,6 +120,50 @@ public class AddTransactionScreen {
 
         // ----- EVENTS -----
         {
+            valueField.setTextFormatter(new TextFormatter<>(c -> {
+                if (c.isAdded()) {
+                    try {
+                        if (c.getText().length() == 1 && !c.getText().equals("."))
+                            Integer.parseInt(c.getText());
+                        float v = Float.parseFloat(c.getControlNewText());
+
+                        ValueType sVType = vTypeField.getSelectionModel().getSelectedItem();
+                        if (sVType != ValueType.ABSOLUTE && sVType != null && v > 100) {
+                            valueField.setText(Float.toString(100f));
+
+                            throw new NumberFormatException();
+                        }
+                    } catch (NumberFormatException n) {
+                        return null;
+                    }
+                }
+
+                return c;
+            }));
+
+            tTypeField.getSelectionModel().selectedItemProperty().addListener((e, o, n) -> {
+                if (Objects.equals(n, TransactionType.REVENUE)) {
+                    vTypeField.getSelectionModel().select(ValueType.ABSOLUTE);
+                    vTypeField.setDisable(true);
+                } else {
+                    vTypeField.setDisable(false);
+                }
+            });
+
+            vTypeField.getSelectionModel().selectedItemProperty().addListener((e, o, n) -> {
+                if (Objects.equals(n, ValueType.ALL)) {
+                    valueField.setText(Float.toString(100f));
+                    valueField.setDisable(true);
+                } else {
+                    valueField.setDisable(false);
+
+                    if (!Objects.equals(n, ValueType.ABSOLUTE)) {
+
+                        valueField.setText(valueField.getText());
+                    }
+                }
+            });
+
             submit.setOnAction((a) -> {
                 if (nameField.getText() == null || nameField.getText().equals("")
                         || valueField.getText() == null || valueField.getText().equals("")
@@ -144,6 +181,21 @@ public class AddTransactionScreen {
 
                 stage.close();
             });
+        }
+
+
+
+        // ----- VALUE INIT -----
+        {
+            tTypeField.getItems().addAll(TransactionType.values());
+            vTypeField.getItems().setAll(ValueType.values());
+
+            if (t != null) {
+                nameField.setText(t.name());
+                valueField.setText(Float.toString(t.value()));
+                tTypeField.getSelectionModel().select(t.transactionType());
+                vTypeField.getSelectionModel().select(t.valueType());
+            }
         }
 
         stage.show();

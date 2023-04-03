@@ -17,6 +17,8 @@
 
 package com.chomusuke.logic;
 
+import com.chomusuke.util.Preconditions;
+
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -50,6 +52,7 @@ public class Storage {
      * @param month a value
      */
     public static void write(Transaction t, int year, int month) {
+        Preconditions.checkArgument(month > 0 && month <= 12);
 
         Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
 
@@ -77,6 +80,7 @@ public class Storage {
      * @param month a value
      */
     public static void write(List<Transaction> list, int year, int month) {
+        Preconditions.checkArgument(month > 0 && month <= 12);
 
         Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
 
@@ -106,6 +110,7 @@ public class Storage {
      * @return a list of transactions loaded from the file
      */
     public static List<Transaction> load(int year, int month) {
+        Preconditions.checkArgument(month > 0 && month <= 12);
 
         Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
 

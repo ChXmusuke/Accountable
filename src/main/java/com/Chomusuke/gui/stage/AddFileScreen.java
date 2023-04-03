@@ -87,18 +87,17 @@ public class AddFileScreen {
         // ----- EVENTS -----
         {
             // Restrict the month input to realistic values
-            month.textProperty().addListener(t -> {
-                StringProperty monthText = (StringProperty) t;
+            month.textProperty().addListener((t, o, n) -> {
                 int v;
                 try {
-                    v = Integer.parseInt(monthText.getValue());
+                    v = Integer.parseInt(n);
 
                     if (v < 0)
-                        monthText.setValue(Integer.toString(1));
+                        ((StringProperty) t).setValue(Integer.toString(1));
                     else if (v > 12) {
-                        monthText.setValue(Integer.toString(12));
+                        ((StringProperty) t).setValue(Integer.toString(12));
                     }
-                } catch (NumberFormatException ignored) {
+                } catch (NumberFormatException e) {
                     // Exception ignored
                 } catch (Exception exception) {
                     exception.printStackTrace();
