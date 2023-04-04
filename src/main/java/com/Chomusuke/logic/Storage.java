@@ -65,7 +65,7 @@ public class Storage {
     public static Map<Byte, Account> readAccounts() {
         Path file = DIR_NAME.resolve("balances");
 
-        Map<Byte, Account> a = new HashMap<>();
+        Map<Byte, Account> accounts = new HashMap<>();
 
         try (DataInputStream input = new DataInputStream(new FileInputStream(file.toString()))) {
             byte id;
@@ -73,17 +73,49 @@ public class Storage {
             for (int i = 0 ; i < MAX_ACCOUNT_COUNT ; i++) {
                 id = input.readByte();
                 account = new Account(input.readUTF(), input.readDouble());
-                a.put(id, account);
+                accounts.put(id, account);
             }
 
             throw new RuntimeException("The file contains too much accounts.");
+        } catch (FileNotFoundException notFoundException) {
+            // Account balance recovery if the file is missing, but transactions are still there
+            // The account names can't be recovered
+            System.out.println("No balance file has been found. Reconstructing...");
+
+            List<String> years = getAvailableYears();
+            List<String> months;
+            TransactionList transactions = new TransactionList();
+            float[] values;
+
+            for (String y : years) {
+
+                months = getAvailableMonths(Integer.parseInt(y));
+                for (String m : months) {
+
+                    transactions.setTransactionList(read(Integer.parseInt(y), Integer.parseInt(m)));
+                    values = transactions.getValues();
+                    System.out.println(Arrays.toString(values));
+                    for (int i = 0 ; i < transactions.getTransactionList().size() ; i++) {
+                        Transaction t = transactions.getTransactionList().get(i);
+
+                        if (t.to() != 0) {
+                            if (!accounts.containsKey(t.to()))
+                                accounts.put(t.to(), new Account(Integer.toString(accounts.size()+1), 0));
+
+                            accounts.get(t.to()).add(Math.abs(values[i]));
+                        }
+                    }
+                }
+            }
+
+            writeAccounts(accounts);
         } catch (EOFException ignored) {
             // Exception ignored
         } catch (IOException exception) {
             exception.printStackTrace();
         }
 
-        return a;
+        return accounts;
     }
 
     /**
