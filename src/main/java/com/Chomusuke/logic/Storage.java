@@ -65,7 +65,7 @@ public class Storage {
     public static Map<Byte, Account> readAccounts() {
         Path file = DIR_NAME.resolve("balances");
 
-        Map<Byte, Account> accounts = new HashMap<>();
+        Map<Byte, Account> balances = new HashMap<>();
 
         try (DataInputStream input = new DataInputStream(new FileInputStream(file.toString()))) {
             byte id;
@@ -73,7 +73,7 @@ public class Storage {
             for (int i = 0 ; i < MAX_ACCOUNT_COUNT ; i++) {
                 id = input.readByte();
                 account = new Account(input.readUTF(), input.readDouble());
-                accounts.put(id, account);
+                balances.put(id, account);
             }
 
             throw new RuntimeException("The file contains too much accounts.");
@@ -82,32 +82,9 @@ public class Storage {
             // The account names can't be recovered
             System.out.println("The balances file is missing. Reconstructing...");
 
-            List<String> years = getAvailableYears();
-            List<String> months;
-            TransactionList transactions = new TransactionList();
-            float[] values;
+            balances = loadBalancesFromTransactions();
 
-            for (String y : years) {
-
-                months = getAvailableMonths(Integer.parseInt(y));
-                for (String m : months) {
-
-                    transactions.setTransactionList(read(Integer.parseInt(y), Integer.parseInt(m)));
-                    values = transactions.getValues();
-                    for (int i = 0 ; i < transactions.getTransactionList().size() ; i++) {
-                        Transaction t = transactions.getTransactionList().get(i);
-
-                        if (t.to() != 0) {
-                            if (!accounts.containsKey(t.to()))
-                                accounts.put(t.to(), new Account(Integer.toString(accounts.size()+1), 0));
-
-                            accounts.get(t.to()).add(Math.abs(values[i]));
-                        }
-                    }
-                }
-            }
-
-            writeAccounts(accounts);
+            writeAccounts(balances);
         } catch (EOFException ignored) {
             // Exception ignored
         } catch (IOException exception) {
@@ -300,5 +277,36 @@ public class Storage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static Map<Byte, Account> loadBalancesFromTransactions() {
+        Map<Byte, Account> balances = new HashMap<>();
+
+        List<String> years = getAvailableYears();
+        List<String> months;
+        TransactionList transactions = new TransactionList();
+        float[] values;
+
+        for (String y : years) {
+
+            months = getAvailableMonths(Integer.parseInt(y));
+            for (String m : months) {
+
+                transactions.setTransactionList(read(Integer.parseInt(y), Integer.parseInt(m)));
+                values = transactions.getValues();
+                for (int i = 0 ; i < transactions.getTransactionList().size() ; i++) {
+                    Transaction t = transactions.getTransactionList().get(i);
+
+                    if (t.to() != 0) {
+                        if (!balances.containsKey(t.to()))
+                            balances.put(t.to(), new Account(Integer.toString(balances.size()+1), 0));
+
+                        balances.get(t.to()).add(Math.abs(values[i]));
+                    }
+                }
+            }
+        }
+
+        return balances;
     }
 }
