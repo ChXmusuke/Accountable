@@ -33,7 +33,7 @@ import static com.chomusuke.logic.Transaction.ValueType;
  */
 public class Storage {
 
-    private static final int MAX_TRANSACTION_COUNT = 512;
+    private static final int MAX_TRANSACTION_COUNT = 128;
     private static final int MAX_ACCOUNT_COUNT = 16;
 
     private static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
@@ -82,7 +82,7 @@ public class Storage {
             // The account names can't be recovered
             System.out.println("The balances file is missing. Reconstructing...");
 
-            balances = loadBalancesFromTransactions();
+            balances = readBalancesFromTransactions();
 
             writeAccounts(balances);
         } catch (EOFException ignored) {
@@ -279,7 +279,7 @@ public class Storage {
         }
     }
 
-    private static Map<Byte, Account> loadBalancesFromTransactions() {
+    public static Map<Byte, Account> readBalancesFromTransactions() {
         Map<Byte, Account> balances = new HashMap<>();
 
         List<String> years = getAvailableYears();
