@@ -13,7 +13,7 @@ public class Tile extends HBox {
 
     protected final Rectangle colorTag;
 
-    public Tile(String name, float value) {
+    public Tile(String name, double value) {
 
         colorTag = new Rectangle();
         VBox textBox = new VBox();
