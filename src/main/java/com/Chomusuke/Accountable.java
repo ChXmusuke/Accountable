@@ -17,10 +17,7 @@
 
 package com.chomusuke;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -153,7 +150,7 @@ public class Accountable extends Application {
                     int month = Integer.parseInt(n);
 
                     if (year >= 1 && month >= 1)
-                        manager.setTransactionList(Storage.load(year, month));
+                        manager.setTransactionList(Storage.read(year, month));
                 }
             });
 
@@ -271,7 +268,7 @@ public class Accountable extends Application {
 
 
         // ----- STORAGE INIT -----
-        manager.setTransactionList(Storage.load(
+        manager.setTransactionList(Storage.read(
                 dateSelector.getYearValue(),
                 dateSelector.getMonthValue()
         ));
