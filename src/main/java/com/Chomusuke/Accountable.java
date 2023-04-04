@@ -85,7 +85,7 @@ public class Accountable extends Application {
 
         // ----- MEMORY -----
         TransactionList manager = new TransactionList();
-        Map<Byte, Account> balances = Storage.readAccounts();
+        Map<String, Byte> accounts = new HashMap<>();
 
 
 
@@ -121,7 +121,7 @@ public class Accountable extends Application {
         // Date selector and related
         HBox controls = new HBox();
 
-        SquareButton showAccounts = new SquareButton("wallet.png", a -> AccountScreen.show(balances));
+        SquareButton showAccounts = new SquareButton("wallet.png", a -> AccountScreen.show(accounts));
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
         DateSelector dateSelector = new DateSelector();
         Text loadedDate = new Text();

@@ -2,15 +2,18 @@ package com.chomusuke.gui.stage;
 
 import com.chomusuke.gui.element.Tile.Tile;
 import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Storage;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Map;
+import java.util.Random;
 
 public class AccountScreen {
 
@@ -20,12 +23,23 @@ public class AccountScreen {
 
     /**
      * Don't let anyone instantiate this class
-     *
      * TODO: create scene to replace in main window
      */
     private AccountScreen() {}
 
-    public static void show(Map<Byte, Account> accounts) {
+    public static void show(Map<String, Byte> accounts) {
+
+        // ----- MEMORY -----
+        Map<Byte, Account> balances = Storage.readBalancesFromTransactions();
+        accounts.keySet().forEach(n ->
+                balances.put(accounts.get(n), new Account(n, 0)));
+        balances.keySet().forEach(b ->
+            accounts.put(balances.get(b).getName(), b)
+        );
+
+
+
+        // ----- DISPLAY -----
         Stage stage = new Stage();
 
         VBox root = new VBox();
@@ -35,11 +49,13 @@ public class AccountScreen {
 
         FlowPane content = new FlowPane();
         ScrollPane scrollPane = new ScrollPane(content);
-        for (Account a : accounts.values()) {
-            content.getChildren().add(new Tile(a.getName(), a.getBalance()));
+        for (String a : accounts.keySet()) {
+            content.getChildren().add(new Tile(a, balances.get(accounts.get(a)).getBalance()));
         }
 
         root.getChildren().addAll(add, scrollPane);
+
+
 
         // ----- STYLE -----
         {
@@ -67,6 +83,44 @@ public class AccountScreen {
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         }
 
+
+
+        // ----- EVENTS -----
+        {
+            add.setOnAction(e -> {
+                byte[] b = new byte[1];
+                Random r = new Random();
+                while (b[0] == 0 || accounts.containsValue(b[0])) {
+                    r.nextBytes(b);
+                }
+
+                Stage popUp = new Stage();
+
+                VBox popUpRoot = new VBox();
+                Scene popUpScene = new Scene(popUpRoot);
+
+                TextField nameInput = new TextField();
+                Button submit = new Button("Créer");
+
+                popUpRoot.getChildren().addAll(nameInput, submit);
+
+                popUp.setScene(popUpScene);
+
+                popUpRoot.setSpacing(PADDING);
+                popUpRoot.setPadding(new Insets(PADDING));
+
+                submit.setOnAction(s -> {
+
+                    accounts.put(nameInput.getText(), b[0]);
+                    content.getChildren().add(new Tile(nameInput.getText(), 0f));
+                    popUp.close();
+                });
+
+                popUp.show();
+            });
+        }
+
         stage.show();
+        stage.setOnCloseRequest(e -> System.out.println(accounts));
     }
 }
