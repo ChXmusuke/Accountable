@@ -37,6 +37,21 @@ public class TransactionList {
     private boolean setAllFlag = false;
 
     /**
+     * Constructor with no parameters
+     */
+    public TransactionList() {
+    }
+
+    /**
+     * Construct the list from an existing transaction list.
+     *
+     * @param txs an array
+     */
+    public TransactionList(List<Transaction> txs) {
+        this.txs.setAll(txs);
+    }
+
+    /**
      * Replaces all transactions in memory by the transactions
      * in {@code txs}.
      *
@@ -73,6 +88,19 @@ public class TransactionList {
      * @return an array of float values
      */
     public float[] getValues() {
+
+        return getValues(this.txs);
+    }
+
+    /**
+     * Computes the values of all transactions
+     * contained in the specified array.
+     *
+     * @param txs an array of transactions
+     *
+     * @return the values of the transactions
+     */
+    public static float[] getValues(List<Transaction> txs) {
         float[] values = new float[txs.size()];
         float valueP = 0;  // Total income
         float valueN = 0;  // Total expenses
