@@ -80,7 +80,7 @@ public class Storage {
         } catch (FileNotFoundException notFoundException) {
             // Account balance recovery if the file is missing, but transactions are still there
             // The account names can't be recovered
-            System.out.println("No balance file has been found. Reconstructing...");
+            System.out.println("The balances file is missing. Reconstructing...");
 
             List<String> years = getAvailableYears();
             List<String> months;
