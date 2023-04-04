@@ -94,7 +94,6 @@ public class Storage {
 
                     transactions.setTransactionList(read(Integer.parseInt(y), Integer.parseInt(m)));
                     values = transactions.getValues();
-                    System.out.println(Arrays.toString(values));
                     for (int i = 0 ; i < transactions.getTransactionList().size() ; i++) {
                         Transaction t = transactions.getTransactionList().get(i);
 
@@ -215,7 +214,6 @@ public class Storage {
             return new ArrayList<>();
         } catch (EOFException ignored) {
             // Exception ignored
-            System.out.println("Reached end of file.");
         } catch (Exception e) {
             e.printStackTrace();
         }
