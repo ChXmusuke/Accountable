@@ -100,4 +100,17 @@ public class Account {
     public String toString() {
         return String.format("Account {name:%s, balance:%s}", name, balance);
     }
+
+    @Override
+    public boolean equals(Object that) {
+        if (that == null)
+            return false;
+        if (this == that)
+            return true;
+        if (this.getClass() != that.getClass())
+            return false;
+
+        return this.name.equals(((Account) that).name) &&
+                this.balance == ((Account) that).balance;
+    }
 }
