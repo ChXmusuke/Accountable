@@ -19,6 +19,7 @@ package com.chomusuke;
 
 import java.util.*;
 
+import com.chomusuke.gui.element.Tile.TransactionTile;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
@@ -84,6 +85,7 @@ public class Accountable extends Application {
 
         // ----- MEMORY -----
         TransactionList manager = new TransactionList();
+        Map<Byte, Account> balances = Storage.readAccounts();
 
 
 
@@ -119,9 +121,12 @@ public class Accountable extends Application {
         // Date selector and related
         HBox controls = new HBox();
 
+        SquareButton showAccounts = new SquareButton("wallet.png", a -> AccountScreen.show(balances));
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
         DateSelector dateSelector = new DateSelector();
         Text loadedDate = new Text();
+
+        controls.getChildren().addAll(showAccounts, newFile, dateSelector, loadedDate);
 
         Text remainder = new Text();
         HBox remainderContainer = new HBox(remainder);
@@ -137,8 +142,6 @@ public class Accountable extends Application {
             title.setId("title");
             title.getStyleClass().add("stdText");
             titleContainer.setAlignment(Pos.CENTER);
-
-            controls.getChildren().addAll(newFile, dateSelector, loadedDate);
 
             loadedDate.getStyleClass().add("stdText");
             HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
