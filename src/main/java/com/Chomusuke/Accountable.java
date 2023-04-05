@@ -247,17 +247,14 @@ public class Accountable extends Application {
 
                         oldList.remove(l.getFrom());
                     }
-                    System.out.println(oldList);
-                    System.out.println(l.getList());
 
                     Account.ModMap.of(oldList)
                             .reverse()
                             .apply(balances);
 
-                    System.out.println(Account.ModMap.of(new ArrayList<>(oldList)));
-                    System.out.println(Account.ModMap.of(new ArrayList<>(l.getList())));
                     Account.ModMap.of(new ArrayList<>(l.getList()))
                             .apply(balances);
+
                     Storage.writeAccounts(balances);
                 }
 

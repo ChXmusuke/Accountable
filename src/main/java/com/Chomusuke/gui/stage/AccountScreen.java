@@ -62,7 +62,7 @@ public class AccountScreen {
             root.setPadding(new Insets(PADDING));
             root.setSpacing(PADDING);
 
-            add.setText("Ajouter un compte");
+            add.setText("Créer un compte");
 
             content.getStyleClass().add("background");
             content.prefWidthProperty().bind(root.widthProperty());
@@ -116,6 +116,5 @@ public class AccountScreen {
         }
 
         stage.show();
-        System.out.println(balances);
     }
 }
