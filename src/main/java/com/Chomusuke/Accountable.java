@@ -111,7 +111,12 @@ public class Accountable extends Application {
         // Transaction addition (space key)
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode() == KeyCode.SPACE) {
-                AddTransactionScreen.show(manager, balances);
+                switch (selectedScene.get()) {
+                    case MAIN ->
+                            AddTransactionScreen.show(manager, balances);
+                    case ACCOUNTS ->
+                            AddAccountScreen.show(balances);
+                }
             }
             event.consume();
         });
