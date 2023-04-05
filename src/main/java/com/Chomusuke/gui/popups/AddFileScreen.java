@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui.stage;
+package com.chomusuke.gui.popups;
 
 import java.util.ArrayList;
 
