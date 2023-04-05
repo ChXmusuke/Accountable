@@ -17,6 +17,7 @@
 
 package com.chomusuke.gui.stage;
 
+import com.chomusuke.logic.Account;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -33,6 +34,7 @@ import javafx.stage.Stage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -47,7 +49,7 @@ public class AddTransactionScreen {
      *
      * @param txList a {@code Transaction} list
      */
-    public static void show(TransactionList txList, Map<String, Byte> accounts) {
+    public static void show(TransactionList txList, Map<Byte, Account> accounts) {
 
         show(txList, null, accounts);
     }
@@ -59,8 +61,11 @@ public class AddTransactionScreen {
      * @param txList a {@code Transaction} list
      * @param t a {@code Transaction}
      */
-    public static void show(TransactionList txList, Transaction t, Map<String, Byte> accounts) {
-        System.out.println(accounts);
+    public static void show(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
+        Map<String, Byte> names = new HashMap<>();
+        for (byte b : accounts.keySet())
+            names.put(accounts.get(b).getName(), b);
+
         Stage stage = new Stage();
         GridPane p = new GridPane();
         Scene s = new Scene(p);
@@ -178,14 +183,14 @@ public class AddTransactionScreen {
                         || tTypeField.getValue() == null || vTypeField.getValue() == null || to.getValue() == null)
                     return;
 
-                txList.add(new Transaction(
-                                nameField.getText(),
-                                tTypeField.getValue().equals(TransactionType.SAVINGS) ? accounts.get(to.getValue()) : (byte) 0,
-                                tTypeField.getValue(),
-                                vTypeField.getValue(),
-                                Float.parseFloat(valueField.getText())
-                        ),
-                        t);
+                Transaction newTransaction = new Transaction(
+                        nameField.getText(),
+                        tTypeField.getValue().equals(TransactionType.SAVINGS) ? names.get(to.getValue()) : (byte) 0,
+                        tTypeField.getValue(),
+                        vTypeField.getValue(),
+                        Float.parseFloat(valueField.getText())
+                );
+                txList.add(newTransaction, t);
 
                 stage.close();
             });
@@ -203,9 +208,10 @@ public class AddTransactionScreen {
                 valueField.setText(Float.toString(t.value()));
                 tTypeField.getSelectionModel().select(t.transactionType());
                 vTypeField.getSelectionModel().select(t.valueType());
+                to.getSelectionModel().select(accounts.get(t.to()).getName());
             }
 
-            to.setItems(FXCollections.observableArrayList(accounts.keySet()));
+            to.setItems(FXCollections.observableArrayList(names.keySet()));
         }
 
         stage.show();

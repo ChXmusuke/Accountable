@@ -17,6 +17,10 @@
 
 package com.chomusuke.logic;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class provides memory storage for an account.
  */
@@ -112,5 +116,64 @@ public class Account {
 
         return this.name.equals(((Account) that).name) &&
                 this.balance == ((Account) that).balance;
+    }
+
+
+
+    public static class ModMap {
+
+        Map<Byte, Float> modMap = new HashMap<>();
+
+        /**
+         * Don't let anyone instantiate this class
+         */
+        private ModMap() {
+        }
+
+        /**
+         * Returns a mapping with the modifications to all accounts mentioned by the transactions'
+         * "to" fields.
+         *
+         * @param txs a transaction list
+         *
+         * @return the corresponding ModMap
+         */
+        public static ModMap of(List<Transaction> txs) {
+            ModMap m = new ModMap();
+
+            if (txs != null) {
+                float[] values = TransactionList.getValues(txs);
+
+                for (int i = 0; i < txs.size(); i++) {
+                    if (txs.get(i).transactionType().equals(Transaction.TransactionType.SAVINGS)) {
+                        byte to = txs.get(i).to();
+                        float oldValue = 0;
+                        if (m.modMap.containsKey(to))
+                            oldValue = m.modMap.get(to);
+
+                        m.modMap.put(to, oldValue-values[i]);
+                    }
+                }
+            }
+
+            return m;
+        }
+
+        public ModMap reverse() {
+            modMap.replaceAll((b, v) -> -v);
+            return this;
+        }
+
+        public void apply(Map<Byte, Account> balances) {
+            for (byte b : modMap.keySet()) {
+                balances.get(b).add(modMap.get(b));
+            }
+        }
+
+        @Override
+        public String toString() {
+
+            return modMap.toString();
+        }
     }
 }

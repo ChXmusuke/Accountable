@@ -27,15 +27,7 @@ public class AccountScreen {
      */
     private AccountScreen() {}
 
-    public static void show(Map<String, Byte> accounts) {
-
-        // ----- MEMORY -----
-        Map<Byte, Account> balances = Storage.readBalancesFromTransactions();
-        accounts.keySet().forEach(n ->
-                balances.put(accounts.get(n), new Account(n, 0)));
-        balances.keySet().forEach(b ->
-            accounts.put(balances.get(b).getName(), b)
-        );
+    public static void show(Map<Byte, Account> balances) {
 
 
 
@@ -49,8 +41,8 @@ public class AccountScreen {
 
         FlowPane content = new FlowPane();
         ScrollPane scrollPane = new ScrollPane(content);
-        for (String a : accounts.keySet()) {
-            content.getChildren().add(new Tile(a, balances.get(accounts.get(a)).getBalance()));
+        for (byte a : balances.keySet()) {
+            content.getChildren().add(new Tile(balances.get(a).getName(), balances.get(a).getBalance()));
         }
 
         root.getChildren().addAll(add, scrollPane);
@@ -90,7 +82,7 @@ public class AccountScreen {
             add.setOnAction(e -> {
                 byte[] b = new byte[1];
                 Random r = new Random();
-                while (b[0] == 0 || accounts.containsValue(b[0])) {
+                while (b[0] == 0 || balances.containsKey(b[0])) {
                     r.nextBytes(b);
                 }
 
@@ -111,8 +103,11 @@ public class AccountScreen {
 
                 submit.setOnAction(s -> {
 
-                    accounts.put(nameInput.getText(), b[0]);
+                    balances.put(b[0], new Account(nameInput.getText(), 0f));
+                    Storage.writeAccounts(balances);
+
                     content.getChildren().add(new Tile(nameInput.getText(), 0f));
+
                     popUp.close();
                 });
 
@@ -121,5 +116,6 @@ public class AccountScreen {
         }
 
         stage.show();
+        System.out.println(balances);
     }
 }

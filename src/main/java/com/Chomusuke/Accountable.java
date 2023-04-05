@@ -85,7 +85,7 @@ public class Accountable extends Application {
 
         // ----- MEMORY -----
         TransactionList manager = new TransactionList();
-        Map<String, Byte> accounts = new HashMap<>();
+        Map<Byte, Account> balances = Storage.readAccounts();
 
 
 
@@ -121,7 +121,7 @@ public class Accountable extends Application {
         // Date selector and related
         HBox controls = new HBox();
 
-        SquareButton showAccounts = new SquareButton("wallet.png", a -> AccountScreen.show(accounts));
+        SquareButton showAccounts = new SquareButton("wallet.png", a -> AccountScreen.show(balances));
         SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
         DateSelector dateSelector = new DateSelector();
         Text loadedDate = new Text();
@@ -200,13 +200,13 @@ public class Accountable extends Application {
             // Transaction addition (space key)
             scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
                 if (event.getCode() == KeyCode.SPACE) {
-                    AddTransactionScreen.show(manager, accounts);
+                    AddTransactionScreen.show(manager, balances);
                 }
                 event.consume();
             });
 
             // Transaction addition (Big Fat + Button)
-            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager, accounts));
+            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager, balances));
 
             // Colors for remainder
             remainder.textProperty().addListener((v, o, n) -> {
@@ -225,19 +225,40 @@ public class Accountable extends Application {
                 l.next();
 
                 if (!manager.setAllFlag()) {
+                    List<Transaction> oldList = new ArrayList<>(l.getList());
+
                     if (l.wasRemoved()) {
                         Storage.write(
                                 manager.getTransactionList(),
                                 dateSelector.getYearValue(),
                                 dateSelector.getMonthValue()
                         );
+
+                        if (l.wasAdded())
+                            oldList.set(l.getFrom(), l.getRemoved().get(0));
+                        else
+                            oldList.add(l.getFrom(), l.getRemoved().get(0));
                     } else {
                         Storage.write(
                                 l.getAddedSubList().get(0),
                                 dateSelector.getYearValue(),
                                 dateSelector.getMonthValue()
                         );
+
+                        oldList.remove(l.getFrom());
                     }
+                    System.out.println(oldList);
+                    System.out.println(l.getList());
+
+                    Account.ModMap.of(oldList)
+                            .reverse()
+                            .apply(balances);
+
+                    System.out.println(Account.ModMap.of(new ArrayList<>(oldList)));
+                    System.out.println(Account.ModMap.of(new ArrayList<>(l.getList())));
+                    Account.ModMap.of(new ArrayList<>(l.getList()))
+                            .apply(balances);
+                    Storage.writeAccounts(balances);
                 }
 
                 // Display
@@ -257,7 +278,7 @@ public class Accountable extends Application {
                     // Event handler
                     tile.setOnMouseClicked(m -> {
                         if (m.getButton() == MouseButton.PRIMARY) {
-                            AddTransactionScreen.show(manager, tile.getBaseTransaction(), accounts);
+                            AddTransactionScreen.show(manager, tile.getBaseTransaction(), balances);
                         }
                     });
 
