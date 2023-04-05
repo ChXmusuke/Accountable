@@ -50,6 +50,7 @@ public class AddFileScreen {
         Stage stage = new Stage();
 
         VBox root = new VBox();
+        Scene scene = new Scene(root);
 
         HBox inputs = new HBox();
         TextField year = new TextField();
@@ -65,11 +66,14 @@ public class AddFileScreen {
 
         // ----- STYLE -----
         {
+            stage.setScene(scene);
             stage.setResizable(false);
+
+            scene.getStylesheets().add("stylesheets/accountable.css");
+
             root.getStyleClass().add("background");
             root.setPadding(new Insets(PADDING));
             root.setSpacing(PADDING);
-            stage.setScene(new Scene(root));
 
             inputs.setSpacing(PADDING);
 

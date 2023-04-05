@@ -56,18 +56,19 @@ public class AddAccountScreen {
 
         Stage popUp = new Stage();
 
-        VBox popUpRoot = new VBox();
-        Scene popUpScene = new Scene(popUpRoot);
+        VBox root = new VBox();
+        Scene scene = new Scene(root);
 
         TextField nameInput = new TextField();
         Button submit = new Button(account == null ? "Ajouter" : "Modifier");
 
-        popUpRoot.getChildren().addAll(nameInput, submit);
+        root.getChildren().addAll(nameInput, submit);
 
-        popUp.setScene(popUpScene);
+        root.getStyleClass().add("background");
+        popUp.setScene(scene);
 
-        popUpRoot.setSpacing(PADDING);
-        popUpRoot.setPadding(new Insets(PADDING));
+        root.setSpacing(PADDING);
+        root.setPadding(new Insets(PADDING));
 
         submit.setOnAction(s -> {
             if (nameInput.getText().equals(""))

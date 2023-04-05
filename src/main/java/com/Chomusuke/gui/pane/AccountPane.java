@@ -18,6 +18,7 @@
 package com.chomusuke.gui.pane;
 
 import com.chomusuke.Accountable.SceneID;
+import com.chomusuke.gui.element.PlusButton;
 import com.chomusuke.gui.element.Tile.AccountTile;
 import com.chomusuke.gui.stage.AddAccountScreen;
 import com.chomusuke.logic.Account;
@@ -33,7 +34,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
-public class AccountPane extends VBox {
+public class AccountPane extends Pane {
 
     private static final int PADDING = 8;
 
@@ -45,32 +46,37 @@ public class AccountPane extends VBox {
 
 
         // ----- DISPLAY -----
-        Button back = new Button("<-");
-        Button add = new Button();
-
         VBox content = new VBox();
-        ScrollPane scrollPane = new ScrollPane(content);
+        Button back = new Button("<-");
+        PlusButton add = new PlusButton();
 
-        getChildren().addAll(back, add, scrollPane);
+        VBox tilePane = new VBox();
+        ScrollPane scrollPane = new ScrollPane(tilePane);
+
+        content.getChildren().addAll(back, scrollPane);
+        getChildren().addAll(content, add);
 
 
 
         // ----- STYLE -----
         {
-            getStyleClass().add("background");
-            setPadding(new Insets(PADDING));
-            setSpacing(PADDING);
-
-            add.setText("Créer un compte");
-
             content.getStyleClass().add("background");
+            content.setPadding(new Insets(PADDING));
+            content.setSpacing(PADDING);
             content.prefWidthProperty().bind(widthProperty());
             content.prefHeightProperty().bind(heightProperty());
-            content.setSpacing(PADDING);
+
+            tilePane.setSpacing(PADDING);
+            tilePane.getStyleClass().add("background");
+            tilePane.prefWidthProperty().bind(content.widthProperty());
+
 
             scrollPane.getStyleClass().add("scrollPane");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+            add.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+            add.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
         }
 
 
@@ -78,14 +84,14 @@ public class AccountPane extends VBox {
         // ----- EVENTS -----
         {
             back.setOnAction(e -> selectedScene.set(SceneID.MAIN));
-            add.setOnAction(e -> AddAccountScreen.show(observableBalances));
+            add.setOnMouseClicked(e -> AddAccountScreen.show(observableBalances));
 
             observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c ->
-                    updateDisplay(observableBalances, content)
+                    updateDisplay(observableBalances, tilePane)
             );
         }
 
-        updateDisplay(observableBalances, content);
+        updateDisplay(observableBalances, tilePane);
     }
 
     private static void updateDisplay(Map<Byte, Account> balances, Pane p) {
