@@ -121,6 +121,5 @@ public class AccountScreen {
         }
 
         stage.show();
-        stage.setOnCloseRequest(e -> System.out.println(accounts));
     }
 }

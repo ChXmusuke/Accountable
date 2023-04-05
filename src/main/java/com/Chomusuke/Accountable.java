@@ -200,13 +200,13 @@ public class Accountable extends Application {
             // Transaction addition (space key)
             scene.addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
                 if (event.getCode() == KeyCode.SPACE) {
-                    AddTransactionScreen.show(manager);
+                    AddTransactionScreen.show(manager, accounts);
                 }
                 event.consume();
             });
 
             // Transaction addition (Big Fat + Button)
-            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager));
+            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(manager, accounts));
 
             // Colors for remainder
             remainder.textProperty().addListener((v, o, n) -> {
@@ -257,7 +257,7 @@ public class Accountable extends Application {
                     // Event handler
                     tile.setOnMouseClicked(m -> {
                         if (m.getButton() == MouseButton.PRIMARY) {
-                            AddTransactionScreen.show(manager, tile.getBaseTransaction());
+                            AddTransactionScreen.show(manager, tile.getBaseTransaction(), accounts);
                         }
                     });
 

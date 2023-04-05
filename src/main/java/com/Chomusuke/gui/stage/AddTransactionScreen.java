@@ -17,6 +17,7 @@
 
 package com.chomusuke.gui.stage;
 
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,6 +33,7 @@ import javafx.stage.Stage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static com.chomusuke.logic.Transaction.*;
@@ -45,9 +47,9 @@ public class AddTransactionScreen {
      *
      * @param txList a {@code Transaction} list
      */
-    public static void show(TransactionList txList) {
+    public static void show(TransactionList txList, Map<String, Byte> accounts) {
 
-        show(txList, null);
+        show(txList, null, accounts);
     }
 
     /**
@@ -57,7 +59,8 @@ public class AddTransactionScreen {
      * @param txList a {@code Transaction} list
      * @param t a {@code Transaction}
      */
-    public static void show(TransactionList txList, Transaction t) {
+    public static void show(TransactionList txList, Transaction t, Map<String, Byte> accounts) {
+        System.out.println(accounts);
         Stage stage = new Stage();
         GridPane p = new GridPane();
         Scene s = new Scene(p);
@@ -66,6 +69,7 @@ public class AddTransactionScreen {
         ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
         TextField valueField = new TextField();
         ChoiceBox<ValueType> vTypeField = new ChoiceBox<>();
+        ChoiceBox<String> to = new ChoiceBox<>();
 
         HBox buttons = new HBox();
         Button submit = new Button(t != null ? "Modifier" : "Ajouter");
@@ -92,8 +96,6 @@ public class AddTransactionScreen {
             stage.setScene(s);
             stage.setResizable(false);
 
-            p.add(buttons, 0, 2, 2, 1);
-
             p.setPadding(new Insets(PADDING));
             p.setHgap(PADDING);
             p.setVgap(PADDING);
@@ -104,11 +106,17 @@ public class AddTransactionScreen {
             p.add(tTypeField, 0, 1);
             p.add(vTypeField, 1, 1);
 
+            p.add(to, 0, 2);
+            p.add(buttons, 0, 3, 2, 1);
+
             s.getStylesheets().add("stylesheets/accountable.css");
 
             tTypeField.setMaxWidth(Double.MAX_VALUE);
 
             vTypeField.setMaxWidth(Double.MAX_VALUE);
+
+            to.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(to, Priority.ALWAYS);
 
             buttons.setPadding(new Insets(PADDING * 2));
             buttons.setSpacing(PADDING);
@@ -167,12 +175,12 @@ public class AddTransactionScreen {
             submit.setOnAction((a) -> {
                 if (nameField.getText() == null || nameField.getText().equals("")
                         || valueField.getText() == null || valueField.getText().equals("")
-                        || tTypeField.getValue() == null || vTypeField.getValue() == null) {
+                        || tTypeField.getValue() == null || vTypeField.getValue() == null || to.getValue() == null)
                     return;
-                }
+
                 txList.add(new Transaction(
                                 nameField.getText(),
-                                (byte) 0,
+                                tTypeField.getValue().equals(TransactionType.SAVINGS) ? accounts.get(to.getValue()) : (byte) 0,
                                 tTypeField.getValue(),
                                 vTypeField.getValue(),
                                 Float.parseFloat(valueField.getText())
@@ -196,6 +204,8 @@ public class AddTransactionScreen {
                 tTypeField.getSelectionModel().select(t.transactionType());
                 vTypeField.getSelectionModel().select(t.valueType());
             }
+
+            to.setItems(FXCollections.observableArrayList(accounts.keySet()));
         }
 
         stage.show();
