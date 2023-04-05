@@ -19,13 +19,17 @@ package com.chomusuke;
 
 import java.util.*;
 
-import com.chomusuke.gui.scene.AccountScene;
-import com.chomusuke.gui.scene.SubScene;
-import com.chomusuke.gui.scene.TransactionScene;
+import com.chomusuke.gui.pane.AccountPane;
+import com.chomusuke.gui.pane.TransactionPane;
+import com.chomusuke.gui.stage.AddTransactionScreen;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.chomusuke.logic.*;
@@ -75,18 +79,15 @@ public class Accountable extends Application {
         TransactionList manager = new TransactionList();
         Map<Byte, Account> balances = Storage.readAccounts();
 
-        // ----- SCENES -----
+        stage.setScene(new Scene(new Pane()));
         ObjectProperty<SceneID> selectedScene = new SimpleObjectProperty<>();
 
         selectedScene.addListener((s, o, n) -> {
             switch (n) {
                 case MAIN ->
-                        stage.setScene(new TransactionScene(selectedScene, manager, balances));
+                        stage.getScene().setRoot(new TransactionPane(selectedScene, manager, balances));
                 case ACCOUNTS ->
-                        stage.setScene(new AccountScene(selectedScene, balances));
-                default ->
-                        stage.setScene(new SubScene(selectedScene) {
-                });
+                        stage.getScene().setRoot(new AccountPane(selectedScene, balances));
             }
         });
 
@@ -101,9 +102,19 @@ public class Accountable extends Application {
             stage.setResizable(false);
             stage.setTitle("Accountable.");
 
+            stage.getScene().getStylesheets().add("stylesheets/accountable.css");
+
             // Icon
             stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
         }
+
+        // Transaction addition (space key)
+        stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                AddTransactionScreen.show(manager, balances);
+            }
+            event.consume();
+        });
 
         stage.show();
     }

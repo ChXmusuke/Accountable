@@ -1,4 +1,21 @@
-package com.chomusuke.gui.scene;
+/*  Accountable: a personal spending monitoring program
+    Copyright (C) 2023  Artur Yukhanov
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+package com.chomusuke.gui.pane;
 
 import com.chomusuke.Accountable.SceneID;
 import com.chomusuke.gui.element.Tile.AccountTile;
@@ -16,14 +33,11 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
-public class AccountScene extends SubScene {
+public class AccountPane extends VBox {
 
     private static final int PADDING = 8;
 
-    public AccountScene(ObjectProperty<SceneID> selectedScene, Map<Byte, Account> balances) {
-        super(selectedScene);
-        VBox root = new VBox();
-        setRoot(root);
+    public AccountPane(ObjectProperty<SceneID> selectedScene, Map<Byte, Account> balances) {
 
         // ----- MEMORY -----
         ObservableMap<Byte, Account> observableBalances = FXCollections.observableMap(balances);
@@ -37,23 +51,21 @@ public class AccountScene extends SubScene {
         VBox content = new VBox();
         ScrollPane scrollPane = new ScrollPane(content);
 
-        root.getChildren().addAll(back, add, scrollPane);
+        getChildren().addAll(back, add, scrollPane);
 
 
 
         // ----- STYLE -----
         {
-            getStylesheets().add("stylesheets/accountable.css");
-
-            root.getStyleClass().add("background");
-            root.setPadding(new Insets(PADDING));
-            root.setSpacing(PADDING);
+            getStyleClass().add("background");
+            setPadding(new Insets(PADDING));
+            setSpacing(PADDING);
 
             add.setText("Créer un compte");
 
             content.getStyleClass().add("background");
-            content.prefWidthProperty().bind(root.widthProperty());
-            content.prefHeightProperty().bind(root.heightProperty());
+            content.prefWidthProperty().bind(widthProperty());
+            content.prefHeightProperty().bind(heightProperty());
             content.setSpacing(PADDING);
 
             scrollPane.getStyleClass().add("scrollPane");

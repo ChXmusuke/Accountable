@@ -1,4 +1,21 @@
-package com.chomusuke.gui.scene;
+/*  Accountable: a personal spending monitoring program
+    Copyright (C) 2023  Artur Yukhanov
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+package com.chomusuke.gui.pane;
 
 import com.chomusuke.Accountable.SceneID;
 import com.chomusuke.gui.element.DateSelector;
@@ -16,8 +33,6 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -28,22 +43,17 @@ import javafx.scene.text.Text;
 
 import java.util.*;
 
-public class TransactionScene extends SubScene {
+public class TransactionPane extends BorderPane{
 
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
     private static final int PADDING = 8;
 
-    public TransactionScene(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances) {
-        super(selectedScene);
-        BorderPane root = new BorderPane();
-        setRoot(root);
+    public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances) {
 
         // Main
         {
-            root.getStyleClass().add("background");
-            root.setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-
-            getStylesheets().add("stylesheets/accountable.css");
+            getStyleClass().add("background");
+            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
         }
 
 
@@ -69,7 +79,7 @@ public class TransactionScene extends SubScene {
         HBox remainderContainer = new HBox(remainder);
 
         top.getChildren().addAll(titleContainer, controls, remainderContainer);
-        root.setTop(top);
+        setTop(top);
 
         // Top
         {
@@ -110,7 +120,7 @@ public class TransactionScene extends SubScene {
         PlusButton addTransaction = new PlusButton();
 
         content.getChildren().addAll(scrollPane, addTransaction);
-        root.setCenter(content);
+        setCenter(content);
 
         // Content
         {
@@ -134,14 +144,6 @@ public class TransactionScene extends SubScene {
 
         // ----- EVENTS -----
         {
-            // Transaction addition (space key)
-            addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-                if (event.getCode() == KeyCode.SPACE) {
-                    AddTransactionScreen.show(txs, balances);
-                }
-                event.consume();
-            });
-
             // Transaction addition (Big Fat + Button)
             addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(txs, balances));
 
