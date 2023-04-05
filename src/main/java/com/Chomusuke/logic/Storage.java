@@ -307,6 +307,10 @@ public class Storage {
             }
         }
 
+        for (byte b : balances.keySet())
+            if (balances.get(b).getBalance() == 0)
+                balances.remove(b);
+
         return balances;
     }
 }
