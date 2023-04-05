@@ -56,7 +56,8 @@ public class AddAccountScreen {
             if (nameInput.getText().equals(""))
                 return;
 
-            balances.put(id, new Account(nameInput.getText(), 0f));
+            double value = account == null ? 0f : account.getBalance();
+            balances.put(id, new Account(nameInput.getText(), value));
             Storage.writeAccounts(balances);
 
             popUp.close();
