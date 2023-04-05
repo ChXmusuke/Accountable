@@ -161,6 +161,12 @@ public class AddTransactionScreen {
                 } else {
                     vTypeField.setDisable(false);
                 }
+
+                if (!Objects.equals(n, TransactionType.SAVINGS)) {
+                    to.getSelectionModel().clearSelection();
+                    to.setVisible(false);
+                } else
+                    to.setVisible(true);
             });
 
             vTypeField.getSelectionModel().selectedItemProperty().addListener((e, o, n) -> {
