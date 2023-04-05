@@ -2,18 +2,16 @@ package com.chomusuke.gui.stage;
 
 import com.chomusuke.gui.element.Tile.Tile;
 import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Storage;
+import javafx.collections.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Map;
-import java.util.Random;
 
 public class AccountScreen {
 
@@ -28,6 +26,8 @@ public class AccountScreen {
     private AccountScreen() {}
 
     public static void show(Map<Byte, Account> balances) {
+        // ----- MEMORY -----
+        ObservableMap<Byte, Account> observableBalances = FXCollections.observableMap(balances);
 
 
 
@@ -41,9 +41,6 @@ public class AccountScreen {
 
         FlowPane content = new FlowPane();
         ScrollPane scrollPane = new ScrollPane(content);
-        for (byte a : balances.keySet()) {
-            content.getChildren().add(new Tile(balances.get(a).getName(), balances.get(a).getBalance()));
-        }
 
         root.getChildren().addAll(add, scrollPane);
 
@@ -79,40 +76,18 @@ public class AccountScreen {
 
         // ----- EVENTS -----
         {
-            add.setOnAction(e -> {
-                byte[] b = new byte[1];
-                Random r = new Random();
-                while (b[0] == 0 || balances.containsKey(b[0])) {
-                    r.nextBytes(b);
+            add.setOnAction(e -> AddAccountScreen.show(observableBalances));
+
+            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {
+                content.getChildren().clear();
+                for (byte b : observableBalances.keySet()) {
+                    content.getChildren().add(new Tile(observableBalances.get(b).getName(), observableBalances.get(b).getBalance()));
                 }
-
-                Stage popUp = new Stage();
-
-                VBox popUpRoot = new VBox();
-                Scene popUpScene = new Scene(popUpRoot);
-
-                TextField nameInput = new TextField();
-                Button submit = new Button("Créer");
-
-                popUpRoot.getChildren().addAll(nameInput, submit);
-
-                popUp.setScene(popUpScene);
-
-                popUpRoot.setSpacing(PADDING);
-                popUpRoot.setPadding(new Insets(PADDING));
-
-                submit.setOnAction(s -> {
-
-                    balances.put(b[0], new Account(nameInput.getText(), 0f));
-                    Storage.writeAccounts(balances);
-
-                    content.getChildren().add(new Tile(nameInput.getText(), 0f));
-
-                    popUp.close();
-                });
-
-                popUp.show();
             });
+        }
+
+        for (byte b : observableBalances.keySet()) {
+            content.getChildren().add(new Tile(observableBalances.get(b).getName(), observableBalances.get(b).getBalance()));
         }
 
         stage.show();
