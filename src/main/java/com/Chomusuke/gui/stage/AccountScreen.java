@@ -1,13 +1,13 @@
 package com.chomusuke.gui.stage;
 
-import com.chomusuke.gui.element.Tile.Tile;
+import com.chomusuke.gui.element.Tile.AccountTile;
 import com.chomusuke.logic.Account;
 import javafx.collections.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -39,7 +39,7 @@ public class AccountScreen {
 
         Button add = new Button();
 
-        FlowPane content = new FlowPane();
+        VBox content = new VBox();
         ScrollPane scrollPane = new ScrollPane(content);
 
         root.getChildren().addAll(add, scrollPane);
@@ -64,8 +64,7 @@ public class AccountScreen {
             content.getStyleClass().add("background");
             content.prefWidthProperty().bind(root.widthProperty());
             content.prefHeightProperty().bind(root.heightProperty());
-            content.setHgap(PADDING);
-            content.setVgap(PADDING);
+            content.setSpacing(PADDING);
 
             scrollPane.getStyleClass().add("scrollPane");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -78,18 +77,27 @@ public class AccountScreen {
         {
             add.setOnAction(e -> AddAccountScreen.show(observableBalances));
 
-            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {
-                content.getChildren().clear();
-                for (byte b : observableBalances.keySet()) {
-                    content.getChildren().add(new Tile(observableBalances.get(b).getName(), observableBalances.get(b).getBalance()));
-                }
-            });
+            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c ->
+                updateDisplay(observableBalances, content)
+            );
         }
 
-        for (byte b : observableBalances.keySet()) {
-            content.getChildren().add(new Tile(observableBalances.get(b).getName(), observableBalances.get(b).getBalance()));
-        }
+        updateDisplay(observableBalances, content);
 
         stage.show();
+    }
+
+    private static void updateDisplay(Map<Byte, Account> balances, Pane p) {
+        p.getChildren().clear();
+
+        for (Account a : balances.values()) {
+            AccountTile t = new AccountTile(a);
+
+            t.setOnMouseClicked(m ->
+                    AddAccountScreen.show(balances, t.getBaseAccount())
+            );
+
+            p.getChildren().add(t);
+        }
     }
 }

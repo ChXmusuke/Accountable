@@ -15,12 +15,27 @@ import java.util.Random;
 public class AddAccountScreen {
 
     private static final int PADDING = 8;
+
     public static void show(Map<Byte, Account> balances) {
-        byte[] b = new byte[1];
-        Random r = new Random();
-        while (b[0] == 0 || balances.containsKey(b[0])) {
-            r.nextBytes(b);
+
+        show(balances, null);
+    }
+
+    public static void show(Map<Byte, Account> balances, Account account) {
+        byte id;
+        if (account == null) {
+            byte[] byteArray = new byte[1];
+            Random r = new Random();
+            while (byteArray[0] == 0 || balances.containsKey(byteArray[0]))
+                r.nextBytes(byteArray);
+
+            id = byteArray[0];
+        } else {
+            id = balances.keySet().stream()
+                    .filter(f -> balances.get(f).getName().equals(account.getName()))
+                    .toList().get(0);
         }
+
 
         Stage popUp = new Stage();
 
@@ -28,7 +43,7 @@ public class AddAccountScreen {
         Scene popUpScene = new Scene(popUpRoot);
 
         TextField nameInput = new TextField();
-        Button submit = new Button("Créer");
+        Button submit = new Button(account == null ? "Ajouter" : "Modifier");
 
         popUpRoot.getChildren().addAll(nameInput, submit);
 
@@ -38,12 +53,18 @@ public class AddAccountScreen {
         popUpRoot.setPadding(new Insets(PADDING));
 
         submit.setOnAction(s -> {
+            if (nameInput.getText().equals(""))
+                return;
 
-            balances.put(b[0], new Account(nameInput.getText(), 0f));
+            balances.put(id, new Account(nameInput.getText(), 0f));
             Storage.writeAccounts(balances);
 
             popUp.close();
         });
+
+        if (account != null)
+            nameInput.setText(account.getName());
+
 
         popUp.show();
     }
