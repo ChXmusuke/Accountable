@@ -61,33 +61,13 @@ public class Account {
     }
 
     /**
-     * Set the balance to the specified value.
+     * Updates the balance with the specified amount.
      *
-     * @param newBalance new value for the balance
+     * @param amount a value
      */
-    public void setBalance(double newBalance) {
-
-        balance = newBalance;
-    }
-
-    /**
-     * Adds the specified amount to the balance.
-     *
-     * @param amount the amount to add
-     */
-    public void add(double amount) {
+    public void update(double amount) {
 
         balance += amount;
-    }
-
-    /**
-     * Subtracts the specified amount from the balance.
-     *
-     * @param amount the amount to subtract
-     */
-    public void subtract(double amount) {
-
-        balance -= amount;
     }
 
     /**
@@ -166,7 +146,7 @@ public class Account {
 
         public void apply(Map<Byte, Account> balances) {
             for (byte b : modMap.keySet()) {
-                balances.get(b).add(modMap.get(b));
+                balances.get(b).update(modMap.get(b));
             }
         }
 
