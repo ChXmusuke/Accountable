@@ -180,7 +180,8 @@ public class AddTransactionScreen {
             submit.setOnAction((a) -> {
                 if (nameField.getText() == null || nameField.getText().equals("")
                         || valueField.getText() == null || valueField.getText().equals("")
-                        || tTypeField.getValue() == null || vTypeField.getValue() == null || to.getValue() == null)
+                        || tTypeField.getValue() == null || vTypeField.getValue() == null ||
+                        (to.getValue() == null && tTypeField.getValue() == TransactionType.SAVINGS))
                     return;
 
                 Transaction newTransaction = new Transaction(
@@ -208,7 +209,8 @@ public class AddTransactionScreen {
                 valueField.setText(Float.toString(t.value()));
                 tTypeField.getSelectionModel().select(t.transactionType());
                 vTypeField.getSelectionModel().select(t.valueType());
-                to.getSelectionModel().select(accounts.get(t.to()).getName());
+                if (t.to() != 0)
+                    to.getSelectionModel().select(accounts.get(t.to()).getName());
             }
 
             to.setItems(FXCollections.observableArrayList(names.keySet()));
