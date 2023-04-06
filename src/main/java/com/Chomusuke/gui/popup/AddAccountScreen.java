@@ -59,6 +59,14 @@ public class AddAccountScreen extends PopUp {
             close();
         });
 
+        setDeleteAction(d -> {
+            if (account != null && account.getBalance() == 0) {
+                balances.remove(id);
+
+                close();
+            }
+        });
+
         if (account != null)
             nameInput.setText(account.getName());
 
