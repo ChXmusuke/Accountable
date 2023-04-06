@@ -87,7 +87,9 @@ public abstract class PopUp extends Stage {
 
     protected void setDeleteAction(EventHandler<ActionEvent> action) {
 
-        ((Button) buttons.getChildren().get(1))
-                .setOnAction(action);
+        if (buttons.getChildren().size() == 2) {
+            ((Button) buttons.getChildren().get(1))
+                    .setOnAction(action);
+        }
     }
 }
