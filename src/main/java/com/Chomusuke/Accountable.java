@@ -21,8 +21,8 @@ import java.util.*;
 
 import com.chomusuke.gui.pane.AccountPane;
 import com.chomusuke.gui.pane.TransactionPane;
-import com.chomusuke.gui.popups.AddAccountScreen;
-import com.chomusuke.gui.popups.AddTransactionScreen;
+import com.chomusuke.gui.popup.AddAccountScreen;
+import com.chomusuke.gui.popup.AddTransactionScreen;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

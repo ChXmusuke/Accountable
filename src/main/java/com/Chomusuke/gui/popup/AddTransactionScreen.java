@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui.popups;
+package com.chomusuke.gui.popup;
 
 import com.chomusuke.logic.Account;
 import javafx.collections.FXCollections;

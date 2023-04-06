@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui.element.Tile;
+package com.chomusuke.gui.element.tile;
 
 import com.chomusuke.logic.Transaction;
 import javafx.scene.paint.Color;

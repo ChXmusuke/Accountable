@@ -19,8 +19,8 @@ package com.chomusuke.gui.pane;
 
 import com.chomusuke.Accountable.SceneID;
 import com.chomusuke.gui.element.PlusButton;
-import com.chomusuke.gui.element.Tile.AccountTile;
-import com.chomusuke.gui.popups.AddAccountScreen;
+import com.chomusuke.gui.element.tile.AccountTile;
+import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
