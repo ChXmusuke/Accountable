@@ -34,14 +34,65 @@ import static com.chomusuke.logic.Transaction.ValueType;
 public class Storage {
 
     private static final int MAX_TRANSACTION_COUNT = 512;
+    private static final int MAX_ACCOUNT_COUNT = 256;
 
-    public static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
+    private static final Path ROOT_DIR = Path.of(System.getProperty("user.home")).resolve(System.getProperty("os.name").equals("Mac OS X") ? "Library/Application Support" : "AppData/Roaming");
     private static final Path DIR_NAME = ROOT_DIR.resolve("Accountable/storage/");
 
     /**
      * Don't let anyone instantiate this class.
      */
     private Storage() {}
+
+    public static void writeAccounts(Map<Byte, Account> accounts) {
+        Path file = DIR_NAME.resolve("balances");
+
+        createDirFiles(file);
+
+        try (DataOutputStream output = new DataOutputStream(new FileOutputStream(file.toString()))) {
+            for (Byte id : accounts.keySet()) {
+                output.writeByte(id);
+                output.writeUTF(accounts.get(id).getName());
+                output.writeDouble(accounts.get(id).getBalance());
+            }
+
+            System.out.printf("Wrote %s balances%n", accounts.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<Byte, Account> readAccounts() {
+        Path file = DIR_NAME.resolve("balances");
+
+        Map<Byte, Account> balances = new HashMap<>();
+
+        try (DataInputStream input = new DataInputStream(new FileInputStream(file.toString()))) {
+            byte id;
+            Account account;
+            for (int i = 0 ; i < MAX_ACCOUNT_COUNT ; i++) {
+                id = input.readByte();
+                account = new Account(input.readUTF(), input.readDouble());
+                balances.put(id, account);
+            }
+
+            throw new RuntimeException("The file contains too much accounts.");
+        } catch (FileNotFoundException notFoundException) {
+            // Account balance recovery if the file is missing, but transactions are still there
+            // The account names can't be recovered
+            System.out.println("The balances file is missing. Reconstructing...");
+
+            balances = readBalancesFromTransactions();
+
+            writeAccounts(balances);
+        } catch (EOFException ignored) {
+            // Exception ignored
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        return balances;
+    }
 
     /**
      * Appends the specified {@code Transaction} to a file according to the given year and month.
@@ -109,7 +160,7 @@ public class Storage {
      *
      * @return a list of transactions loaded from the file
      */
-    public static List<Transaction> load(int year, int month) {
+    public static List<Transaction> read(int year, int month) {
         Preconditions.checkArgument(month > 0 && month <= 12);
 
         Path file = DIR_NAME.resolve(String.format("%s/%s", year, month));
@@ -140,7 +191,6 @@ public class Storage {
             return new ArrayList<>();
         } catch (EOFException ignored) {
             // Exception ignored
-            System.out.println("Reached end of file.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -227,5 +277,40 @@ public class Storage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Map<Byte, Account> readBalancesFromTransactions() {
+        Map<Byte, Account> balances = new HashMap<>();
+
+        List<String> years = getAvailableYears();
+        List<String> months;
+        TransactionList transactions = new TransactionList();
+        float[] values;
+
+        for (String y : years) {
+
+            months = getAvailableMonths(Integer.parseInt(y));
+            for (String m : months) {
+
+                transactions.setTransactionList(read(Integer.parseInt(y), Integer.parseInt(m)));
+                values = transactions.getValues();
+                for (int i = 0 ; i < transactions.getTransactionList().size() ; i++) {
+                    Transaction t = transactions.getTransactionList().get(i);
+
+                    if (t.to() != 0) {
+                        if (!balances.containsKey(t.to()))
+                            balances.put(t.to(), new Account(Integer.toString(balances.size()+1), 0));
+
+                        balances.get(t.to()).update(Math.abs(values[i]));
+                    }
+                }
+            }
+        }
+
+        for (byte b : balances.keySet())
+            if (balances.get(b).getBalance() == 0)
+                balances.remove(b);
+
+        return balances;
     }
 }

@@ -15,59 +15,34 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui.element;
+package com.chomusuke.gui.element.tile;
 
 import com.chomusuke.logic.Transaction;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-
-import java.util.Locale;
 
 /**
  * Provides a JavaFX Node that represents a transaction.
  */
-public class TransactionTile extends HBox {
+public class TransactionTile extends Tile {
 
     Transaction baseTransaction;
 
     public TransactionTile(Transaction t, float value) {
+        super(t.name(), value);
 
         baseTransaction = t;
-
-        Rectangle colorTag = new Rectangle();
-        VBox textBox = new VBox();
-
-        this.getChildren().addAll(colorTag, textBox);
-
-        Text nameText = new Text(t.name());
-        Text valueText = new Text(String.format(Locale.ROOT, "%.2f", value));
-
-        textBox.getChildren().addAll(nameText, valueText);
 
 
 
         // ----- STYLE -----
         {
-            colorTag.getStyleClass().add("colorTag");
-            colorTag.setHeight(68);
-            colorTag.setWidth(8);
-
             // Color-coded based on transaction type
             switch (t.transactionType()) {
-                case REVENUE -> colorTag.setFill(Color.web("#33CC33"));
-                case BUDGET -> colorTag.setFill(Color.web("#FFE066"));
-                case BILL -> colorTag.setFill(Color.web("#FF1A75"));
-                case SAVINGS -> colorTag.setFill(Color.web("#33CCFF"));
+                case REVENUE -> colorTag.setFill(Color.web("#33CC33"));  // Green
+                case BUDGET -> colorTag.setFill(Color.web("#FFE066"));  // Yellow
+                case BILL -> colorTag.setFill(Color.web("#FF1A75"));  // Red
+                case SAVINGS -> colorTag.setFill(Color.web("#33CCFF"));  // Blue
             }
-
-            textBox.getStyleClass().add("tileText");
-            textBox.getChildren().forEach(text -> text.setStyle(
-                    "-fx-font: 24 \"Arial Rounded MT Bold\"; " +
-                            "-fx-fill: lightgray"
-            ));
         }
     }
 
