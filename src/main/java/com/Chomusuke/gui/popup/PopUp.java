@@ -33,24 +33,24 @@ public abstract class PopUp extends Stage {
 
     private final HBox buttons = new HBox();
 
-    private final Button deleteButton;
-
     public PopUp() {
 
-        this(new Pane());
+        this(false);
     }
 
-    public PopUp(Node content) {
+    public PopUp(boolean showDeleteButton) {
 
         // ----- MAIN -----
         VBox root = new VBox();
         Scene scene = new Scene(root);
 
         Button submit = new Button("Confirmer");
-        deleteButton = new Button("Supprimer");
+        Button deleteButton = new Button("Supprimer");
 
         buttons.getChildren().add(submit);
-        root.getChildren().addAll(content, buttons);
+        if (showDeleteButton)
+            buttons.getChildren().add(deleteButton);
+        root.getChildren().addAll(new Pane(), buttons);
 
         // ----- STYLE -----
         {
@@ -89,13 +89,5 @@ public abstract class PopUp extends Stage {
 
         ((Button) buttons.getChildren().get(1))
                 .setOnAction(action);
-    }
-
-    protected void showDeleteButton(boolean show) {
-
-        if (show && buttons.getChildren().size() == 1)
-            buttons.getChildren().add(deleteButton);
-        else if (!show && buttons.getChildren().size() == 2)
-            buttons.getChildren().remove(1);
     }
 }

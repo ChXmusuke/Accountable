@@ -32,7 +32,7 @@ public class AddAccountScreen extends PopUp {
     }
 
     public AddAccountScreen(Map<Byte, Account> balances, Account account) {
-        super();
+        super(account != null);
 
         byte id;
         if (account == null) {

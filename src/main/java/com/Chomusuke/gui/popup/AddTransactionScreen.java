@@ -45,7 +45,7 @@ public class AddTransactionScreen extends PopUp {
     }
 
     public AddTransactionScreen(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
-        super();
+        super(t != null);
 
         Map<String, Byte> names = new HashMap<>();
         for (byte b : accounts.keySet())
@@ -67,7 +67,6 @@ public class AddTransactionScreen extends PopUp {
         content.add(to, 0, 2);
 
         setContent(content);
-        showDeleteButton(t != null);
 
 
 
