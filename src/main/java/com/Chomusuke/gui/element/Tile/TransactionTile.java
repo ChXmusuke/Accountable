@@ -31,6 +31,8 @@ public class TransactionTile extends Tile {
         super(t.name(), value);
 
         baseTransaction = t;
+        ColorTag colorTag = new ColorTag();
+        getChildren().add(0, colorTag);
 
 
 

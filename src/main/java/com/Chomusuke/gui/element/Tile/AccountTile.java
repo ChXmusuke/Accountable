@@ -18,6 +18,10 @@
 package com.chomusuke.gui.element.tile;
 
 import com.chomusuke.logic.Account;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+
+import java.util.Locale;
 
 public class AccountTile extends Tile {
 
@@ -27,6 +31,18 @@ public class AccountTile extends Tile {
         super(account.getName(), account.getBalance());
 
         baseAccount = account;
+
+        Pane tag = new Pane();
+        ColorTag t1 = new ColorTag();
+        ColorTag t2 = new ColorTag(ColorTag.DEFAULT_HEIGHT*account.getProgress());
+        t2.setFill(Color.GREEN);
+        tag.getChildren().addAll(t1, t2);
+
+        getChildren().add(0, tag);
+
+        if (account.getObjective() != 0) {
+            setValueString(String.format(Locale.ROOT, "%.2f / %.2f", account.getBalance(), account.getObjective()));
+        }
     }
 
     public Account getBaseAccount() {
