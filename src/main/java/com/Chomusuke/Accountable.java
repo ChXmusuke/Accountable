@@ -26,6 +26,9 @@ import com.chomusuke.gui.popup.AddTransactionScreen;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -79,6 +82,8 @@ public class Accountable extends Application {
         // ----- MEMORY -----
         TransactionList manager = new TransactionList();
         Map<Byte, Account> balances = Storage.readAccounts();
+        StringProperty year = new SimpleStringProperty();
+        StringProperty month = new SimpleStringProperty();
 
 
 
@@ -88,8 +93,8 @@ public class Accountable extends Application {
 
         selectedScene.addListener((s, o, n) -> {
             switch (n) {
-                case MAIN ->
-                        stage.getScene().setRoot(new TransactionPane(selectedScene, manager, balances));
+                case TRANSACTIONS ->
+                        stage.getScene().setRoot(new TransactionPane(selectedScene, manager, balances, year, month));
                 case ACCOUNTS ->
                         stage.getScene().setRoot(new AccountPane(selectedScene, balances));
             }
@@ -99,7 +104,7 @@ public class Accountable extends Application {
 
         // Main
         {
-            selectedScene.set(SceneID.MAIN);
+            selectedScene.set(SceneID.TRANSACTIONS);
 
             stage.setHeight(WINDOW_HEIGHT);
             stage.setWidth(WINDOW_HEIGHT * WINDOW_RATIO);
@@ -112,11 +117,65 @@ public class Accountable extends Application {
             stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
         }
 
+        // Load the corresponding file in memory when selecting a year+month
+        month.addListener((v, o, n) -> {
+            if (n != null) {
+
+                int intYear = Integer.parseInt(year.get());
+                int intMonth = Integer.parseInt(month.get());
+
+                if (intYear >= 1 && intMonth >= 1)
+                    manager.setTransactionList(Storage.read(intYear, intMonth));
+            }
+        });
+
+        // Transaction list modification
+        manager.getTransactionList().addListener((ListChangeListener<Transaction>) l -> {
+            l.next();
+
+            int intYear = Integer.parseInt(year.get());
+            int intMonth = Integer.parseInt(month.get());
+
+            if (!manager.setAllFlag()) {
+                List<Transaction> oldList = new ArrayList<>(l.getList());
+
+                if (l.wasRemoved()) {
+                    Storage.write(
+                            manager.getTransactionList(),
+                            intYear,
+                            intMonth
+                    );
+
+                    if (l.wasAdded())
+                        oldList.set(l.getFrom(), l.getRemoved().get(0));
+                    else
+                        oldList.add(l.getFrom(), l.getRemoved().get(0));
+                } else {
+                    Storage.write(
+                            l.getAddedSubList().get(0),
+                            intYear,
+                            intMonth
+                    );
+
+                    oldList.remove(l.getFrom());
+                }
+
+                Account.ModMap.of(oldList)
+                        .reverse()
+                        .apply(balances);
+
+                Account.ModMap.of(new ArrayList<>(l.getList()))
+                        .apply(balances);
+
+                Storage.writeAccounts(balances);
+            }
+        });
+
         // Transaction addition (space key)
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode() == KeyCode.SPACE) {
                 switch (selectedScene.get()) {
-                    case MAIN ->
+                    case TRANSACTIONS ->
                             new AddTransactionScreen(manager, balances).show();
                     case ACCOUNTS ->
                             new AddAccountScreen(balances).show();
@@ -129,7 +188,7 @@ public class Accountable extends Application {
     }
 
     public enum SceneID {
-        MAIN,
+        TRANSACTIONS,
         ACCOUNTS
     }
 }

@@ -20,8 +20,8 @@ package com.chomusuke.gui.element;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
@@ -34,8 +34,8 @@ import com.chomusuke.util.Time;
  */
 public class DateSelector extends HBox {
 
-    private final ReadOnlyStringWrapper year = new ReadOnlyStringWrapper();
-    private final ReadOnlyStringWrapper month = new ReadOnlyStringWrapper();
+    private final StringProperty year = new SimpleStringProperty();
+    private final StringProperty month = new SimpleStringProperty();
 
     private static final int PADDING = 8;
 
@@ -94,29 +94,12 @@ public class DateSelector extends HBox {
 
         // ----- INIT SELECT -----
         yearSelector.setItems(FXCollections.observableList(years));
-        yearSelector.getSelectionModel().selectLast();
         monthSelector.setItems(FXCollections.observableList(months));
-        monthSelector.getSelectionModel().selectLast();
     }
 
-    /**
-     * Returns the current value of the year {@code ChoiceBox}.
-     *
-     * @return the year, as an {@code int} value
-     */
-    public int getYearValue() {
+    public StringProperty getYearProperty() {
 
-        return Integer.parseInt(year.get());
-    }
-
-    /**
-     * Returns the current value of the month {@code ChoiceBox}.
-     *
-     * @return the month, as an {@code int} value
-     */
-    public int getMonthValue() {
-
-        return Integer.parseInt(month.get());
+        return year;
     }
 
     /**
@@ -124,8 +107,8 @@ public class DateSelector extends HBox {
      *
      * @return a {@code ReadOnlyStringProperty}
      */
-    public ReadOnlyStringProperty getMonthProperty() {
+    public StringProperty getMonthProperty() {
 
-        return month.getReadOnlyProperty();
+        return month;
     }
 }

@@ -84,7 +84,7 @@ public class AccountPane extends Pane {
 
         // ----- EVENTS -----
         {
-            back.setOnAction(e -> selectedScene.set(SceneID.MAIN));
+            back.setOnAction(e -> selectedScene.set(SceneID.TRANSACTIONS));
             add.setOnMouseClicked(e -> new AddAccountScreen(observableBalances).show());
 
             observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {

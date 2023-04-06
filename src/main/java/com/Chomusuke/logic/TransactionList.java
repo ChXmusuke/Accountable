@@ -37,21 +37,6 @@ public class TransactionList {
     private boolean setAllFlag = false;
 
     /**
-     * Constructor with no parameters
-     */
-    public TransactionList() {
-    }
-
-    /**
-     * Construct the list from an existing transaction list.
-     *
-     * @param txs an array
-     */
-    public TransactionList(List<Transaction> txs) {
-        this.txs.setAll(txs);
-    }
-
-    /**
      * Replaces all transactions in memory by the transactions
      * in {@code txs}.
      *

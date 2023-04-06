@@ -25,11 +25,10 @@ import com.chomusuke.gui.element.tile.TransactionTile;
 import com.chomusuke.gui.popup.AddFileScreen;
 import com.chomusuke.gui.popup.AddTransactionScreen;
 import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Storage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -48,7 +47,7 @@ public class TransactionPane extends BorderPane{
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
     private static final int PADDING = 8;
 
-    public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances) {
+    public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
         // Main
         {
@@ -93,16 +92,8 @@ public class TransactionPane extends BorderPane{
             loadedDate.getStyleClass().add("stdText");
             HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
 
-            // Load the corresponding file in memory when selecting a year+month
-            dateSelector.getMonthProperty().addListener((v, o, n) -> {
-                if (n != null) {
-                    int year = dateSelector.getYearValue();
-                    int month = Integer.parseInt(n);
-
-                    if (year >= 1 && month >= 1)
-                        txs.setTransactionList(Storage.read(year, month));
-                }
-            });
+            year.bind(dateSelector.getYearProperty());
+            month.bind(dateSelector.getMonthProperty());
 
             remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
             remainderContainer.setAlignment(Pos.BASELINE_LEFT);
@@ -159,49 +150,8 @@ public class TransactionPane extends BorderPane{
                     remainder.setFill(Color.GREEN);
             });
 
-            // Transaction list modification
-            txs.getTransactionList().addListener((ListChangeListener<Transaction>) l -> {
-                l.next();
-
-                if (!txs.setAllFlag()) {
-                    List<Transaction> oldList = new ArrayList<>(l.getList());
-
-                    if (l.wasRemoved()) {
-                        Storage.write(
-                                txs.getTransactionList(),
-                                dateSelector.getYearValue(),
-                                dateSelector.getMonthValue()
-                        );
-
-                        if (l.wasAdded())
-                            oldList.set(l.getFrom(), l.getRemoved().get(0));
-                        else
-                            oldList.add(l.getFrom(), l.getRemoved().get(0));
-                    } else {
-                        Storage.write(
-                                l.getAddedSubList().get(0),
-                                dateSelector.getYearValue(),
-                                dateSelector.getMonthValue()
-                        );
-
-                        oldList.remove(l.getFrom());
-                    }
-
-                    Account.ModMap.of(oldList)
-                            .reverse()
-                            .apply(balances);
-
-                    Account.ModMap.of(new ArrayList<>(l.getList()))
-                            .apply(balances);
-
-                    Storage.writeAccounts(balances);
-                }
-
-                // Display
-
-                int year = dateSelector.getYearValue();
-                int month = dateSelector.getMonthValue();
-                loadedDate.setText(String.format("%s/%s", year, month));
+            dateSelector.getMonthProperty().addListener(e -> {
+                loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
                 remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()));
 
                 VBox pane = (VBox) scrollPane.getContent();
@@ -224,11 +174,5 @@ public class TransactionPane extends BorderPane{
                 pane.getChildren().setAll(tiles);
             });
         }
-
-        // ----- STORAGE INIT -----
-        txs.setTransactionList(Storage.read(
-                dateSelector.getYearValue(),
-                dateSelector.getMonthValue()
-        ));
     }
 }
