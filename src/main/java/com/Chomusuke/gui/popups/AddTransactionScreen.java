@@ -67,7 +67,7 @@ public class AddTransactionScreen extends PopUp {
         content.add(to, 0, 2);
 
         setContent(content);
-        setShowDeleteButton(t != null);
+        showDeleteButton(t != null);
 
 
 

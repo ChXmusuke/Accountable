@@ -17,8 +17,6 @@
 
 package com.chomusuke.gui.popups;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -35,7 +33,7 @@ public abstract class PopUp extends Stage {
 
     private final HBox buttons = new HBox();
 
-    private final BooleanProperty showDeleteButton = new SimpleBooleanProperty(false);
+    private final Button deleteButton;
 
     public PopUp() {
 
@@ -49,7 +47,7 @@ public abstract class PopUp extends Stage {
         Scene scene = new Scene(root);
 
         Button submit = new Button("Confirmer");
-        Button delete = new Button("Supprimer");
+        deleteButton = new Button("Supprimer");
 
         buttons.getChildren().add(submit);
         root.getChildren().addAll(content, buttons);
@@ -71,16 +69,8 @@ public abstract class PopUp extends Stage {
             submit.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(submit, Priority.ALWAYS);
 
-            delete.setTextFill(Color.RED);
+            deleteButton.setTextFill(Color.RED);
         }
-
-        showDeleteButton.addListener((b, o, n) ->
-        {
-            if (n && !o)
-                buttons.getChildren().add(delete);
-            else
-                buttons.getChildren().remove(1);
-        });
     }
 
     protected void setContent(Node node) {
@@ -101,8 +91,11 @@ public abstract class PopUp extends Stage {
                 .setOnAction(action);
     }
 
-    protected void setShowDeleteButton(boolean show) {
+    protected void showDeleteButton(boolean show) {
 
-        showDeleteButton.set(show);
+        if (show && buttons.getChildren().size() == 1)
+            buttons.getChildren().add(deleteButton);
+        else if (!show && buttons.getChildren().size() == 2)
+            buttons.getChildren().remove(1);
     }
 }
