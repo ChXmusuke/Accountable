@@ -80,6 +80,9 @@ public class Accountable extends Application {
         TransactionList manager = new TransactionList();
         Map<Byte, Account> balances = Storage.readAccounts();
 
+
+
+        // ----- WINDOW -----
         stage.setScene(new Scene(new Pane()));
         ObjectProperty<SceneID> selectedScene = new SimpleObjectProperty<>();
 
