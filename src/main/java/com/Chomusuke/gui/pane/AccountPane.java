@@ -22,6 +22,7 @@ import com.chomusuke.gui.element.PlusButton;
 import com.chomusuke.gui.element.tile.AccountTile;
 import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Storage;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -86,9 +87,10 @@ public class AccountPane extends Pane {
             back.setOnAction(e -> selectedScene.set(SceneID.MAIN));
             add.setOnMouseClicked(e -> new AddAccountScreen(observableBalances).show());
 
-            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c ->
-                    updateDisplay(observableBalances, tilePane)
-            );
+            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {
+                Storage.writeAccounts(balances);
+                updateDisplay(observableBalances, tilePane);
+            });
         }
 
         updateDisplay(observableBalances, tilePane);

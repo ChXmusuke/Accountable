@@ -18,7 +18,6 @@
 package com.chomusuke.gui.popup;
 
 import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Storage;
 import javafx.scene.control.TextField;
 
 import java.util.Map;
@@ -56,7 +55,6 @@ public class AddAccountScreen extends PopUp {
 
             double value = account == null ? 0f : account.getBalance();
             balances.put(id, new Account(nameInput.getText(), value));
-            Storage.writeAccounts(balances);
 
             close();
         });
