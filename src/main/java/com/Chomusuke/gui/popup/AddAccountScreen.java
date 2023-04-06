@@ -19,11 +19,15 @@ package com.chomusuke.gui.popup;
 
 import com.chomusuke.logic.Account;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.HBox;
 
 import java.util.Map;
 import java.util.Random;
 
 public class AddAccountScreen extends PopUp {
+
+    private static final int PADDING = 8;
 
     public AddAccountScreen(Map<Byte, Account> balances) {
 
@@ -47,29 +51,61 @@ public class AddAccountScreen extends PopUp {
                     .toList().get(0);
         }
 
+        HBox content = new HBox();
         TextField nameInput = new TextField();
+        TextField objectiveInput = new TextField();
+        content.getChildren().addAll(nameInput, objectiveInput);
 
-        setSubmitAction(s -> {
-            if (nameInput.getText().equals(""))
-                return;
+        setContent(content);
 
-            double value = account == null ? 0f : account.getBalance();
-            balances.put(id, new Account(nameInput.getText(), value));
 
-            close();
-        });
 
-        setDeleteAction(d -> {
-            if (account != null && account.getBalance() == 0) {
-                balances.remove(id);
+        // ----- STYLE -----
+        {
+            content.setSpacing(PADDING);
+        }
+
+
+
+        // ----- EVENTS -----
+        {
+            objectiveInput.setTextFormatter(new TextFormatter<>(c -> {
+                if (c.isAdded()) {
+                    try {
+                        if (c.getText().length() == 1 && !c.getText().equals("."))
+                            Integer.parseInt(c.getText());
+                    } catch (NumberFormatException n) {
+                        return null;
+                    }
+                }
+
+                return c;
+            }));
+
+            setSubmitAction(s -> {
+                if (nameInput.getText().equals(""))
+                    return;
+
+                double value = account == null ? 0f : account.getBalance();
+                balances.put(id, new Account(nameInput.getText(), value, Double.parseDouble(objectiveInput.getText())));
 
                 close();
+            });
+
+
+            setDeleteAction(d -> {
+                if (account != null && account.getBalance() == 0) {
+                    balances.remove(id);
+
+                    close();
+                }
+            });
+
+            if (account != null) {
+                nameInput.setText(account.getName());
+                if (account.getObjective() >= 0)
+                    objectiveInput.setText(Double.toString(account.getObjective()));
             }
-        });
-
-        if (account != null)
-            nameInput.setText(account.getName());
-
-        setContent(nameInput);
+        }
     }
 }

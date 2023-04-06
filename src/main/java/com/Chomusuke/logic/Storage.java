@@ -54,6 +54,7 @@ public class Storage {
                 output.writeByte(id);
                 output.writeUTF(accounts.get(id).getName());
                 output.writeDouble(accounts.get(id).getBalance());
+                output.writeDouble(accounts.get(id).getObjective());
             }
 
             System.out.printf("Wrote %s balances%n", accounts.size());
@@ -72,7 +73,7 @@ public class Storage {
             Account account;
             for (int i = 0 ; i < MAX_ACCOUNT_COUNT ; i++) {
                 id = input.readByte();
-                account = new Account(input.readUTF(), input.readDouble());
+                account = new Account(input.readUTF(), input.readDouble(), input.readDouble());
                 balances.put(id, account);
             }
 

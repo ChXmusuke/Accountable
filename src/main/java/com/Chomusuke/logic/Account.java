@@ -26,8 +26,20 @@ import java.util.Map;
  */
 public class Account {
 
-    private String name;
+    private final String name;
     private double balance;
+    private final double objective;
+
+    /**
+     * 2-parameter constructor
+     *
+     * @param name a name
+     * @param balance a value
+     */
+    public Account(String name, double balance) {
+
+        this(name, balance, 0);
+    }
 
     /**
      * Constructor.
@@ -35,19 +47,10 @@ public class Account {
      * @param name a name
      * @param balance a value
      */
-    public Account(String name, double balance) {
+    public Account(String name, double balance, double objective) {
         this.name = name;
         this.balance = balance;
-    }
-
-    /**
-     * Sets the name of the account to the specified value.
-     *
-     * @param newName a new name for this account
-     */
-    public void setName(String newName) {
-
-        name = newName;
+        this.objective = objective;
     }
 
     /**
@@ -80,9 +83,32 @@ public class Account {
         return balance;
     }
 
+    /**
+     * Returns the savings goal of the account.
+     * 0 if no objective has been set.
+     *
+     * @return the savings objective
+     */
+    public double getObjective() {
+
+        return objective;
+    }
+
+    /**
+     * Returns the progress of the savings goal.
+     * The value is negative is no goal has been set.
+     *
+     * @return a value between 0 and 1
+     */
+    public double getProgress() {
+
+        return objective == 0 ? -1 : balance/objective;
+    }
+
     @Override
     public String toString() {
-        return String.format("Account {name:%s, balance:%s}", name, balance);
+
+        return String.format("Account {name:%s, balance:%s, objective:%s}", name, balance, objective);
     }
 
     @Override
@@ -95,11 +121,14 @@ public class Account {
             return false;
 
         return this.name.equals(((Account) that).name) &&
-                this.balance == ((Account) that).balance;
+                this.balance == ((Account) that).balance &&
+                this.objective == ((Account) that).objective;
     }
 
 
-
+    /**
+     * Provides recording of modifications made to all existing accounts.
+     */
     public static class ModMap {
 
         Map<Byte, Float> modMap = new HashMap<>();
@@ -139,11 +168,21 @@ public class Account {
             return m;
         }
 
+        /**
+         * Reverses the sign of the change values.
+         *
+         * @return the reversed ModMap
+         */
         public ModMap reverse() {
             modMap.replaceAll((b, v) -> -v);
             return this;
         }
 
+        /**
+         * Applies the ModMap to the given account mapping.
+         *
+         * @param balances an account map
+         */
         public void apply(Map<Byte, Account> balances) {
             for (byte b : modMap.keySet()) {
                 balances.get(b).update(modMap.get(b));
