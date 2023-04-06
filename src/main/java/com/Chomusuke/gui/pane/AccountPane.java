@@ -84,7 +84,7 @@ public class AccountPane extends Pane {
         // ----- EVENTS -----
         {
             back.setOnAction(e -> selectedScene.set(SceneID.MAIN));
-            add.setOnMouseClicked(e -> AddAccountScreen.show(observableBalances));
+            add.setOnMouseClicked(e -> new AddAccountScreen(observableBalances).show());
 
             observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c ->
                     updateDisplay(observableBalances, tilePane)
@@ -101,7 +101,7 @@ public class AccountPane extends Pane {
             AccountTile t = new AccountTile(a);
 
             t.setOnMouseClicked(m ->
-                    AddAccountScreen.show(balances, t.getBaseAccount())
+                    new AddAccountScreen(balances, t.getBaseAccount()).show()
             );
 
             p.getChildren().add(t);

@@ -114,9 +114,9 @@ public class Accountable extends Application {
             if (event.getCode() == KeyCode.SPACE) {
                 switch (selectedScene.get()) {
                     case MAIN ->
-                            AddTransactionScreen.show(manager, balances);
+                            new AddTransactionScreen(manager, balances).show();
                     case ACCOUNTS ->
-                            AddAccountScreen.show(balances);
+                            new AddAccountScreen(balances).show();
                 }
             }
             event.consume();

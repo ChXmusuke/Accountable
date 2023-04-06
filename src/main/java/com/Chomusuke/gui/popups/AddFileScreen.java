@@ -19,132 +19,94 @@ package com.chomusuke.gui.popups;
 
 import java.util.ArrayList;
 
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import com.chomusuke.logic.Storage;
 
 /**
  * This class displays a JavaFX Stage made for transaction creation.
  */
-public class AddFileScreen {
+public class AddFileScreen extends PopUp {
 
     private static final int PADDING = 8;
 
     /**
      * Don't let anyone instantiate this class
      */
-    private AddFileScreen() {}
+    public AddFileScreen() {
+        super();
 
-    /**
-     * Displays the date entry window.
-     */
-    public static void show() {
-        Stage stage = new Stage();
-
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
-
-        HBox inputs = new HBox();
+        // ----- MAIN -----
+        HBox content = new HBox();
         TextField year = new TextField();
         TextField month = new TextField();
 
-        inputs.getChildren().addAll(year, month);
+        content.getChildren().addAll(year, month);
+        content.setSpacing(PADDING);
 
-        Button submit = new Button("Ajouter");
-
-        root.getChildren().addAll(inputs, submit);
-
-
-
-        // ----- STYLE -----
-        {
-            stage.setScene(scene);
-            stage.setResizable(false);
-
-            scene.getStylesheets().add("stylesheets/accountable.css");
-
-            root.getStyleClass().add("background");
-            root.setPadding(new Insets(PADDING));
-            root.setSpacing(PADDING);
-
-            inputs.setSpacing(PADDING);
-
-            submit.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(submit, Priority.ALWAYS);
-        }
+        setContent(content);
 
 
 
         // ----- EVENTS -----
-        {
-            year.setTextFormatter(new TextFormatter<>(c -> {
-                if (c.isAdded()) {
-                    try {
-                        int n = Integer.parseInt(c.getControlNewText());
+        year.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.isAdded()) {
+                try {
+                    int n = Integer.parseInt(c.getControlNewText());
 
-                        if (n < 0) {
-                            year.setText(Integer.toString(~n+1));
+                    if (n < 0) {
+                        year.setText(Integer.toString(~n+1));
 
-                            throw new NumberFormatException();
-                        }
-                    } catch (NumberFormatException n) {
-                        return null;
+                        throw new NumberFormatException();
                     }
+                } catch (NumberFormatException n) {
+                    return null;
                 }
+            }
 
-                return c;
-            }));
+            return c;
+        }));
 
-            month.setTextFormatter(new TextFormatter<>(c -> {
-                if (c.isAdded()) {
-                    try {
-                        int n = Integer.parseInt(c.getControlNewText());
+        month.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.isAdded()) {
+                try {
+                    int n = Integer.parseInt(c.getControlNewText());
 
-                        if (1 > n || n > 12) {
-                            month.setText(Integer.toString(Math.min(Math.max(n, 1), 12)));
+                    if (1 > n || n > 12) {
+                        month.setText(Integer.toString(Math.min(Math.max(n, 1), 12)));
 
-                            throw new NumberFormatException();
-                        }
-                    } catch (NumberFormatException n) {
-                        return null;
+                        throw new NumberFormatException();
                     }
+                } catch (NumberFormatException n) {
+                    return null;
                 }
+            }
 
-                return c;
-            }));
+            return c;
+        }));
 
-            // Creation of the file
-            submit.setOnAction(a -> {
-                // The submission does not trigger if either one of the fields is empty
-                if (year.getText().equals("")
-                        || month.getText().equals("")) {
-                    return;
-                }
+        setSubmitAction(a -> {
+            // The submission does not trigger if either one of the fields is empty
+            if (year.getText().equals("")
+                    || month.getText().equals("")) {
+                return;
+            }
 
-                int yearValue = Integer.parseInt(year.getText());
-                int monthValue = Integer.parseInt(month.getText());
+            int yearValue = Integer.parseInt(year.getText());
+            int monthValue = Integer.parseInt(month.getText());
 
-                // Restrict inputs to realistic year and month values
-                if (Integer.parseInt(year.getText()) < 1
-                        || Integer.parseInt(month.getText()) > 12) {
-                    return;
-                }
+            // Restrict inputs to realistic year and month values
+            if (Integer.parseInt(year.getText()) < 1
+                    || Integer.parseInt(month.getText()) > 12) {
+                return;
+            }
 
-                // Writes an empty list, meaning creating an empty file at wanted location
-                Storage.write(new ArrayList<>(), yearValue, monthValue);
+            // Writes an empty list, meaning creating an empty file at wanted location
+            Storage.write(new ArrayList<>(), yearValue, monthValue);
 
-                stage.close();
-            });
-        }
-
-        stage.show();
+            close();
+        });
     }
 }

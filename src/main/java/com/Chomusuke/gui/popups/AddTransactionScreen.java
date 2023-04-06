@@ -19,17 +19,12 @@ package com.chomusuke.gui.popups;
 
 import com.chomusuke.logic.Account;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
@@ -40,35 +35,23 @@ import java.util.Objects;
 
 import static com.chomusuke.logic.Transaction.*;
 
-public class AddTransactionScreen {
+public class AddTransactionScreen extends PopUp {
 
     private static final int PADDING = 8;
 
-    /**
-     * Displays the transaction entry window.
-     *
-     * @param txList a {@code Transaction} list
-     */
-    public static void show(TransactionList txList, Map<Byte, Account> accounts) {
+    public AddTransactionScreen(TransactionList txList, Map<Byte, Account> accounts) {
 
-        show(txList, null, accounts);
+        this(txList, null, accounts);
     }
 
-    /**
-     * Displays the transaction entry window.
-     * If t is set, pre-fills the fields for modification.
-     *
-     * @param txList a {@code Transaction} list
-     * @param t a {@code Transaction}
-     */
-    public static void show(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
+    public AddTransactionScreen(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
+        super();
+
         Map<String, Byte> names = new HashMap<>();
         for (byte b : accounts.keySet())
             names.put(accounts.get(b).getName(), b);
 
-        Stage stage = new Stage();
-        GridPane p = new GridPane();
-        Scene s = new Scene(p);
+        GridPane content = new GridPane();
 
         TextField nameField = new TextField();
         ChoiceBox<TransactionType> tTypeField = new ChoiceBox<>();
@@ -76,45 +59,23 @@ public class AddTransactionScreen {
         ChoiceBox<ValueType> vTypeField = new ChoiceBox<>();
         ChoiceBox<String> to = new ChoiceBox<>();
 
-        HBox buttons = new HBox();
-        Button submit = new Button(t != null ? "Modifier" : "Ajouter");
+        content.add(nameField, 0, 0);
+        content.add(valueField, 1, 0);
+        content.add(tTypeField, 0, 1);
+        content.add(vTypeField, 1, 1);
 
-        buttons.getChildren().add(submit);
+        content.add(to, 0, 2);
 
-        // Delete button
-        if (t != null) {
-            Button delete = new Button("Supprimer");
-            delete.setTextFill(Color.RED);
-            delete.setOnAction(a -> {
-                txList.remove(t);
-
-                stage.close();
-            });
-
-            buttons.getChildren().add(delete);
-        }
+        setContent(content);
+        setShowDeleteButton(t != null);
 
 
 
         // ----- STYLE -----
         {
-            stage.setScene(s);
-            stage.setResizable(false);
-
-            p.setPadding(new Insets(PADDING));
-            p.setHgap(PADDING);
-            p.setVgap(PADDING);
-            p.getStyleClass().add("background");
-
-            p.add(nameField, 0, 0);
-            p.add(valueField, 1, 0);
-            p.add(tTypeField, 0, 1);
-            p.add(vTypeField, 1, 1);
-
-            p.add(to, 0, 2);
-            p.add(buttons, 0, 3, 2, 1);
-
-            s.getStylesheets().add("stylesheets/accountable.css");
+            content.setHgap(PADDING);
+            content.setVgap(PADDING);
+            content.getStyleClass().add("background");
 
             tTypeField.setMaxWidth(Double.MAX_VALUE);
 
@@ -122,11 +83,6 @@ public class AddTransactionScreen {
 
             to.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(to, Priority.ALWAYS);
-
-            buttons.setPadding(new Insets(PADDING * 2));
-            buttons.setSpacing(PADDING);
-            submit.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(submit, Priority.ALWAYS);
         }
 
 
@@ -183,7 +139,7 @@ public class AddTransactionScreen {
                 }
             });
 
-            submit.setOnAction((a) -> {
+            setSubmitAction(a -> {
                 if (nameField.getText() == null || nameField.getText().equals("")
                         || valueField.getText() == null || valueField.getText().equals("")
                         || tTypeField.getValue() == null || vTypeField.getValue() == null ||
@@ -199,8 +155,16 @@ public class AddTransactionScreen {
                 );
                 txList.add(newTransaction, t);
 
-                stage.close();
+                close();
             });
+
+            if (t != null) {
+                setDeleteAction(a -> {
+                    txList.remove(t);
+
+                    close();
+                });
+            }
         }
 
 
@@ -217,12 +181,12 @@ public class AddTransactionScreen {
                 vTypeField.getSelectionModel().select(t.valueType());
                 if (t.to() != 0)
                     to.getSelectionModel().select(accounts.get(t.to()).getName());
+            } else {
+                tTypeField.getSelectionModel().select(TransactionType.REVENUE);
             }
 
             to.setItems(FXCollections.observableArrayList(names.keySet()));
         }
-
-        stage.show();
     }
 }
 

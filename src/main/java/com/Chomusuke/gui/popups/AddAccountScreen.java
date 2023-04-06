@@ -19,26 +19,21 @@ package com.chomusuke.gui.popups;
 
 import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Storage;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.util.Map;
 import java.util.Random;
 
-public class AddAccountScreen {
+public class AddAccountScreen extends PopUp {
 
-    private static final int PADDING = 8;
+    public AddAccountScreen(Map<Byte, Account> balances) {
 
-    public static void show(Map<Byte, Account> balances) {
-
-        show(balances, null);
+        this(balances, null);
     }
 
-    public static void show(Map<Byte, Account> balances, Account account) {
+    public AddAccountScreen(Map<Byte, Account> balances, Account account) {
+        super();
+
         byte id;
         if (account == null) {
             byte[] byteArray = new byte[1];
@@ -53,24 +48,9 @@ public class AddAccountScreen {
                     .toList().get(0);
         }
 
-
-        Stage popUp = new Stage();
-
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
-
         TextField nameInput = new TextField();
-        Button submit = new Button(account == null ? "Ajouter" : "Modifier");
 
-        root.getChildren().addAll(nameInput, submit);
-
-        root.getStyleClass().add("background");
-        popUp.setScene(scene);
-
-        root.setSpacing(PADDING);
-        root.setPadding(new Insets(PADDING));
-
-        submit.setOnAction(s -> {
+        setSubmitAction(s -> {
             if (nameInput.getText().equals(""))
                 return;
 
@@ -78,13 +58,12 @@ public class AddAccountScreen {
             balances.put(id, new Account(nameInput.getText(), value));
             Storage.writeAccounts(balances);
 
-            popUp.close();
+            close();
         });
 
         if (account != null)
             nameInput.setText(account.getName());
 
-
-        popUp.show();
+        setContent(nameInput);
     }
 }

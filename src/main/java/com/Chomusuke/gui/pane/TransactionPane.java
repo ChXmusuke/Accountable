@@ -69,7 +69,7 @@ public class TransactionPane extends BorderPane{
         HBox controls = new HBox();
 
         SquareButton showAccounts = new SquareButton("wallet.png", a -> selectedScene.set(SceneID.ACCOUNTS));
-        SquareButton newFile = new SquareButton("new.png", a -> AddFileScreen.show());
+        SquareButton newFile = new SquareButton("new.png", a -> new AddFileScreen().show());
         DateSelector dateSelector = new DateSelector();
         Text loadedDate = new Text();
 
@@ -145,7 +145,7 @@ public class TransactionPane extends BorderPane{
         // ----- EVENTS -----
         {
             // Transaction addition (Big Fat + Button)
-            addTransaction.setOnMouseClicked((e) -> AddTransactionScreen.show(txs, balances));
+            addTransaction.setOnMouseClicked((e) -> new AddTransactionScreen(txs, balances).show());
 
             // Colors for remainder
             remainder.textProperty().addListener((v, o, n) -> {
@@ -214,7 +214,7 @@ public class TransactionPane extends BorderPane{
                     // Event handler
                     tile.setOnMouseClicked(m -> {
                         if (m.getButton() == MouseButton.PRIMARY) {
-                            AddTransactionScreen.show(txs, tile.getBaseTransaction(), balances);
+                            new AddTransactionScreen(txs, tile.getBaseTransaction(), balances).show();
                         }
                     });
 
