@@ -45,7 +45,7 @@ public class Storage {
     private Storage() {}
 
     public static void writeAccounts(Map<Byte, Account> accounts) {
-        Path file = DIR_NAME.resolve("balances");
+        Path file = DIR_NAME.getParent().resolve("balances");
 
         createDirFiles(file);
 
@@ -64,7 +64,7 @@ public class Storage {
     }
 
     public static Map<Byte, Account> readAccounts() {
-        Path file = DIR_NAME.resolve("balances");
+        Path file = DIR_NAME.getParent().resolve("balances");
 
         Map<Byte, Account> balances = new HashMap<>();
 
