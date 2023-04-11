@@ -161,6 +161,8 @@ public class TransactionPane extends BorderPane{
             dateSelector.getMonthProperty().addListener(e -> {
                 loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
                 remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()));
+                addTransaction.setVisible(true);
+                transactionPane.getChildren().remove(emptyText);
             });
         }
     }
@@ -181,7 +183,6 @@ public class TransactionPane extends BorderPane{
             tiles.add(tile);
         }
 
-        addTransaction.setVisible(true);
         transactionPane.getChildren().setAll(tiles);
     }
 }

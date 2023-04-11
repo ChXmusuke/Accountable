@@ -50,7 +50,9 @@ public class DateSelector extends HBox {
         getChildren().addAll(yearSelector, monthSelector);
 
         List<String> years = Storage.getAvailableYears();
-        List<String> months = Storage.getAvailableMonths(Integer.parseInt(years.get(years.size()-1)));
+        List<String> months = new ArrayList<>();
+        if (years.size() > 0)
+            months = Storage.getAvailableMonths(Integer.parseInt(years.get(years.size()-1)));
 
 
 
