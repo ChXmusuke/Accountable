@@ -64,6 +64,7 @@ public class AccountPane extends Pane {
             tilePane.setSpacing(PADDING);
             tilePane.getStyleClass().add("background");
             tilePane.prefWidthProperty().bind(content.widthProperty());
+            tilePane.prefHeightProperty().bind(content.heightProperty());
 
 
             scrollPane.getStyleClass().add("scrollPane");

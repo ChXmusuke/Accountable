@@ -121,7 +121,7 @@ public class TransactionPane extends BorderPane{
         {
             content.setPadding(new Insets(PADDING));
 
-            transactionPane.getStyleClass().addAll("background");
+            transactionPane.getStyleClass().add("background");
             transactionPane.setSpacing(PADDING);
             transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
             transactionPane.prefWidthProperty().bind(content.widthProperty());
