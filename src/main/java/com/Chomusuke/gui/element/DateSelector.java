@@ -72,8 +72,12 @@ public class DateSelector extends HBox {
                 monthSelector.getSelectionModel()
                         .clearSelection();
 
-                if (n != null)
+                if (n != null) {
                     year.set(yearSelector.getValue());
+                    monthSelector.setDisable(false);
+                } else {
+                    monthSelector.setDisable(true);
+                }
             });
 
             monthSelector.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
@@ -92,9 +96,11 @@ public class DateSelector extends HBox {
 
 
 
-        // ----- INIT SELECT -----
+        // ----- INIT -----
         yearSelector.setItems(FXCollections.observableList(years));
         monthSelector.setItems(FXCollections.observableList(months));
+
+        monthSelector.setDisable(true);
     }
 
     public StringProperty getYearProperty() {
