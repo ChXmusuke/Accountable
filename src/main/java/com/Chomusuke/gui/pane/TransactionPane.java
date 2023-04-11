@@ -107,6 +107,8 @@ public class TransactionPane extends BorderPane{
 
         transactionPane = new VBox();
         ScrollPane scrollPane = new ScrollPane(transactionPane);
+        Text emptyText = new Text("Please select a date.");
+        transactionPane.getChildren().add(emptyText);
 
         // "Add transaction" button
         PlusButton addTransaction = new PlusButton();
@@ -123,6 +125,9 @@ public class TransactionPane extends BorderPane{
             transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
             transactionPane.prefWidthProperty().bind(content.widthProperty());
             transactionPane.prefHeightProperty().bind(content.heightProperty());
+            transactionPane.setAlignment(Pos.TOP_CENTER);
+
+            emptyText.getStyleClass().add("stdText");
 
             scrollPane.getStyleClass().add("scrollPane");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
