@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package com.chomusuke.gui.element.tmp;
+package com.chomusuke.gui.element.tile;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
