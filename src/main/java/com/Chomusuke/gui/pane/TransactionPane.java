@@ -25,7 +25,6 @@ import com.chomusuke.gui.element.tile.TransactionTile;
 import com.chomusuke.gui.popup.AddFileScreen;
 import com.chomusuke.gui.popup.AddTransactionScreen;
 import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -46,6 +45,8 @@ public class TransactionPane extends BorderPane{
 
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
     private static final int PADDING = 8;
+
+    private final VBox transactionPane;
 
     public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
@@ -104,7 +105,7 @@ public class TransactionPane extends BorderPane{
         // ----- CONTENT -----
         Pane content = new Pane();
 
-        VBox transactionPane = new VBox();
+        transactionPane = new VBox();
         ScrollPane scrollPane = new ScrollPane(transactionPane);
 
         // "Add transaction" button
@@ -153,26 +154,26 @@ public class TransactionPane extends BorderPane{
             dateSelector.getMonthProperty().addListener(e -> {
                 loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
                 remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()));
-
-                VBox pane = (VBox) scrollPane.getContent();
-
-                List<Transaction> txList = txs.getTransactionList();
-                // Tiles generation
-                List<TransactionTile> tiles = new ArrayList<>();
-                for (int i = 0; i < txList.size(); i++) {
-                    TransactionTile tile = new TransactionTile(txList.get(i), txs.getValues()[i]);
-                    // Event handler
-                    tile.setOnMouseClicked(m -> {
-                        if (m.getButton() == MouseButton.PRIMARY) {
-                            new AddTransactionScreen(txs, tile.getBaseTransaction(), balances).show();
-                        }
-                    });
-
-                    tiles.add(tile);
-                }
-
-                pane.getChildren().setAll(tiles);
             });
         }
+    }
+
+    public void update(TransactionList txs, Map<Byte, Account> balances) {
+
+        // Tiles generation
+        List<TransactionTile> tiles = new ArrayList<>();
+        for (int i = 0; i < txs.getTransactionList().size(); i++) {
+            TransactionTile tile = new TransactionTile(txs.getTransactionList().get(i), txs.getValues()[i]);
+            // Event handler
+            tile.setOnMouseClicked(m -> {
+                if (m.getButton() == MouseButton.PRIMARY) {
+                    new AddTransactionScreen(txs, tile.getBaseTransaction(), balances).show();
+                }
+            });
+
+            tiles.add(tile);
+        }
+
+        transactionPane.getChildren().setAll(tiles);
     }
 }

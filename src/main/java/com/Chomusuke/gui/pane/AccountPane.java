@@ -22,10 +22,7 @@ import com.chomusuke.gui.element.PlusButton;
 import com.chomusuke.gui.element.tile.AccountTile;
 import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Storage;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -39,19 +36,16 @@ public class AccountPane extends Pane {
 
     private static final int PADDING = 8;
 
-    public AccountPane(ObjectProperty<SceneID> selectedScene, Map<Byte, Account> balances) {
+    private final VBox tilePane;
 
-        // ----- MEMORY -----
-        ObservableMap<Byte, Account> observableBalances = FXCollections.observableMap(balances);
-
-
+    public AccountPane(ObjectProperty<SceneID> selectedScene, ObservableMap<Byte, Account> balances) {
 
         // ----- DISPLAY -----
         VBox content = new VBox();
         Button back = new Button("<-");
         PlusButton add = new PlusButton();
 
-        VBox tilePane = new VBox();
+        tilePane = new VBox();
         ScrollPane scrollPane = new ScrollPane(tilePane);
 
         content.getChildren().addAll(back, scrollPane);
@@ -85,19 +79,12 @@ public class AccountPane extends Pane {
         // ----- EVENTS -----
         {
             back.setOnAction(e -> selectedScene.set(SceneID.TRANSACTIONS));
-            add.setOnMouseClicked(e -> new AddAccountScreen(observableBalances).show());
-
-            observableBalances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {
-                Storage.writeAccounts(balances);
-                updateDisplay(observableBalances, tilePane);
-            });
+            add.setOnMouseClicked(e -> new AddAccountScreen(balances).show());
         }
-
-        updateDisplay(observableBalances, tilePane);
     }
 
-    private static void updateDisplay(Map<Byte, Account> balances, Pane p) {
-        p.getChildren().clear();
+    public void update(Map<Byte, Account> balances) {
+        tilePane.getChildren().clear();
 
         for (Account a : balances.values()) {
             AccountTile t = new AccountTile(a);
@@ -106,7 +93,7 @@ public class AccountPane extends Pane {
                     new AddAccountScreen(balances, t.getBaseAccount()).show()
             );
 
-            p.getChildren().add(t);
+            tilePane.getChildren().add(t);
         }
     }
 }

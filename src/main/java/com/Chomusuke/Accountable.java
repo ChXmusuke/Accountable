@@ -28,7 +28,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -81,7 +84,7 @@ public class Accountable extends Application {
 
         // ----- MEMORY -----
         TransactionList manager = new TransactionList();
-        Map<Byte, Account> balances = Storage.readAccounts();
+        ObservableMap<Byte, Account> balances = FXCollections.observableMap(Storage.readAccounts());
         StringProperty year = new SimpleStringProperty();
         StringProperty month = new SimpleStringProperty();
 
@@ -90,13 +93,15 @@ public class Accountable extends Application {
         // ----- WINDOW -----
         stage.setScene(new Scene(new Pane()));
         ObjectProperty<SceneID> selectedScene = new SimpleObjectProperty<>();
+        TransactionPane transactions = new TransactionPane(selectedScene, manager, balances, year, month);
+        AccountPane accounts = new AccountPane(selectedScene, balances);
 
         selectedScene.addListener((s, o, n) -> {
             switch (n) {
                 case TRANSACTIONS ->
-                        stage.getScene().setRoot(new TransactionPane(selectedScene, manager, balances, year, month));
+                        stage.getScene().setRoot(transactions);
                 case ACCOUNTS ->
-                        stage.getScene().setRoot(new AccountPane(selectedScene, balances));
+                        stage.getScene().setRoot(accounts);
             }
         });
 
@@ -104,8 +109,6 @@ public class Accountable extends Application {
 
         // Main
         {
-            selectedScene.set(SceneID.TRANSACTIONS);
-
             stage.setHeight(WINDOW_HEIGHT);
             stage.setWidth(WINDOW_HEIGHT * WINDOW_RATIO);
             stage.setResizable(false);
@@ -169,6 +172,14 @@ public class Accountable extends Application {
 
                 Storage.writeAccounts(balances);
             }
+
+            transactions.update(manager, balances);
+            accounts.update(balances);
+        });
+
+        balances.addListener((MapChangeListener<? super Byte, ? super Account>) c -> {
+            Storage.writeAccounts(balances);
+            accounts.update(balances);
         });
 
         // Transaction addition (space key)
@@ -183,6 +194,12 @@ public class Accountable extends Application {
             }
             event.consume();
         });
+
+
+
+        // ----- INIT -----
+        selectedScene.set(SceneID.TRANSACTIONS);
+        accounts.update(balances);
 
         stage.show();
     }
