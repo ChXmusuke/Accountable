@@ -87,7 +87,8 @@ public class AddAccountScreen extends PopUp {
                     return;
 
                 double value = account == null ? 0f : account.getBalance();
-                balances.put(id, new Account(nameInput.getText(), value, Double.parseDouble(objectiveInput.getText())));
+                double objective = objectiveInput.getText().equals("") ? 0 : Double.parseDouble(objectiveInput.getText());
+                balances.put(id, new Account(nameInput.getText(), value, objective));
 
                 close();
             });
