@@ -18,6 +18,9 @@
 package com.chomusuke.gui.popup;
 
 import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Storage;
+import com.chomusuke.logic.Transaction;
+import com.chomusuke.util.Time;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
@@ -28,6 +31,7 @@ import java.util.Random;
 public class AddAccountScreen extends PopUp {
 
     private static final int PADDING = 8;
+    private final byte id;
 
     public AddAccountScreen(Map<Byte, Account> balances) {
 
@@ -37,7 +41,6 @@ public class AddAccountScreen extends PopUp {
     public AddAccountScreen(Map<Byte, Account> balances, Account account) {
         super(account != null);
 
-        byte id;
         if (account == null) {
             byte[] byteArray = new byte[1];
             Random r = new Random();
@@ -95,8 +98,20 @@ public class AddAccountScreen extends PopUp {
 
 
             setDeleteAction(d -> {
-                if (account != null && account.getBalance() == 0) {
+                if (account != null) {
                     balances.remove(id);
+                    if (account.getBalance() > 0) {
+                        int year = Time.getCurrentYear();
+                        int month = Time.getCurrentMonth();
+
+                        Storage.write(new Transaction(
+                                account.getName() + " terminated",
+                                id,
+                                Transaction.TransactionType.SAVINGS,
+                                Transaction.ValueType.ABSOLUTE,
+                                (float) -account.getBalance()
+                        ), year, month);
+                    }
 
                     close();
                 }

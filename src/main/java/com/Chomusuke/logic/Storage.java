@@ -303,7 +303,7 @@ public class Storage {
                         if (!balances.containsKey(t.to()))
                             balances.put(t.to(), new Account(Integer.toString(balances.size()+1), 0));
 
-                        balances.get(t.to()).update(Math.abs(values[i]));
+                        balances.get(t.to()).update(-values[i]);
                     }
                 }
             }
