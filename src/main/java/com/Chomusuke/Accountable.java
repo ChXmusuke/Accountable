@@ -23,6 +23,7 @@ import com.chomusuke.gui.pane.AccountPane;
 import com.chomusuke.gui.pane.TransactionPane;
 import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.gui.popup.AddTransactionScreen;
+import com.chomusuke.util.Time;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -206,8 +207,12 @@ public class Accountable extends Application {
 
 
         // ----- INIT -----
-        selectedScene.set(SceneID.TRANSACTIONS);
-        accounts.update(balances);
+        {
+            selectedScene.set(SceneID.TRANSACTIONS);
+            accounts.update(balances);
+            year.set(Integer.toString(Time.getCurrentYear()));
+            month.set(Integer.toString(Time.getCurrentMonth()));
+        }
 
         stage.show();
     }

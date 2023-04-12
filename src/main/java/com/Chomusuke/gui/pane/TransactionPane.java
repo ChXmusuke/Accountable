@@ -96,8 +96,8 @@ public class TransactionPane extends BorderPane{
             loadedDate.getStyleClass().add("stdText");
             HBox.setMargin(loadedDate, new Insets(0, 0, 0, PADDING));
 
-            year.bind(dateSelector.getYearProperty());
-            month.bind(dateSelector.getMonthProperty());
+            year.bindBidirectional(dateSelector.getYearProperty());
+            month.bindBidirectional(dateSelector.getMonthProperty());
 
             remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
             remainderContainer.setAlignment(Pos.BASELINE_LEFT);
@@ -160,8 +160,9 @@ public class TransactionPane extends BorderPane{
                     remainder.setFill(Color.GREEN);
             });
 
-            dateSelector.getMonthProperty().addListener(e -> {
-                loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
+            dateSelector.getMonthProperty().addListener((v, o, n) -> {
+                if (n != null)
+                    loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
 
                 addTransaction.setVisible(true);
                 transactionPane.getChildren().remove(emptyText);

@@ -46,6 +46,8 @@ public class DateSelector extends HBox {
         // Selection boxes
         ChoiceBox<String> yearSelector = new ChoiceBox<>();
         ChoiceBox<String> monthSelector = new ChoiceBox<>();
+        year.bindBidirectional(yearSelector.valueProperty());
+        month.bindBidirectional(monthSelector.valueProperty());
 
         getChildren().addAll(yearSelector, monthSelector);
 
@@ -74,17 +76,7 @@ public class DateSelector extends HBox {
                 monthSelector.getSelectionModel()
                         .clearSelection();
 
-                if (n != null) {
-                    year.set(yearSelector.getValue());
-                    monthSelector.setDisable(false);
-                } else {
-                    monthSelector.setDisable(true);
-                }
-            });
-
-            monthSelector.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
-                if (n != null)
-                    month.set(monthSelector.getValue());
+                monthSelector.setDisable(n == null);
             });
         }
 
