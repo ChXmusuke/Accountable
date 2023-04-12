@@ -21,7 +21,6 @@ import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Storage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
-import com.chomusuke.util.Time;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
@@ -102,8 +101,6 @@ public class AddAccountScreen extends PopUp {
             setDeleteAction(d -> {
                 if (account != null) {
                     if (account.getBalance() > 0) {
-                        int year = Time.getCurrentYear();
-                        int month = Time.getCurrentMonth();
 
                         Transaction newTx = new Transaction(
                                 account.getName() + " withdrawal",
@@ -114,7 +111,6 @@ public class AddAccountScreen extends PopUp {
                         );
                         txList.add(newTx);
                         balances.get(id).update(-account.getBalance());
-                        Storage.write(newTx, year, month);
                         Storage.writeAccounts(balances);
                     }
 
