@@ -88,13 +88,15 @@ public class AccountPane extends Pane {
         tilePane.getChildren().clear();
 
         for (Account a : balances.values()) {
-            AccountTile t = new AccountTile(a);
+            if (a.getBalance() > 0) {
+                AccountTile t = new AccountTile(a);
 
-            t.setOnMouseClicked(m ->
-                    new AddAccountScreen(balances, t.getBaseAccount()).show()
-            );
+                t.setOnMouseClicked(m ->
+                        new AddAccountScreen(balances, t.getBaseAccount()).show()
+                );
 
-            tilePane.getChildren().add(t);
+                tilePane.getChildren().add(t);
+            }
         }
     }
 }

@@ -99,7 +99,6 @@ public class AddAccountScreen extends PopUp {
 
             setDeleteAction(d -> {
                 if (account != null) {
-                    balances.remove(id);
                     if (account.getBalance() > 0) {
                         int year = Time.getCurrentYear();
                         int month = Time.getCurrentMonth();
