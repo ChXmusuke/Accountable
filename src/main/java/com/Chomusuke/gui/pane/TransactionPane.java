@@ -51,7 +51,7 @@ public class TransactionPane extends BorderPane{
     private final VBox transactionPane;
     private final PlusButton addTransaction;
 
-    public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txs, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
+    public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
         // Main
         {
@@ -146,7 +146,7 @@ public class TransactionPane extends BorderPane{
         // ----- EVENTS -----
         {
             // Transaction addition (Big Fat + Button)
-            addTransaction.setOnMouseClicked((e) -> new AddTransactionScreen(txs, balances).show());
+            addTransaction.setOnMouseClicked((e) -> new AddTransactionScreen(txList, balances).show());
 
             // Colors for remainder
             remainder.textProperty().addListener((v, o, n) -> {
@@ -154,7 +154,7 @@ public class TransactionPane extends BorderPane{
                     remainder.setFill(Color.BLUE);
                 else if (Float.parseFloat(n) < 0)
                     remainder.setFill(Color.RED);
-                else if (Float.parseFloat(n) < txs.getTotalRevenue() * REMAINDER_COLOR_THRESHOLD)
+                else if (Float.parseFloat(n) < txList.getTotalRevenue() * REMAINDER_COLOR_THRESHOLD)
                     remainder.setFill(Color.ORANGE);
                 else
                     remainder.setFill(Color.GREEN);
@@ -167,8 +167,8 @@ public class TransactionPane extends BorderPane{
                 transactionPane.getChildren().remove(emptyText);
             });
 
-            txs.getTransactionList().addListener((ListChangeListener<? super Transaction>) e ->
-                remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()))
+            txList.getTransactionList().addListener((ListChangeListener<? super Transaction>) e ->
+                remainder.setText(String.format(Locale.ROOT, "%.2f", txList.getRemainder()))
             );
         }
     }

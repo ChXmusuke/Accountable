@@ -20,6 +20,7 @@ package com.chomusuke.gui.popup;
 import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Storage;
 import com.chomusuke.logic.Transaction;
+import com.chomusuke.logic.TransactionList;
 import com.chomusuke.util.Time;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -31,14 +32,15 @@ import java.util.Random;
 public class AddAccountScreen extends PopUp {
 
     private static final int PADDING = 8;
+
     private final byte id;
 
-    public AddAccountScreen(Map<Byte, Account> balances) {
+    public AddAccountScreen(Map<Byte, Account> balances, TransactionList txList) {
 
-        this(balances, null);
+        this(balances, null, txList);
     }
 
-    public AddAccountScreen(Map<Byte, Account> balances, Account account) {
+    public AddAccountScreen(Map<Byte, Account> balances, Account account, TransactionList txList) {
         super(account != null);
 
         if (account == null) {
@@ -57,8 +59,8 @@ public class AddAccountScreen extends PopUp {
         HBox content = new HBox();
         TextField nameInput = new TextField();
         TextField objectiveInput = new TextField();
-        content.getChildren().addAll(nameInput, objectiveInput);
 
+        content.getChildren().addAll(nameInput, objectiveInput);
         setContent(content);
 
 
@@ -103,13 +105,17 @@ public class AddAccountScreen extends PopUp {
                         int year = Time.getCurrentYear();
                         int month = Time.getCurrentMonth();
 
-                        Storage.write(new Transaction(
-                                account.getName() + " terminated",
+                        Transaction newTx = new Transaction(
+                                account.getName() + " withdrawal",
                                 id,
                                 Transaction.TransactionType.SAVINGS,
                                 Transaction.ValueType.ABSOLUTE,
                                 (float) -account.getBalance()
-                        ), year, month);
+                        );
+                        txList.add(newTx);
+                        balances.get(id).update(-account.getBalance());
+                        Storage.write(newTx, year, month);
+                        Storage.writeAccounts(balances);
                     }
 
                     close();

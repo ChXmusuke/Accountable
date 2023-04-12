@@ -22,8 +22,8 @@ import com.chomusuke.gui.element.PlusButton;
 import com.chomusuke.gui.element.tile.AccountTile;
 import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
+import com.chomusuke.logic.TransactionList;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -36,9 +36,11 @@ public class AccountPane extends Pane {
 
     private static final int PADDING = 8;
 
+    TransactionList txList;
     private final VBox tilePane;
 
-    public AccountPane(ObjectProperty<SceneID> selectedScene, ObservableMap<Byte, Account> balances) {
+    public AccountPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances) {
+        this.txList = txList;
 
         // ----- DISPLAY -----
         VBox content = new VBox();
@@ -80,7 +82,7 @@ public class AccountPane extends Pane {
         // ----- EVENTS -----
         {
             back.setOnAction(e -> selectedScene.set(SceneID.TRANSACTIONS));
-            add.setOnMouseClicked(e -> new AddAccountScreen(balances).show());
+            add.setOnMouseClicked(e -> new AddAccountScreen(balances, txList).show());
         }
     }
 
@@ -92,7 +94,7 @@ public class AccountPane extends Pane {
                 AccountTile t = new AccountTile(a);
 
                 t.setOnMouseClicked(m ->
-                        new AddAccountScreen(balances, t.getBaseAccount()).show()
+                        new AddAccountScreen(balances, t.getBaseAccount(), txList).show()
                 );
 
                 tilePane.getChildren().add(t);
