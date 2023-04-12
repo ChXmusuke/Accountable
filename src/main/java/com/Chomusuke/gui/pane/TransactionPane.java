@@ -25,9 +25,11 @@ import com.chomusuke.gui.element.tile.TransactionTile;
 import com.chomusuke.gui.popup.AddFileScreen;
 import com.chomusuke.gui.popup.AddTransactionScreen;
 import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -160,10 +162,14 @@ public class TransactionPane extends BorderPane{
 
             dateSelector.getMonthProperty().addListener(e -> {
                 loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
-                remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()));
+
                 addTransaction.setVisible(true);
                 transactionPane.getChildren().remove(emptyText);
             });
+
+            txs.getTransactionList().addListener((ListChangeListener<? super Transaction>) e ->
+                remainder.setText(String.format(Locale.ROOT, "%.2f", txs.getRemainder()))
+            );
         }
     }
 
