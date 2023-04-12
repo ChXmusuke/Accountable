@@ -110,7 +110,6 @@ public class AddAccountScreen extends PopUp {
                                 (float) -account.getBalance()
                         );
                         txList.add(newTx);
-                        balances.get(id).update(-account.getBalance());
                         Storage.writeAccounts(balances);
                     }
 

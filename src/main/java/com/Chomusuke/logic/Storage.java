@@ -306,6 +306,11 @@ public class Storage {
                     }
                 }
             }
+
+            for (Account a : balances.values()) {
+                if (a.getBalance() == 0)
+                    a.update(-1);
+            }
         }
 
         return balances;

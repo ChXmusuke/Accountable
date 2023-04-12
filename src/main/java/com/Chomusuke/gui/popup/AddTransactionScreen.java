@@ -32,6 +32,7 @@ import com.chomusuke.logic.TransactionList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.chomusuke.logic.Transaction.*;
 
@@ -202,8 +203,11 @@ public class AddTransactionScreen extends PopUp {
                 tTypeField.getSelectionModel().select(TransactionType.REVENUE);
             }
 
-            to.setItems(FXCollections.observableArrayList(names.keySet()));
+            to.setItems(FXCollections.observableArrayList(
+                    names.keySet().stream()
+                    .filter(e -> accounts.get(names.get(e)).getBalance() >= 0)
+                    .collect(Collectors.toList())
+            ));
         }
     }
 }
-

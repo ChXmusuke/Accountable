@@ -184,8 +184,14 @@ public class Account {
          * @param balances an account map
          */
         public void apply(Map<Byte, Account> balances) {
+            Account a;
             for (byte b : modMap.keySet()) {
-                balances.get(b).update(modMap.get(b));
+                a = balances.get(b);
+                if (a.getBalance() == -1)
+                    a.update(1);
+                a.update(modMap.get(b));
+                if (a.getBalance() == 0)
+                    a.update(-1);
             }
         }
 

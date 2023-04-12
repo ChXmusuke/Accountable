@@ -90,7 +90,7 @@ public class AccountPane extends Pane {
         tilePane.getChildren().clear();
 
         for (Account a : balances.values()) {
-            if (a.getBalance() > 0) {
+            if (a.getBalance() >= 0) {
                 AccountTile t = new AccountTile(a);
 
                 t.setOnMouseClicked(m ->
