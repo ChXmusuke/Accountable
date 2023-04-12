@@ -164,7 +164,8 @@ public class TransactionList {
             txs.set(index, t);
         } else {
 
-            if (t.transactionType().equals(TransactionType.REVENUE))
+            if (t.transactionType().equals(TransactionType.REVENUE) ||
+                    t.transactionType().equals(TransactionType.SAVINGS) && t.value(getTotalRevenue(), getRemainder()) < 0)
                 txs.add(0, t);
             else txs.add(t);
         }

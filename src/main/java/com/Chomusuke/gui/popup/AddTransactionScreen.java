@@ -91,17 +91,26 @@ public class AddTransactionScreen extends PopUp {
             valueField.setTextFormatter(new TextFormatter<>(c -> {
                 if (c.isAdded()) {
                     try {
-                        if (c.getText().length() == 1 && !c.getText().equals("."))
+                        if (c.getText().length() == 1 && !c.getText().equals(".") && !c.getText().equals("-"))
                             Integer.parseInt(c.getText());
-                        float v = Float.parseFloat(c.getControlNewText());
+                        float v = 0;
+                        if (!c.getControlNewText().equals("-"))
+                            v = Float.parseFloat(c.getControlNewText());
 
                         ValueType sVType = vTypeField.getSelectionModel().getSelectedItem();
-                        if (sVType != ValueType.ABSOLUTE && sVType != null && v > 100) {
-                            valueField.setText(Float.toString(100f));
+                        if (sVType != null && !sVType.equals(ValueType.ABSOLUTE)) {
+                            if (v > 100) {
+                                valueField.setText(Float.toString(100f));
 
-                            throw new NumberFormatException();
+                                throw new NumberFormatException();
+                            } else if (v < 0) {
+                                valueField.setText(Float.toString(0f));
+
+                                throw new NumberFormatException();
+                            }
                         }
                     } catch (NumberFormatException n) {
+
                         return null;
                     }
                 }
@@ -141,18 +150,27 @@ public class AddTransactionScreen extends PopUp {
             setSubmitAction(a -> {
                 if (nameField.getText() == null || nameField.getText().equals("")
                         || valueField.getText() == null || valueField.getText().equals("")
-                        || tTypeField.getValue() == null || vTypeField.getValue() == null ||
-                        (to.getValue() == null && tTypeField.getValue() == TransactionType.SAVINGS))
+                        || tTypeField.getValue() == null || vTypeField.getValue() == null
+                        || to.getValue() == null && tTypeField.getValue() == TransactionType.SAVINGS)
                     return;
 
-                Transaction newTransaction = new Transaction(
-                        nameField.getText(),
-                        tTypeField.getValue().equals(TransactionType.SAVINGS) ? names.get(to.getValue()) : (byte) 0,
-                        tTypeField.getValue(),
-                        vTypeField.getValue(),
-                        Float.parseFloat(valueField.getText())
-                );
-                txList.add(newTransaction, t);
+                try {
+                    float v = Float.parseFloat(valueField.getText());
+                    if (v < 0 && !tTypeField.getValue().equals(TransactionType.SAVINGS))
+                        v = Math.abs(v);
+
+                    Transaction newTransaction = new Transaction(
+                            nameField.getText(),
+                            tTypeField.getValue().equals(TransactionType.SAVINGS) ? names.get(to.getValue()) : (byte) 0,
+                            tTypeField.getValue(),
+                            vTypeField.getValue(),
+                            v
+                    );
+                    txList.add(newTransaction, t);
+                } catch (NumberFormatException exception) {
+
+                    return;
+                }
 
                 close();
             });

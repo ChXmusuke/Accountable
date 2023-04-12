@@ -181,7 +181,8 @@ public class Storage {
                 float value = input.readFloat();
 
                 Transaction newTx = new Transaction(name, to, tt, vt, value);
-                if (tt.equals(TransactionType.REVENUE))
+                if (tt.equals(TransactionType.REVENUE) ||
+                tt.equals(TransactionType.SAVINGS) && value < 0)
                     txs.add(0, newTx);
                 else
                     txs.add(newTx);
