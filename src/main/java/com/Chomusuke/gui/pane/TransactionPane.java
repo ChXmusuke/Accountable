@@ -49,7 +49,6 @@ public class TransactionPane extends BorderPane{
     private static final int PADDING = 8;
 
     private final VBox transactionPane;
-    private final PlusButton addTransaction;
 
     public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
@@ -114,7 +113,7 @@ public class TransactionPane extends BorderPane{
         transactionPane.getChildren().add(emptyText);
 
         // "Add transaction" button
-        addTransaction = new PlusButton();
+        PlusButton addTransaction = new PlusButton();
 
         content.getChildren().addAll(scrollPane, addTransaction);
         setCenter(content);
@@ -163,9 +162,6 @@ public class TransactionPane extends BorderPane{
             dateSelector.getMonthProperty().addListener((v, o, n) -> {
                 if (n != null)
                     loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
-
-                addTransaction.setVisible(true);
-                transactionPane.getChildren().remove(emptyText);
             });
 
             txList.getTransactionList().addListener((ListChangeListener<? super Transaction>) e ->
