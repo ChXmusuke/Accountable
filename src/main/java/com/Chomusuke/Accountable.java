@@ -217,6 +217,10 @@ public class Accountable extends Application {
         stage.show();
     }
 
+
+    /**
+     * This enum provides constants for determining the scene currently loaded.
+     */
     public enum SceneID {
         TRANSACTIONS,
         ACCOUNTS

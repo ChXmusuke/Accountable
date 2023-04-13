@@ -32,13 +32,23 @@ import javafx.scene.layout.VBox;
 
 import java.util.Map;
 
+/**
+ * Provides a JavaFX pane containing account information.
+ */
 public class AccountPane extends Pane {
 
     private static final int PADDING = 8;
 
-    TransactionList txList;
+    private final TransactionList txList;
     private final VBox tilePane;
 
+    /**
+     * Constructor.
+     *
+     * @param selectedScene the scene currently selected
+     * @param txList a transaction list
+     * @param balances an account map
+     */
     public AccountPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances) {
         this.txList = txList;
 
@@ -86,6 +96,11 @@ public class AccountPane extends Pane {
         }
     }
 
+    /**
+     * Updates the display.
+     *
+     * @param balances an account map
+     */
     public void update(Map<Byte, Account> balances) {
         tilePane.getChildren().clear();
 

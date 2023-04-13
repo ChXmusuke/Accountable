@@ -27,17 +27,28 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * This class provides a JavaFX stage used to create stuff.
+ */
 public abstract class PopUp extends Stage {
 
     private static final int PADDING = 8;
 
     private final HBox buttons = new HBox();
 
+    /**
+     * Default constructor.
+     */
     public PopUp() {
 
         this(false);
     }
 
+    /**
+     * Constructor with parameter to show delete button.
+     *
+     * @param showDeleteButton a boolean
+     */
     public PopUp(boolean showDeleteButton) {
 
         // ----- MAIN -----
@@ -73,18 +84,34 @@ public abstract class PopUp extends Stage {
         }
     }
 
+    /**
+     * Sets the content of the stage.
+     * Use to add buttons, text fields etc.
+     *
+     * @param node content
+     */
     protected void setContent(Node node) {
 
         ((VBox) getScene().getRoot()).getChildren()
                 .set(0, node);
     }
 
+    /**
+     * Defines the action to perform when the "submit" button is activated.
+     *
+     * @param action an event handler
+     */
     protected void setSubmitAction(EventHandler<ActionEvent> action) {
 
         ((Button) buttons.getChildren().get(0))
                 .setOnAction(action);
     }
 
+    /**
+     * Defines the action to perform when the "delete" button is activated.
+     *
+     * @param action an event handler
+     */
     protected void setDeleteAction(EventHandler<ActionEvent> action) {
 
         if (buttons.getChildren().size() == 2) {

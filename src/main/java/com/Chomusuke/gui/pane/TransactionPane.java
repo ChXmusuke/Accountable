@@ -70,16 +70,15 @@ public class TransactionPane extends BorderPane{
         // Date selector and related
         HBox controls = new HBox();
 
-        SquareButton showAccounts = new SquareButton("wallet.png", a -> selectedScene.set(SceneID.ACCOUNTS));
+        SquareButton accounts = new SquareButton("wallet.png", a -> selectedScene.set(SceneID.ACCOUNTS));
         SquareButton newFile = new SquareButton("new.png", a -> new AddFileScreen().show());
         DateSelector dateSelector = new DateSelector();
         Text loadedDate = new Text();
 
-        controls.getChildren().addAll(showAccounts, newFile, dateSelector, loadedDate);
-
         Text remainder = new Text();
         HBox remainderContainer = new HBox(remainder);
 
+        controls.getChildren().addAll(accounts, newFile, dateSelector, loadedDate);
         top.getChildren().addAll(titleContainer, controls, remainderContainer);
         setTop(top);
 
@@ -159,11 +158,13 @@ public class TransactionPane extends BorderPane{
                     remainder.setFill(Color.GREEN);
             });
 
+            // Update the
             dateSelector.getMonthProperty().addListener((v, o, n) -> {
                 if (n != null)
                     loadedDate.setText(String.format("%s/%s", year.get(), month.get()));
             });
 
+            // Update the remainder
             txList.getTransactionList().addListener((ListChangeListener<? super Transaction>) e ->
                 remainder.setText(String.format(Locale.ROOT, "%.2f", txList.getRemainder()))
             );

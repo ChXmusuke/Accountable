@@ -32,6 +32,9 @@ public class PlusButton extends StackPane {
     private static final int CROSS_ARM_LENGTH = 21;
     private static final double CROSS_ARM_RATIO = 1.0/7;
 
+    /**
+     * Constructor.
+     */
     public PlusButton() {
         Circle c = new Circle(RADIUS);
         // Cross

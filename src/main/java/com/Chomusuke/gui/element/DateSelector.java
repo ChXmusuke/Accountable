@@ -97,6 +97,11 @@ public class DateSelector extends HBox {
         monthSelector.setDisable(true);
     }
 
+    /**
+     * Returns a read only property containing the year value.
+     *
+     * @return a {@code StringProperty}
+     */
     public StringProperty getYearProperty() {
 
         return year;
@@ -105,7 +110,7 @@ public class DateSelector extends HBox {
     /**
      * Returns a read only property containing the month value.
      *
-     * @return a {@code ReadOnlyStringProperty}
+     * @return a {@code StringProperty}
      */
     public StringProperty getMonthProperty() {
 

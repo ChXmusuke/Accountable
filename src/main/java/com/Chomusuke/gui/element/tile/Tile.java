@@ -27,10 +27,20 @@ import javafx.scene.text.Text;
 
 import java.util.Locale;
 
+/**
+ * This class provides a JavaFX node representing a tile,
+ * containing a name and a numerical value.
+ */
 public class Tile extends HBox {
 
     private final StringProperty valueString = new SimpleStringProperty();
 
+    /**
+     * Constructor.
+     *
+     * @param name a name
+     * @param value a numerical value
+     */
     public Tile(String name, double value) {
 
         VBox textBox = new VBox();
@@ -62,17 +72,27 @@ public class Tile extends HBox {
     }
 
 
-
+    /**
+     * This class provides a JavaFX node useful for tagging a tile with a color.
+     */
     protected static class ColorTag extends Rectangle {
 
         public static final int DEFAULT_HEIGHT = 68;
         private static final Color DEFAULT_COLOR = Color.web("#33CCFF");
 
+        /**
+         * Constructor using the default height.
+         */
         public ColorTag() {
 
             this(DEFAULT_HEIGHT);
         }
 
+        /**
+         * Constructor with a height parameter.
+         *
+         * @param height a height
+         */
         public ColorTag(double height) {
 
             getStyleClass().add("colorTag");

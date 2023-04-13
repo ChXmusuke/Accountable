@@ -17,12 +17,16 @@
 
 package com.chomusuke.gui.element.tile;
 
-import com.chomusuke.logic.Account;
+import java.util.Locale;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.util.Locale;
+import com.chomusuke.logic.Account;
 
+/**
+ * This class provides a JavaFX node representing an account.
+ */
 public class AccountTile extends Tile {
 
     private final Account baseAccount;
@@ -45,6 +49,11 @@ public class AccountTile extends Tile {
         }
     }
 
+    /**
+     * Returns the account used to build the tile.
+     *
+     * @return an account
+     */
     public Account getBaseAccount() {
 
         return baseAccount;

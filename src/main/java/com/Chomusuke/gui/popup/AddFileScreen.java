@@ -26,7 +26,7 @@ import javafx.scene.layout.HBox;
 import com.chomusuke.logic.Storage;
 
 /**
- * This class displays a JavaFX Stage made for transaction creation.
+ * This class provides a JavaFX Stage made for transaction creation.
  */
 public class AddFileScreen extends PopUp {
 

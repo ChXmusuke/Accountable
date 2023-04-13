@@ -28,30 +28,46 @@ import javafx.scene.layout.HBox;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * This class provides a JavaFX stage used to add an account.
+ */
 public class AddAccountScreen extends PopUp {
 
     private static final int PADDING = 8;
 
     private final byte id;
 
-    public AddAccountScreen(Map<Byte, Account> balances, TransactionList txList) {
+    /**
+     * Constructor without existing account parameter.
+     *
+     * @param accounts an accounts map
+     * @param txList a transaction list
+     */
+    public AddAccountScreen(Map<Byte, Account> accounts, TransactionList txList) {
 
-        this(balances, null, txList);
+        this(accounts, null, txList);
     }
 
-    public AddAccountScreen(Map<Byte, Account> balances, Account account, TransactionList txList) {
+    /**
+     * Constructor with existing account parameter.
+     *
+     * @param accounts an accounts map.
+     * @param account an account
+     * @param txList a transaction list
+     */
+    public AddAccountScreen(Map<Byte, Account> accounts, Account account, TransactionList txList) {
         super(account != null);
 
         if (account == null) {
             byte[] byteArray = new byte[1];
             Random r = new Random();
-            while (byteArray[0] == 0 || balances.containsKey(byteArray[0]))
+            while (byteArray[0] == 0 || accounts.containsKey(byteArray[0]))
                 r.nextBytes(byteArray);
 
             id = byteArray[0];
         } else {
-            id = balances.keySet().stream()
-                    .filter(f -> balances.get(f).getName().equals(account.getName()))
+            id = accounts.keySet().stream()
+                    .filter(f -> accounts.get(f).getName().equals(account.getName()))
                     .toList().get(0);
         }
 
@@ -92,7 +108,7 @@ public class AddAccountScreen extends PopUp {
 
                 double value = account == null ? 0f : account.getBalance();
                 double objective = objectiveInput.getText().equals("") ? 0 : Double.parseDouble(objectiveInput.getText());
-                balances.put(id, new Account(nameInput.getText(), value, objective));
+                accounts.put(id, new Account(nameInput.getText(), value, objective));
 
                 close();
             });
@@ -110,13 +126,16 @@ public class AddAccountScreen extends PopUp {
                                 (float) -account.getBalance()
                         );
                         txList.add(newTx);
-                        Storage.writeAccounts(balances);
+                        Storage.writeAccounts(accounts);
                     }
 
                     close();
                 }
             });
 
+
+
+            // ----- INIT -----
             if (account != null) {
                 nameInput.setText(account.getName());
                 if (account.getObjective() >= 0)

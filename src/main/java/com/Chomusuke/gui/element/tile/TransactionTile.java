@@ -27,6 +27,12 @@ public class TransactionTile extends Tile {
 
     Transaction baseTransaction;
 
+    /**
+     * Constructor.
+     *
+     * @param t a transaction
+     * @param value a numerical value
+     */
     public TransactionTile(Transaction t, float value) {
         super(t.name(), value);
 

@@ -280,6 +280,17 @@ public class Storage {
         }
     }
 
+    /**
+     * Retrieves an account map from existing transactions.
+     * <br>
+     * Accounts created using this method are named 1,2,3...
+     * according to the order in which they are found in the
+     * transaction set.
+     * <br>
+     * They have no savings objective.
+     *
+     * @return an account map
+     */
     public static Map<Byte, Account> readBalancesFromTransactions() {
         Map<Byte, Account> balances = new HashMap<>();
 
@@ -288,6 +299,7 @@ public class Storage {
         TransactionList transactions = new TransactionList();
         float[] values;
 
+        // Looks into all the directories to find savings transactions
         for (String y : years) {
 
             months = getAvailableMonths(Integer.parseInt(y));
@@ -307,6 +319,7 @@ public class Storage {
                 }
             }
 
+            // Mark accounts with no balance following transactions as deleted
             for (Account a : balances.values()) {
                 if (a.getBalance() == 0)
                     a.update(-1);

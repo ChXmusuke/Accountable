@@ -36,15 +36,31 @@ import java.util.stream.Collectors;
 
 import static com.chomusuke.logic.Transaction.*;
 
+/**
+ * This class provides a JavaFX stage used to create a transaction.
+ */
 public class AddTransactionScreen extends PopUp {
 
     private static final int PADDING = 8;
 
+    /**
+     * Constructor without existing transaction.
+     *
+     * @param txList a transactions list
+     * @param accounts an account map
+     */
     public AddTransactionScreen(TransactionList txList, Map<Byte, Account> accounts) {
 
         this(txList, null, accounts);
     }
 
+    /**
+     * Constructor without existing transaction.
+     *
+     * @param txList a transactions list
+     * @param t a transaction
+     * @param accounts an account map
+     */
     public AddTransactionScreen(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
         super(t != null);
 
@@ -187,7 +203,7 @@ public class AddTransactionScreen extends PopUp {
 
 
 
-        // ----- VALUE INIT -----
+        // ----- INIT -----
         {
             tTypeField.getItems().addAll(TransactionType.values());
             vTypeField.getItems().setAll(ValueType.values());
