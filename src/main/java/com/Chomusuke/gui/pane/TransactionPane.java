@@ -17,16 +17,8 @@
 
 package com.chomusuke.gui.pane;
 
-import com.chomusuke.Accountable.SceneID;
-import com.chomusuke.gui.element.DateSelector;
-import com.chomusuke.gui.element.PlusButton;
-import com.chomusuke.gui.element.SquareButton;
-import com.chomusuke.gui.element.tile.TransactionTile;
-import com.chomusuke.gui.popup.AddFileScreen;
-import com.chomusuke.gui.popup.AddTransactionScreen;
-import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Transaction;
-import com.chomusuke.logic.TransactionList;
+import java.util.*;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
@@ -41,7 +33,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import java.util.*;
+import com.chomusuke.Accountable.SceneID;
+import com.chomusuke.gui.element.DateSelector;
+import com.chomusuke.gui.element.PlusButton;
+import com.chomusuke.gui.element.SquareButton;
+import com.chomusuke.gui.element.tile.TransactionTile;
+import com.chomusuke.gui.popup.AddFileScreen;
+import com.chomusuke.gui.popup.AddTransactionScreen;
+import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Transaction;
+import com.chomusuke.logic.TransactionList;
 
 public class TransactionPane extends BorderPane{
 

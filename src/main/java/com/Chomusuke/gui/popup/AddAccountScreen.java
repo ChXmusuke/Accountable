@@ -17,16 +17,17 @@
 
 package com.chomusuke.gui.popup;
 
-import com.chomusuke.logic.Account;
-import com.chomusuke.logic.Storage;
-import com.chomusuke.logic.Transaction;
-import com.chomusuke.logic.TransactionList;
+import java.util.Map;
+import java.util.Random;
+
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 
-import java.util.Map;
-import java.util.Random;
+import com.chomusuke.logic.Account;
+import com.chomusuke.logic.Storage;
+import com.chomusuke.logic.Transaction;
+import com.chomusuke.logic.TransactionList;
 
 /**
  * This class provides a JavaFX stage used to add an account.

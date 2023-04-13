@@ -17,12 +17,8 @@
 
 package com.chomusuke.gui.pane;
 
-import com.chomusuke.Accountable.SceneID;
-import com.chomusuke.gui.element.PlusButton;
-import com.chomusuke.gui.element.tile.AccountTile;
-import com.chomusuke.gui.popup.AddAccountScreen;
-import com.chomusuke.logic.Account;
-import com.chomusuke.logic.TransactionList;
+import java.util.Map;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -30,7 +26,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.util.Map;
+import com.chomusuke.Accountable.SceneID;
+import com.chomusuke.gui.element.PlusButton;
+import com.chomusuke.gui.element.tile.AccountTile;
+import com.chomusuke.gui.popup.AddAccountScreen;
+import com.chomusuke.logic.Account;
+import com.chomusuke.logic.TransactionList;
 
 /**
  * Provides a JavaFX pane containing account information.

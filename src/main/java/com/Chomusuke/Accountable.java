@@ -19,11 +19,6 @@ package com.chomusuke;
 
 import java.util.*;
 
-import com.chomusuke.gui.pane.AccountPane;
-import com.chomusuke.gui.pane.TransactionPane;
-import com.chomusuke.gui.popup.AddAccountScreen;
-import com.chomusuke.gui.popup.AddTransactionScreen;
-import com.chomusuke.util.Time;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -40,6 +35,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import com.chomusuke.gui.pane.AccountPane;
+import com.chomusuke.gui.pane.TransactionPane;
+import com.chomusuke.gui.popup.AddAccountScreen;
+import com.chomusuke.gui.popup.AddTransactionScreen;
+import com.chomusuke.util.Time;
 import com.chomusuke.logic.*;
 
 /**

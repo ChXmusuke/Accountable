@@ -17,8 +17,9 @@
 
 package com.chomusuke.gui.element.tile;
 
-import com.chomusuke.logic.Transaction;
 import javafx.scene.paint.Color;
+
+import com.chomusuke.logic.Transaction;
 
 /**
  * Provides a JavaFX Node that represents a transaction.

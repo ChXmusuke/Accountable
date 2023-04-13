@@ -17,7 +17,11 @@
 
 package com.chomusuke.gui.popup;
 
-import com.chomusuke.logic.Account;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javafx.collections.FXCollections;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -26,13 +30,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.chomusuke.logic.Transaction.*;
 
