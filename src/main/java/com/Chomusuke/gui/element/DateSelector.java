@@ -29,6 +29,8 @@ import javafx.scene.layout.HBox;
 import com.chomusuke.logic.Storage;
 import com.chomusuke.util.Time;
 
+import static com.chomusuke.Accountable.PADDING;
+
 /**
  * Provides a JavaFX Node for selecting a date with {@code ChoiceBox}es.
  */
@@ -36,8 +38,6 @@ public class DateSelector extends HBox {
 
     private final StringProperty year = new SimpleStringProperty();
     private final StringProperty month = new SimpleStringProperty();
-
-    private static final int PADDING = 8;
 
     public DateSelector() {
 

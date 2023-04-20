@@ -27,12 +27,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import static com.chomusuke.Accountable.PADDING;
+
 /**
  * This class provides a JavaFX stage used to create stuff.
  */
 public abstract class PopUp extends Stage {
-
-    private static final int PADDING = 8;
 
     private final HBox buttons = new HBox();
 

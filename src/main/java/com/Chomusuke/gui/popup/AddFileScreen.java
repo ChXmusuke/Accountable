@@ -25,12 +25,12 @@ import javafx.scene.layout.HBox;
 
 import com.chomusuke.logic.Storage;
 
+import static com.chomusuke.Accountable.PADDING;
+
 /**
  * This class provides a JavaFX Stage made for transaction creation.
  */
 public class AddFileScreen extends PopUp {
-
-    private static final int PADDING = 8;
 
     /**
      * Don't let anyone instantiate this class

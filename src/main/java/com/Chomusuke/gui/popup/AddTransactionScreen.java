@@ -35,13 +35,12 @@ import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
 import static com.chomusuke.logic.Transaction.*;
+import static com.chomusuke.Accountable.PADDING;
 
 /**
  * This class provides a JavaFX stage used to create a transaction.
  */
 public class AddTransactionScreen extends PopUp {
-
-    private static final int PADDING = 8;
 
     /**
      * Constructor without existing transaction.

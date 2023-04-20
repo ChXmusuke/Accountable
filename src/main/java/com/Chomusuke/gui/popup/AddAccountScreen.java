@@ -29,12 +29,12 @@ import com.chomusuke.logic.Storage;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
+import static com.chomusuke.Accountable.PADDING;
+
 /**
  * This class provides a JavaFX stage used to add an account.
  */
 public class AddAccountScreen extends PopUp {
-
-    private static final int PADDING = 8;
 
     private final byte id;
 
