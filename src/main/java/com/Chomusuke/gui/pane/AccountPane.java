@@ -22,10 +22,7 @@ import java.util.Map;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import com.chomusuke.Accountable.SceneID;
@@ -55,9 +52,6 @@ public class AccountPane extends ContentPane {
     public AccountPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances) {
         this.txList = txList;
 
-        // ----- TOP -----
-        VBox top = new VBox();
-
         // Controls
         HBox controls = new HBox();
 
@@ -66,49 +60,29 @@ public class AccountPane extends ContentPane {
 
 
         // ----- CONTENT -----
-        Pane content = new Pane();
 
         accountPane = new VBox();
-        ScrollPane scrollPane = new ScrollPane(accountPane);
 
         PlusButton addAccount = new PlusButton();
 
         controls.getChildren().add(back);
-        top.getChildren().add(controls);
-        setTop(top);
+        addToTop(controls);
 
-        content.getChildren().addAll(scrollPane, addAccount);
-        setCenter(content);
+        setScrollableContent(accountPane);
+        addToContent(addAccount);
 
 
 
         // ----- STYLE -----
         {
-            // General
-            getStyleClass().add("background");
-            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-
-            // Top
-            top.setSpacing(PADDING);
-            top.setPadding(new Insets(0, 0, PADDING, 0));
-
-            // Content
-            content.setPadding(new Insets(PADDING));
-            content.prefWidthProperty().bind(widthProperty());
-            content.prefHeightProperty().bind(heightProperty());
-
             accountPane.getStyleClass().add("background");
             accountPane.setPadding(new Insets(0, 0, PADDING, 0));
             accountPane.setSpacing(PADDING);
-            accountPane.prefWidthProperty().bind(content.widthProperty());
-            accountPane.prefHeightProperty().bind(content.heightProperty());
+            accountPane.prefWidthProperty().bind(getContentWidthProperty());
+            accountPane.prefHeightProperty().bind(getContentHeightProperty());
 
-            scrollPane.getStyleClass().add("scrollPane");
-            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-            addAccount.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
-            addAccount.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+            addAccount.layoutXProperty().bind(getContentWidthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+            addAccount.layoutYProperty().bind(getContentHeightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
         }
 
 
