@@ -44,10 +44,11 @@ import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
+import static com.chomusuke.Accountable.PADDING;
+
 public class TransactionPane extends BorderPane {
 
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
-    private static final int PADDING = 8;
 
     private final VBox transactionPane;
 

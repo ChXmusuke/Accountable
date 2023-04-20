@@ -52,6 +52,8 @@ public class Accountable extends Application {
     private static final int WINDOW_HEIGHT = 580;
     private static final double WINDOW_RATIO = 6/10.0;
 
+    public static final int PADDING = 8;
+
     public static void main(String[] args) {
         launch(args);
     }

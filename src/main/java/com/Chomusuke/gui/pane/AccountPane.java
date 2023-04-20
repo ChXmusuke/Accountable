@@ -35,12 +35,12 @@ import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
 import com.chomusuke.logic.TransactionList;
 
+import static com.chomusuke.Accountable.PADDING;
+
 /**
  * Provides a JavaFX pane containing account information.
  */
-public class AccountPane extends BorderPane {
-
-    private static final int PADDING = 8;
+public class AccountPane extends ContentPane {
 
     private final TransactionList txList;
     private final VBox accountPane;
