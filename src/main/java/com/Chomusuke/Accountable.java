@@ -159,13 +159,18 @@ public class Accountable extends Application {
                         else
                             oldList.add(l.getFrom(), l.getRemoved().get(0));
                     } else {
-                        Storage.write(
-                                l.getAddedSubList().get(0),
-                                intYear,
-                                intMonth
-                        );
+                        Transaction tx = l.getAddedSubList().get(0);
 
-                        oldList.remove(l.getFrom());
+                        // Filter zero-valued transactions
+                        if (tx.value() != 0) {
+                            Storage.write(
+                                    l.getAddedSubList().get(0),
+                                    intYear,
+                                    intMonth
+                            );
+
+                            oldList.remove(l.getFrom());
+                        } else manager.remove(tx);
                     }
 
                     Account.ModMap.of(oldList)
