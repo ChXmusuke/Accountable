@@ -24,11 +24,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -46,7 +43,7 @@ import com.chomusuke.logic.TransactionList;
 
 import static com.chomusuke.Accountable.PADDING;
 
-public class TransactionPane extends BorderPane {
+public class TransactionPane extends ContentPane {
 
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
 
@@ -54,8 +51,6 @@ public class TransactionPane extends BorderPane {
 
     public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
-        // ----- TOP -----
-        VBox top = new VBox();
 
         // Title of the app
         Text title = new Text("Accountable.");
@@ -75,20 +70,16 @@ public class TransactionPane extends BorderPane {
 
 
         // ----- CONTENT -----
-        Pane content = new Pane();
-
         transactionPane = new VBox();
-        ScrollPane scrollPane = new ScrollPane(transactionPane);
 
         // "Add transaction" button
         PlusButton addTransaction = new PlusButton();
 
         controls.getChildren().addAll(accounts, newFile, dateSelector, loadedDate);
-        top.getChildren().addAll(titleContainer, controls, remainderContainer);
-        setTop(top);
 
-        content.getChildren().addAll(scrollPane, addTransaction);
-        setCenter(content);
+        addToTop(titleContainer, controls, remainderContainer);
+        setScrollableContent(transactionPane);
+        addToContent(addTransaction);
 
 
 
@@ -97,10 +88,6 @@ public class TransactionPane extends BorderPane {
             // General
             getStyleClass().add("background");
             setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-
-            // Top
-            top.setSpacing(PADDING);
-            top.setPadding(new Insets(0, 0, PADDING, 0));
 
             title.setId("title");
             title.getStyleClass().add("stdText");
@@ -115,23 +102,14 @@ public class TransactionPane extends BorderPane {
             remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
             remainderContainer.setAlignment(Pos.BASELINE_LEFT);
 
-            // Content
-            content.setPadding(new Insets(PADDING));
-            content.prefWidthProperty().bind(widthProperty());
-            content.prefHeightProperty().bind(heightProperty());
-
             transactionPane.getStyleClass().add("background");
             transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
             transactionPane.setSpacing(PADDING);
-            transactionPane.prefWidthProperty().bind(content.widthProperty());
-            transactionPane.prefHeightProperty().bind(content.heightProperty());
+            transactionPane.prefWidthProperty().bind(getContentWidthProperty());
+            transactionPane.prefHeightProperty().bind(getContentHeightProperty());
 
-            scrollPane.getStyleClass().add("scrollPane");
-            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-            addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
-            addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+            addTransaction.layoutXProperty().bind(getContentWidthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+            addTransaction.layoutYProperty().bind(getContentHeightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
         }
 
 
