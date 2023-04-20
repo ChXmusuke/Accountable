@@ -23,6 +23,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -36,12 +38,12 @@ import com.chomusuke.logic.TransactionList;
 /**
  * Provides a JavaFX pane containing account information.
  */
-public class AccountPane extends Pane {
+public class AccountPane extends BorderPane {
 
     private static final int PADDING = 8;
 
     private final TransactionList txList;
-    private final VBox tilePane;
+    private final VBox accountPane;
 
     /**
      * Constructor.
@@ -53,39 +55,60 @@ public class AccountPane extends Pane {
     public AccountPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances) {
         this.txList = txList;
 
-        // ----- DISPLAY -----
-        VBox content = new VBox();
+        // ----- TOP -----
+        VBox top = new VBox();
+
+        // Controls
+        HBox controls = new HBox();
+
         Button back = new Button("<-");
-        PlusButton add = new PlusButton();
 
-        tilePane = new VBox();
-        ScrollPane scrollPane = new ScrollPane(tilePane);
 
-        content.getChildren().addAll(back, scrollPane);
-        getChildren().addAll(content, add);
+
+        // ----- CONTENT -----
+        Pane content = new Pane();
+
+        accountPane = new VBox();
+        ScrollPane scrollPane = new ScrollPane(accountPane);
+
+        PlusButton addAccount = new PlusButton();
+
+        controls.getChildren().add(back);
+        top.getChildren().add(controls);
+        setTop(top);
+
+        content.getChildren().addAll(scrollPane, addAccount);
+        setCenter(content);
 
 
 
         // ----- STYLE -----
         {
-            content.getStyleClass().add("background");
+            // General
+            getStyleClass().add("background");
+            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
+
+            // Top
+            top.setSpacing(PADDING);
+            top.setPadding(new Insets(0, 0, PADDING, 0));
+
+            // Content
             content.setPadding(new Insets(PADDING));
-            content.setSpacing(PADDING);
             content.prefWidthProperty().bind(widthProperty());
             content.prefHeightProperty().bind(heightProperty());
 
-            tilePane.setSpacing(PADDING);
-            tilePane.getStyleClass().add("background");
-            tilePane.prefWidthProperty().bind(content.widthProperty());
-            tilePane.prefHeightProperty().bind(content.heightProperty());
-
+            accountPane.getStyleClass().add("background");
+            accountPane.setPadding(new Insets(0, 0, PADDING, 0));
+            accountPane.setSpacing(PADDING);
+            accountPane.prefWidthProperty().bind(content.widthProperty());
+            accountPane.prefHeightProperty().bind(content.heightProperty());
 
             scrollPane.getStyleClass().add("scrollPane");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-            add.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
-            add.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+            addAccount.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
+            addAccount.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
         }
 
 
@@ -93,7 +116,7 @@ public class AccountPane extends Pane {
         // ----- EVENTS -----
         {
             back.setOnAction(e -> selectedScene.set(SceneID.TRANSACTIONS));
-            add.setOnMouseClicked(e -> new AddAccountScreen(balances, txList).show());
+            addAccount.setOnMouseClicked(e -> new AddAccountScreen(balances, txList).show());
         }
     }
 
@@ -103,7 +126,7 @@ public class AccountPane extends Pane {
      * @param balances an account map
      */
     public void update(Map<Byte, Account> balances) {
-        tilePane.getChildren().clear();
+        accountPane.getChildren().clear();
 
         for (Account a : balances.values()) {
             if (a.getBalance() >= 0) {
@@ -113,7 +136,7 @@ public class AccountPane extends Pane {
                         new AddAccountScreen(balances, t.getBaseAccount(), txList).show()
                 );
 
-                tilePane.getChildren().add(t);
+                accountPane.getChildren().add(t);
             }
         }
     }

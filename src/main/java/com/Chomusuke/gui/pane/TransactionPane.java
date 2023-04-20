@@ -44,7 +44,7 @@ import com.chomusuke.logic.Account;
 import com.chomusuke.logic.Transaction;
 import com.chomusuke.logic.TransactionList;
 
-public class TransactionPane extends BorderPane{
+public class TransactionPane extends BorderPane {
 
     private static final float REMAINDER_COLOR_THRESHOLD = 0.1f;
     private static final int PADDING = 8;
@@ -53,14 +53,6 @@ public class TransactionPane extends BorderPane{
 
     public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
-        // Main
-        {
-            getStyleClass().add("background");
-            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-        }
-
-
-
         // ----- TOP -----
         VBox top = new VBox();
 
@@ -68,7 +60,7 @@ public class TransactionPane extends BorderPane{
         Text title = new Text("Accountable.");
         HBox titleContainer = new HBox(title);
 
-        // Date selector and related
+        // Controls
         HBox controls = new HBox();
 
         SquareButton accounts = new SquareButton("wallet.png", a -> selectedScene.set(SceneID.ACCOUNTS));
@@ -79,12 +71,33 @@ public class TransactionPane extends BorderPane{
         Text remainder = new Text();
         HBox remainderContainer = new HBox(remainder);
 
+
+
+        // ----- CONTENT -----
+        Pane content = new Pane();
+
+        transactionPane = new VBox();
+        ScrollPane scrollPane = new ScrollPane(transactionPane);
+
+        // "Add transaction" button
+        PlusButton addTransaction = new PlusButton();
+
         controls.getChildren().addAll(accounts, newFile, dateSelector, loadedDate);
         top.getChildren().addAll(titleContainer, controls, remainderContainer);
         setTop(top);
 
-        // Top
+        content.getChildren().addAll(scrollPane, addTransaction);
+        setCenter(content);
+
+
+
+        // ----- STYLE -----
         {
+            // General
+            getStyleClass().add("background");
+            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
+
+            // Top
             top.setSpacing(PADDING);
             top.setPadding(new Insets(0, 0, PADDING, 0));
 
@@ -100,36 +113,17 @@ public class TransactionPane extends BorderPane{
 
             remainder.setStyle("-fx-font: 18 'Arial Rounded MT Bold'");
             remainderContainer.setAlignment(Pos.BASELINE_LEFT);
-        }
 
-
-
-        // ----- CONTENT -----
-        Pane content = new Pane();
-
-        transactionPane = new VBox();
-        ScrollPane scrollPane = new ScrollPane(transactionPane);
-        Text emptyText = new Text("Please select a date.");
-        transactionPane.getChildren().add(emptyText);
-
-        // "Add transaction" button
-        PlusButton addTransaction = new PlusButton();
-
-        content.getChildren().addAll(scrollPane, addTransaction);
-        setCenter(content);
-
-        // Content
-        {
+            // Content
             content.setPadding(new Insets(PADDING));
+            content.prefWidthProperty().bind(widthProperty());
+            content.prefHeightProperty().bind(heightProperty());
 
             transactionPane.getStyleClass().add("background");
-            transactionPane.setSpacing(PADDING);
             transactionPane.setPadding(new Insets(0, 0, PADDING, 0));
+            transactionPane.setSpacing(PADDING);
             transactionPane.prefWidthProperty().bind(content.widthProperty());
             transactionPane.prefHeightProperty().bind(content.heightProperty());
-            transactionPane.setAlignment(Pos.TOP_CENTER);
-
-            emptyText.getStyleClass().add("stdText");
 
             scrollPane.getStyleClass().add("scrollPane");
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
