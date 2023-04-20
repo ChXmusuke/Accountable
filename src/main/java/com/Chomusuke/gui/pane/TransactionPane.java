@@ -176,7 +176,9 @@ public class TransactionPane extends BorderPane{
         // Tiles generation
         List<TransactionTile> tiles = new ArrayList<>();
         for (int i = 0; i < txs.getTransactionList().size(); i++) {
-            TransactionTile tile = new TransactionTile(txs.getTransactionList().get(i), txs.getValues()[i]);
+            Transaction tx = txs.getTransactionList().get(i);
+            TransactionTile tile = new TransactionTile(tx, txs.getValues()[i]);
+
             // Event handler
             tile.setOnMouseClicked(m -> {
                 if (m.getButton() == MouseButton.PRIMARY) {

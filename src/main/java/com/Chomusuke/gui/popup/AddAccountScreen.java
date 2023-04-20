@@ -117,16 +117,18 @@ public class AddAccountScreen extends PopUp {
 
             setDeleteAction(d -> {
                 if (account != null) {
-                    if (account.getBalance() > 0) {
-
-                        Transaction newTx = new Transaction(
+                    double balance = account.getBalance();
+                    if (balance >= 0) {
+                        Transaction delTx = new Transaction(
                                 account.getName() + " withdrawal",
                                 id,
                                 Transaction.TransactionType.SAVINGS,
                                 Transaction.ValueType.ABSOLUTE,
-                                (float) -account.getBalance()
+                                (float) -balance
                         );
-                        txList.add(newTx);
+
+                        txList.add(delTx);
+
                         Storage.writeAccounts(accounts);
                     }
 
