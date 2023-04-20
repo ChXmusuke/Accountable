@@ -137,7 +137,6 @@ public class TransactionPane extends BorderPane{
 
             addTransaction.layoutXProperty().bind(content.widthProperty().subtract(PlusButton.RADIUS*2+PADDING));
             addTransaction.layoutYProperty().bind(content.heightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
-            addTransaction.setVisible(false);
         }
 
 
