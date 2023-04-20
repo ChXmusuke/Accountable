@@ -99,15 +99,6 @@ public class Accountable extends Application {
         TransactionPane transactions = new TransactionPane(selectedScene, manager, balances, year, month);
         AccountPane accounts = new AccountPane(selectedScene, manager, balances);
 
-        selectedScene.addListener((s, o, n) -> {
-            switch (n) {
-                case TRANSACTIONS ->
-                        stage.getScene().setRoot(transactions);
-                case ACCOUNTS ->
-                        stage.getScene().setRoot(accounts);
-            }
-        });
-
 
 
         // ----- STYLE -----
@@ -127,6 +118,16 @@ public class Accountable extends Application {
 
         // ----- EVENTS -----
         {
+            // Scene switching
+            selectedScene.addListener((s, o, n) -> {
+                switch (n) {
+                    case TRANSACTIONS ->
+                            stage.getScene().setRoot(transactions);
+                    case ACCOUNTS ->
+                            stage.getScene().setRoot(accounts);
+                }
+            });
+
             // Load the corresponding file in memory when selecting a year+month
             month.addListener((v, o, n) -> {
                 if (n != null) {
