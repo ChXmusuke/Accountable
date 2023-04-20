@@ -51,7 +51,7 @@ public class TransactionPane extends ContentPane {
 
     public TransactionPane(ObjectProperty<SceneID> selectedScene, TransactionList txList, Map<Byte, Account> balances, StringProperty year, StringProperty month) {
 
-
+        // ----- TOP -----
         // Title of the app
         Text title = new Text("Accountable.");
         HBox titleContainer = new HBox(title);
@@ -69,11 +69,16 @@ public class TransactionPane extends ContentPane {
 
 
 
-        // ----- CONTENT -----
+        // ----- SCROLLABLE -----
         transactionPane = new VBox();
 
+
+
+        // ----- CONTENT -----
         // "Add transaction" button
         PlusButton addTransaction = new PlusButton();
+
+
 
         controls.getChildren().addAll(accounts, newFile, dateSelector, loadedDate);
 
@@ -85,10 +90,6 @@ public class TransactionPane extends ContentPane {
 
         // ----- STYLE -----
         {
-            // General
-            getStyleClass().add("background");
-            setPadding(new Insets(PADDING, PADDING, 0, PADDING));
-
             title.setId("title");
             title.getStyleClass().add("stdText");
             titleContainer.setAlignment(Pos.CENTER);
