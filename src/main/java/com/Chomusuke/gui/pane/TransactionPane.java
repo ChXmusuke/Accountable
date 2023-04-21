@@ -132,7 +132,7 @@ public class TransactionPane extends ContentPane {
                     remainder.setFill(Color.GREEN);
             });
 
-            // Update the
+            // Update the currently selected date
             dateSelector.getMonthProperty().addListener((v, o, n) -> {
                 if (n != null)
                     loadedDate.setText(String.format("%s/%s", year.get(), month.get()));

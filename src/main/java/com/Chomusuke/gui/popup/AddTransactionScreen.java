@@ -223,6 +223,9 @@ public class AddTransactionScreen extends PopUp {
                     .filter(e -> accounts.get(names.get(e)).getBalance() >= 0)
                     .collect(Collectors.toList())
             ));
+            for (byte b : names.values())
+                System.out.println(accounts.get(b));
+
         }
     }
 }
