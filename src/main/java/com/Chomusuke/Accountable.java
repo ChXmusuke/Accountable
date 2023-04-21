@@ -164,7 +164,6 @@ public class Accountable extends Application {
                     } else {
                         Transaction tx = l.getAddedSubList().get(0);
 
-                        oldList.remove(l.getFrom());
                         // Filter zero-valued transactions
                         if (tx.value() != 0) {
                             Storage.write(
@@ -173,17 +172,19 @@ public class Accountable extends Application {
                                     intMonth
                             );
 
-                            Account.ModMap.of(oldList)
-                                    .reverse()
-                                    .apply(balances);
-
-                            Account.ModMap.of(new ArrayList<>(l.getList()))
-                                    .apply(balances);
+                            oldList.remove(l.getFrom());
                         } else {
                             manager.remove(tx);
                             balances.remove(tx.to());
                         }
                     }
+
+                    Account.ModMap.of(oldList)
+                            .reverse()
+                            .apply(balances);
+
+                    Account.ModMap.of(new ArrayList<>(l.getList()))
+                            .apply(balances);
 
                     Storage.writeAccounts(balances);
                 }
