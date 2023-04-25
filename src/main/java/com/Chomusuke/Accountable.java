@@ -163,6 +163,7 @@ public class Accountable extends Application {
                             oldList.add(l.getFrom(), l.getRemoved().get(0));
                     } else {
                         Transaction tx = l.getAddedSubList().get(0);
+                        oldList.remove(l.getFrom());
 
                         // Filter zero-valued transactions
                         if (tx.value() != 0) {
@@ -172,7 +173,6 @@ public class Accountable extends Application {
                                     intMonth
                             );
 
-                            oldList.remove(l.getFrom());
                         } else {
                             manager.remove(tx);
                             balances.remove(tx.to());
