@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -62,11 +63,16 @@ public class AddTransactionScreen extends PopUp {
     public AddTransactionScreen(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
         super(t != null);
 
-        Map<String, Byte> names = new HashMap<>();
-        for (byte b : accounts.keySet()) {
-            if (accounts.get(b).getBalance() >= 0)
-                names.put(accounts.get(b).getName(), b);
-        }
+        Map<String, Byte> ids = new HashMap<>();
+        ObservableList<String> namesBalances = FXCollections.observableList(accounts.keySet().stream()
+                .filter(id -> accounts.get(id).getBalance() >= 0)
+                .map(id -> {
+                    String s =  String.format("%s - %.2f", accounts.get(id).getName(), accounts.get(id).getBalance());
+                    ids.put(s, id);
+
+                    return s;
+                })
+                .toList());
 
         GridPane content = new GridPane();
 
@@ -179,7 +185,7 @@ public class AddTransactionScreen extends PopUp {
                     Transaction newTransaction = new Transaction(
                             nameField.getText(),
                             tTypeField.getValue().equals(TransactionType.SAVINGS) ?
-                                    names.get(to.getValue().replaceAll(" - //d+$", "")) :
+                                    ids.get(to.getValue()) :
                                     (byte) 0,
                             tTypeField.getValue(),
                             vTypeField.getValue(),
@@ -215,19 +221,15 @@ public class AddTransactionScreen extends PopUp {
                 valueField.setText(Float.toString(t.value()));
                 tTypeField.getSelectionModel().select(t.transactionType());
                 vTypeField.getSelectionModel().select(t.valueType());
-                if (t.to() != 0)
-                    to.getSelectionModel().select(accounts.get(t.to()).getName());
+                if (t.to() != 0) {
+                    Account a = accounts.get(t.to());
+                    to.getSelectionModel().select(String.format("%s - %.2f", a.getName(), a.getBalance()));
+                }
             } else {
                 tTypeField.getSelectionModel().select(TransactionType.REVENUE);
             }
 
-            to.setItems(FXCollections.observableArrayList(
-                    accounts.values().stream()
-                            .filter(a -> a.getBalance() >= 0)
-                            .map(Account::getName)
-                            .map(s -> s.concat(" - " + accounts.get(names.get(s)).getBalance()))
-                            .toList()
-            ));
+            to.setItems(namesBalances);
         }
     }
 }
