@@ -20,7 +20,6 @@ package com.chomusuke.gui.popup;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.scene.control.ChoiceBox;
@@ -179,7 +178,9 @@ public class AddTransactionScreen extends PopUp {
 
                     Transaction newTransaction = new Transaction(
                             nameField.getText(),
-                            tTypeField.getValue().equals(TransactionType.SAVINGS) ? names.get(to.getValue()) : (byte) 0,
+                            tTypeField.getValue().equals(TransactionType.SAVINGS) ?
+                                    names.get(to.getValue()) :
+                                    (byte) 0,
                             tTypeField.getValue(),
                             vTypeField.getValue(),
                             v
@@ -221,11 +222,11 @@ public class AddTransactionScreen extends PopUp {
             }
 
             to.setItems(FXCollections.observableArrayList(
-                    names.keySet().stream()
-                    .filter(e -> accounts.get(names.get(e)).getBalance() >= 0)
-                    .collect(Collectors.toList())
+                    accounts.values().stream()
+                            .filter(a -> a.getBalance() >= 0)
+                            .map(Account::getName)
+                            .toList()
             ));
-
         }
     }
 }
