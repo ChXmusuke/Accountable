@@ -179,7 +179,7 @@ public class AddTransactionScreen extends PopUp {
                     Transaction newTransaction = new Transaction(
                             nameField.getText(),
                             tTypeField.getValue().equals(TransactionType.SAVINGS) ?
-                                    names.get(to.getValue()) :
+                                    names.get(to.getValue().replaceAll(" - //d+$", "")) :
                                     (byte) 0,
                             tTypeField.getValue(),
                             vTypeField.getValue(),
@@ -225,6 +225,7 @@ public class AddTransactionScreen extends PopUp {
                     accounts.values().stream()
                             .filter(a -> a.getBalance() >= 0)
                             .map(Account::getName)
+                            .map(s -> s.concat(" - " + accounts.get(names.get(s)).getBalance()))
                             .toList()
             ));
         }
