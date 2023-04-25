@@ -64,8 +64,10 @@ public class AddTransactionScreen extends PopUp {
         super(t != null);
 
         Map<String, Byte> names = new HashMap<>();
-        for (byte b : accounts.keySet())
-            names.put(accounts.get(b).getName(), b);
+        for (byte b : accounts.keySet()) {
+            if (accounts.get(b).getBalance() >= 0)
+                names.put(accounts.get(b).getName(), b);
+        }
 
         GridPane content = new GridPane();
 
