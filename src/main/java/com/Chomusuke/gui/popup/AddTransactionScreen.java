@@ -17,9 +17,7 @@
 
 package com.chomusuke.gui.popup;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,12 +61,12 @@ public class AddTransactionScreen extends PopUp {
     public AddTransactionScreen(TransactionList txList, Transaction t, Map<Byte, Account> accounts) {
         super(t != null);
 
-        Map<String, Byte> ids = new HashMap<>();
-        ObservableList<String> namesBalances = FXCollections.observableList(accounts.keySet().stream()
+        List<Byte> ids = new ArrayList<>();
+        ObservableList<String> namesBalances = FXCollections.observableList(new ArrayList<>(accounts.keySet()).stream()
                 .filter(id -> accounts.get(id).getBalance() >= 0)
                 .map(id -> {
                     String s =  String.format("%s - %.2f", accounts.get(id).getName(), accounts.get(id).getBalance());
-                    ids.put(s, id);
+                    ids.add(id);
 
                     return s;
                 })
@@ -185,7 +183,7 @@ public class AddTransactionScreen extends PopUp {
                     Transaction newTransaction = new Transaction(
                             nameField.getText(),
                             tTypeField.getValue().equals(TransactionType.SAVINGS) ?
-                                    ids.get(to.getValue()) :
+                                    ids.get(to.getSelectionModel().getSelectedIndex()) :
                                     (byte) 0,
                             tTypeField.getValue(),
                             vTypeField.getValue(),
