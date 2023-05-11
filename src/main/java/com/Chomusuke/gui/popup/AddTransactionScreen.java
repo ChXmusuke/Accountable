@@ -177,8 +177,16 @@ public class AddTransactionScreen extends PopUp {
 
                 try {
                     float v = Float.parseFloat(valueField.getText());
-                    if (v < 0 && !tTypeField.getValue().equals(TransactionType.SAVINGS))
-                        v = Math.abs(v);
+                    if (v < 0) {
+                        if (tTypeField.getValue().equals(TransactionType.SAVINGS)) {
+                            // Check if the transaction value is higher than the account's balance
+                            double b = accounts.get(ids.get(to.getSelectionModel().getSelectedIndex())).getBalance();
+                            if (b+v < 0)
+                                return;
+                        } else {
+                            v = Math.abs(v);
+                        }
+                    }
 
                     Transaction newTransaction = new Transaction(
                             nameField.getText(),
@@ -192,6 +200,7 @@ public class AddTransactionScreen extends PopUp {
                     txList.add(newTransaction, t);
                 } catch (NumberFormatException exception) {
 
+                    exception.printStackTrace();
                     return;
                 }
 
