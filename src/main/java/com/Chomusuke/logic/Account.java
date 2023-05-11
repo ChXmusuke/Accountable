@@ -198,6 +198,7 @@ public class Account {
         public double sum() {
             double sum = modMap.values().stream()
                     .mapToDouble(Number::doubleValue)
+                    .filter(d -> d != -1)
                     .sum();
             return Math.round(sum*100)/100d;
         }
