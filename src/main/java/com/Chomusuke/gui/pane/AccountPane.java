@@ -17,10 +17,15 @@
 
 package com.chomusuke.gui.pane;
 
+import java.util.List;
 import java.util.Map;
 
+import com.chomusuke.logic.Storage;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,6 +36,7 @@ import com.chomusuke.gui.element.tile.AccountTile;
 import com.chomusuke.gui.popup.AddAccountScreen;
 import com.chomusuke.logic.Account;
 import com.chomusuke.logic.TransactionList;
+import javafx.scene.paint.Color;
 
 import static com.chomusuke.Accountable.PADDING;
 
@@ -41,6 +47,7 @@ public class AccountPane extends ContentPane {
 
     private final TransactionList txList;
     private final VBox accountPane;
+    private final LineChart<Number, Number> chart;
 
     /**
      * Constructor.
@@ -66,7 +73,18 @@ public class AccountPane extends ContentPane {
         PlusButton addAccount = new PlusButton();
 
         controls.getChildren().add(back);
-        addToTop(controls);
+
+
+
+        // ----- CHART -----
+
+        NumberAxis x = new NumberAxis();
+        NumberAxis y = new NumberAxis();
+        chart = new LineChart<>(x, y);
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        chart.getData().add(series);
+
+        addToTop(controls, chart);
 
         setScrollableContent(accountPane);
         addToContent(addAccount);
@@ -83,6 +101,37 @@ public class AccountPane extends ContentPane {
 
             addAccount.layoutXProperty().bind(getContentWidthProperty().subtract(PlusButton.RADIUS*2+PADDING));
             addAccount.layoutYProperty().bind(getContentHeightProperty().subtract(PlusButton.RADIUS*2+PADDING*2));
+
+            // Chart
+            x.setTickLabelFill(Color.LIGHTGRAY);
+            y.setTickLabelFill(Color.LIGHTGRAY);
+            x.setStyle("-fx-border-color: transparent; -fx-background-color: transparent;");
+            y.setStyle("-fx-border-color: transparent; -fx-background-color: transparent;");
+
+            x.setLowerBound(1);
+            x.setUpperBound(12);
+            x.setTickUnit(1);
+            y.setForceZeroInRange(false);
+
+            x.setAutoRanging(false);
+            y.setAutoRanging(false);
+            x.setMinorTickVisible(false);
+            y.setMinorTickVisible(false);
+            x.setTickMarkVisible(false);
+            y.setTickMarkVisible(false);
+            x.setMinorTickVisible(false);
+            y.setMinorTickVisible(false);
+            x.setTickLabelsVisible(false);
+
+            setChartBounds();
+
+            chart.setLegendVisible(false);
+            chart.setAnimated(false);
+            chart.setMaxHeight(this.getMaxHeight()*0.3);
+            chart.setCreateSymbols(false);
+            chart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
+            chart.setVerticalGridLinesVisible(false);
+            chart.setHorizontalGridLinesVisible(false);
         }
 
 
@@ -91,6 +140,16 @@ public class AccountPane extends ContentPane {
         {
             back.setOnAction(e -> selectedScene.set(SceneID.TRANSACTIONS));
             addAccount.setOnMouseClicked(e -> new AddAccountScreen(balances, txList).show());
+
+            y.setTickLabelFormatter(new NumberAxis.DefaultFormatter(y) {
+                @Override
+                public String toString(Number object) {
+                    if (object.intValue() == 0 || object.intValue() == series.getData().get(series.getData().size() - 1).getYValue().intValue()) {
+                        return Integer.toString(object.intValue());
+                    }
+                    return "";
+                }
+            });
         }
     }
 
@@ -102,6 +161,7 @@ public class AccountPane extends ContentPane {
     public void update(Map<Byte, Account> balances) {
         accountPane.getChildren().clear();
 
+        // Update account tiles
         for (Account a : balances.values()) {
             if (a.getBalance() >= 0) {
                 AccountTile t = new AccountTile(a);
@@ -113,5 +173,42 @@ public class AccountPane extends ContentPane {
                 accountPane.getChildren().add(t);
             }
         }
+
+        // Update the chart
+        XYChart.Series<Number, Number> ytdData = chart.getData().get(0);
+        ytdData.getData().clear();
+
+        double[] ytdBalances = Storage.readYTDBalances();
+
+        for (int i = 0 ; i < ytdBalances.length ; i++) {
+            XYChart.Data<Number, Number> dataPoint = new XYChart.Data<>(i+1, ytdBalances[i]);
+
+            ytdData.getData().add(dataPoint);
+        }
+        List<XYChart.Data<Number, Number>> data = chart.getData().get(0).getData();
+
+        ((NumberAxis) chart.getYAxis()).setTickUnit((double) data.get(data.size()-1).getYValue());
+
+        setChartBounds();
+    }
+
+    private void setChartBounds() {
+        List<XYChart.Data<Number, Number>> data = chart.getData().get(0).getData();
+        double min = data.stream()
+                .map(XYChart.Data::getYValue)
+                .mapToDouble(Number::doubleValue)
+                .min().orElse(0);
+        double max = data.stream()
+                .map(XYChart.Data::getYValue)
+                .mapToDouble(Number::doubleValue)
+                .max().orElse(0);
+
+        min *= 0.99;
+        min = Math.floor(min*100)/100d;
+        max = Math.ceil(max*100)/100d;
+
+        NumberAxis y = (NumberAxis) chart.getYAxis();
+        y.setLowerBound(min);
+        y.setUpperBound(max);
     }
 }
