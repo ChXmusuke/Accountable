@@ -144,9 +144,9 @@ public class AccountPane extends ContentPane {
             y.setTickLabelFormatter(new NumberAxis.DefaultFormatter(y) {
                 @Override
                 public String toString(Number object) {
-                    if (object.intValue() == 0 || object.intValue() == series.getData().get(series.getData().size() - 1).getYValue().intValue()) {
-                        return Integer.toString(object.intValue());
-                    }
+                    if (object.doubleValue() == 0 || object.doubleValue() == series.getData().get(series.getData().size() - 1).getYValue().doubleValue())
+                        return Double.toString(object.doubleValue());
+
                     return "";
                 }
             });
@@ -187,7 +187,8 @@ public class AccountPane extends ContentPane {
         }
         List<XYChart.Data<Number, Number>> data = chart.getData().get(0).getData();
 
-        ((NumberAxis) chart.getYAxis()).setTickUnit((double) data.get(data.size()-1).getYValue());
+        double tick = (double) data.get(data.size()-1).getYValue();
+        ((NumberAxis) chart.getYAxis()).setTickUnit(tick);
 
         setChartBounds();
     }
@@ -203,7 +204,6 @@ public class AccountPane extends ContentPane {
                 .mapToDouble(Number::doubleValue)
                 .max().orElse(0);
 
-        min *= 0.99;
         min = Math.floor(min*100)/100d;
         max = Math.ceil(max*100)/100d;
 
