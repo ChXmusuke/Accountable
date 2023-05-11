@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 import com.chomusuke.util.Preconditions;
+import com.chomusuke.util.Time;
 
 import static com.chomusuke.logic.Transaction.TransactionType;
 import static com.chomusuke.logic.Transaction.ValueType;
@@ -324,6 +325,32 @@ public class Storage {
                 if (a.getBalance() == 0)
                     a.update(-1);
             }
+        }
+
+        return balances;
+    }
+
+    /**
+     * This method retreives the balance changes from january of the current year and compiles them in an array.
+     *
+     * @return an array with the balances of the last m months, m being the current month
+     */
+    public static double[] readYTDBalances() {
+
+        int year = Time.getCurrentYear();
+        int month = Time.getCurrentMonth();
+
+        // YTD -> from january to current month
+        double[] balances = new double[month];
+        double balancesTotal = readAccounts().values().stream()
+                .mapToDouble(Account::getBalance)
+                .filter(d -> d != -1)
+                .sum();
+        balancesTotal = Math.round(balancesTotal*100)/100d;
+        for (int i = month ; i > 0 ; i--) {
+            balances[i-1] = balancesTotal;
+            balancesTotal -= Account.ModMap.of(read(year, i)).sum();
+            balancesTotal = Math.round(balancesTotal*100)/100d;
         }
 
         return balances;
